@@ -247,7 +247,7 @@ public class DataProviderConfiguration {
     }
 
     /**
-     * Ritorna la relazione field -> Tabella
+     * Ritorna la relazione field -&gt; Tabella
      *
      * @return mappa {nomeField, nomeTabella}
      */
@@ -366,7 +366,7 @@ public class DataProviderConfiguration {
     /**
      * Costruisce la posizione dove viene memorizzato l'indice di lucene
      *
-     * @return percorso dove deve essere memorizzato l'idnice
+     * @return percorso dove deve essere memorizzato l'indice
      */
     public File getLuceneFolder() {
         String luceneFolder = storageLocation + "/dataproviders/" + name;
@@ -417,7 +417,7 @@ public class DataProviderConfiguration {
      *
      * @param query query di ricerca
      * @return primo Documento che ha matchato la ricerca
-     * @throws IOException
+     * @throws IOException Eccezione di input/output
      */
     public Document search(Query query) throws IOException {
         LogGui.info("Query: " + query.toString());

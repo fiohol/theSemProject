@@ -32,9 +32,9 @@ public class CapturePattern implements Serializable {
     /**
      * Definisce un pattern di cattura
      *
-     * @param position
-     * @param pattern
-     * @param fixValue
+     * @param position posizione
+     * @param pattern pattern
+     * @param fixValue normalizzazione
      */
     public CapturePattern(int position, Pattern pattern, String fixValue) {
         this.position = position;
@@ -69,6 +69,7 @@ public class CapturePattern implements Serializable {
 
     /**
      * Ritorna il pattern di cattura
+     *
      * @return pattern di cattura
      */
     public Pattern getPattern() {
@@ -77,6 +78,7 @@ public class CapturePattern implements Serializable {
 
     /**
      * Imposta il pattern di cattura
+     *
      * @param pattern pattern di cattura
      */
     public void setPattern(Pattern pattern) {
@@ -85,7 +87,8 @@ public class CapturePattern implements Serializable {
 
     /**
      * Ritorna il valore di formattazione o di normalizzazione
-     * @return valore di formattazione 
+     *
+     * @return valore di formattazione
      */
     public String getFixValue() {
         return fixValue;
@@ -93,6 +96,7 @@ public class CapturePattern implements Serializable {
 
     /**
      * Imposta il valore di normalizzazione o il pattern di formattazione
+     *
      * @param fixValue valore di formattazione
      */
     public void setFixValue(String fixValue) {

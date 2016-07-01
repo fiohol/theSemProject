@@ -86,7 +86,7 @@ public class NodeData {
      * @param parent nodo padre
      * @param k fattore K per il classificatore KNN
      * @param intern internizzatore stringhe
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public NodeData(String nodeName, NodeData parent, int k, InternPool intern) throws Exception {
         this.nodeName = nodeName;
@@ -379,9 +379,10 @@ public class NodeData {
     }
 
     /**
+     * Rimuove un nodo figlio
      *
-     * @param path
-     * @param level
+     * @param path percorso
+     * @param level livello
      */
     protected void removeChild(Object[] path, int level) {
         if (level < path.length - 1) {
@@ -398,9 +399,10 @@ public class NodeData {
     }
 
     /**
+     * Aggiunge un figlio
      *
-     * @param path
-     * @param level
+     * @param path percorso
+     * @param level livello
      */
     protected void addChild(Object[] path, int level) {
         if (level < path.length - 1) {

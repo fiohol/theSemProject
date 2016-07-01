@@ -41,7 +41,7 @@ public class Tokenizer {
      * @param text testo da tokenizzare
      * @param analyzer analizzatore sintattico
      * @return testo tokenizzato (come testo)
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static String tokenize(String text, Analyzer analyzer) throws Exception {
         TokenizerFilter tf = new TokenizerFilter() {
@@ -76,7 +76,7 @@ public class Tokenizer {
      * @param text testo su cui fare il tagcloud
      * @param id id univoco del documento il cui testo è passato come parametro
      * @param analyzer analizzatore sintattico
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static void getTagClasses(final TagCloudResults ret, String text, String id, Analyzer analyzer) throws Exception {
         TokenizerFilter tf = (String term) -> {
@@ -102,7 +102,7 @@ public class Tokenizer {
      * inserire una logica durante la tokenizzazione. Alla ricezione di un token
      * il sistema applica una logica. Ad esempio unisce tutti i metodi in una
      * stringa ma mano che lo riceve
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static void tokenize(String text, Analyzer analyzer, int tokens, TokenizerFilter filter) throws Exception {
         if (text == null) {
@@ -149,7 +149,7 @@ public class Tokenizer {
      * altro, o l'inserimento di un carattere. Per esempio, per trasformare
      * "bar" in "biro" occorrono due modifiche:
      *
-     * "bar" -> "bir" (sostituzione di 'a' con 'i') "bir" -> "biro" (inserimento
+     * "bar" -&gt; "bir" (sostituzione di 'a' con 'i') "bir" -&gt; "biro" (inserimento
      * di 'o') Non è possibile trasformare la prima parola nella seconda con
      * meno di due modifiche, quindi la distanza di Levenshtein fra "bar" e
      * "biro" è 2.

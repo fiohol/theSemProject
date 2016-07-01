@@ -76,8 +76,8 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
      * @param handler handler
      * @param metadata metadati del documento
      * @param outputHtml necessario per l'override del metodo ma mai usato
-     * @throws SAXException
-     * @throws IOException
+     * @throws SAXException eccezione
+     * @throws IOException Eccezione di input/output
      */
     @Override
     public void parseEmbedded(InputStream stream, org.xml.sax.ContentHandler handler, Metadata metadata, boolean outputHtml) throws SAXException, IOException {

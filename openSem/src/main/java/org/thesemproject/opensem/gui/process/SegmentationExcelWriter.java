@@ -77,7 +77,7 @@ public class SegmentationExcelWriter {
      * @param language lingua
      * @param text testo
      * @param identifiedSegments risultato tagging
-     * @throws IOException
+     * @throws IOException Eccezione di input/output
      */
     public void addDocument(int resultsRow, String fileName, String language, String text, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) throws IOException {
         SXSSFRow row = sheetResults.createRow(resultsRow);
@@ -368,7 +368,7 @@ public class SegmentationExcelWriter {
      * Scrive l'excel
      *
      * @param fos output stream
-     * @throws IOException
+     * @throws IOException Eccezione di input/output
      */
     public void write(FileOutputStream fos) throws IOException {
         wb.write(fos);

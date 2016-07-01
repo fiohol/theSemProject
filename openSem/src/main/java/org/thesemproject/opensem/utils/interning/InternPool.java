@@ -17,7 +17,8 @@ package org.thesemproject.opensem.utils.interning;
 
 /**
  * Classe per gestire la versione internizzata di un oggetto
- * <p/>
+ * 
+ * 
  * Dettaglio dell'esempio implementato si trovano all'indirizzo
  * <a href="https://javax0.wordpress.com/2014/03/11/object-interning/">https://javax0.wordpress.com/2014/03/11/object-interning/</a>
  *

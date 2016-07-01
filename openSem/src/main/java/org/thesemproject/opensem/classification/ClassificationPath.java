@@ -20,7 +20,7 @@ import java.text.DecimalFormat;
 
 /**
  *
- * @author Administrator
+ * Identifica il percorso di classificazione di un documento
  */
 public class ClassificationPath implements Serializable {
 
@@ -77,9 +77,10 @@ public class ClassificationPath implements Serializable {
     }
 
     /**
+     * Ritorna lo score di classificazione al livello prescelto
      *
-     * @param level
-     * @return
+     * @param level livello
+     * @return score
      */
     public double getNodeScore(int level) {
         return this.score[level];
@@ -107,12 +108,12 @@ public class ClassificationPath implements Serializable {
     /**
      * Ritorna il path di classificazione. IL path si legge da sinistra verso
      * destra. A sinistra il livello più alto nell'albero (indice 0) a destra la
-     * foglia. Una classificazione 
-     * 
-     * PIPPO &gt; PLUTO >&gt; TOPOLINO &gt; MINNIE 
-     * 
-     * viene memorizzata come 
-     * 
+     * foglia. Una classificazione
+     *
+     * PIPPO &gt; PLUTO &gt; TOPOLINO &gt; MINNIE
+     *
+     * viene memorizzata come
+     *
      * {"PIPPO", "PLUTO", "TOPOLINO", "MINNIE"}
      *
      * @return path

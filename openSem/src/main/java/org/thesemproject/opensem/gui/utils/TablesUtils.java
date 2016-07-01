@@ -81,7 +81,7 @@ public class TablesUtils {
      * Aggiunge un record di tabella
      *
      * @param semGui frame
-     * @throws HeadlessException
+     * @throws HeadlessException eccezione
      */
     public static void addTableRecord(SemGui semGui) throws HeadlessException {
         String name = JOptionPane.showInputDialog(null, "Inserire il valore del record");

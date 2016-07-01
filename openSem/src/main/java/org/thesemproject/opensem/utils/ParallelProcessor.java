@@ -24,25 +24,14 @@ import org.thesemproject.opensem.gui.LogGui;
  * Questa classe gestisce l'esecuzione in parallelo di piu' threads
  * parallelizzabili distribuendoli sui processori del sistema (o su un numero di
  * thread paralleli deciso dall'utente)
- * <p/>
+ * 
+ * 
  * Per gestire le cose si usa il componente standard Java ExecutorService come
  * dettagliatamente descritto nella documentazione ufficiale Oracle
- * <p/>
+ *
+ *
  * <a href="https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html">https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html</a>
- * <p/>
- * Esempio di utilizzo:
- * <pre>
- * final ParallelProcessor executor = new ParallelProcessor(Constants.PROCESSORS, 5); //5 minuti al massimo per una aggregazione
- * for (int j = 0; j < Constants.PROCESSORS; j++) {
- *  executor.add(new Runnable() {
- *  public void run() {
- *  for (; ; ) {
- *  // quello che c'e' da fare con tanto di condizione di uscita
- *  }
- * });
- * }
- * executor.waitTermination();
- * </pre>
+ *
  */
 public class ParallelProcessor {
 

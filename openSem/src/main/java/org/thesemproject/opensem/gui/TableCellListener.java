@@ -30,7 +30,7 @@ import java.beans.*;
 
 /**
  *
- * @author Administrator
+ * Listner sulle tabelle
  */
 
 public class TableCellListener implements PropertyChangeListener, Runnable {
@@ -122,7 +122,7 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
 
     /**
      *
-     * @param e
+     * @param e evento
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

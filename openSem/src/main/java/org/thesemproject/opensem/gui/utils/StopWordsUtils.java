@@ -194,7 +194,7 @@ public class StopWordsUtils {
      * Gestisce l'aggiunta di una stop word
      *
      * @param semGui frame
-     * @throws HeadlessException
+     * @throws HeadlessException eccezione
      */
     public static void addStopWord(SemGui semGui) throws HeadlessException {
         String name = JOptionPane.showInputDialog(null, "Inserire il valore del record");

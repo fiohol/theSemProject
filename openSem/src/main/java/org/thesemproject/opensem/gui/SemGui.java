@@ -6158,7 +6158,7 @@ public class SemGui extends javax.swing.JFrame {
      * Metodo di start del software SemGUI
      *
      * @param args the command line arguments
-     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.ClassNotFoundException classe non trovata
      */
     public static void main(String args[]) throws ClassNotFoundException {
         try {
@@ -7054,7 +7054,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return file chooser per importare l'albero
      */
     public JFileChooser getImportTreeFileChooser() {
         return importTreeFileChooser;
@@ -7102,7 +7102,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return valore fisso per la cattura
      */
     public JTextField getCapturePatternFixedValue() {
         return capturePatternFixedValue;
@@ -7126,7 +7126,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return textfield
+     * @return textfield 
      */
     public JTextField getjTextField1() {
         return jTextField1;
@@ -7166,7 +7166,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return albero di classificazione
      */
     public JTree getClassificationTree() {
         return classificationTree;
@@ -7174,7 +7174,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return albero di classificazione
      */
     public JTree getClassificationTree1() {
         return classificationTree1;
@@ -7254,7 +7254,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return filePanelHtml
      */
     public JTextPane getFilesPanelHtml() {
         return filesPanelHtml;
@@ -7446,7 +7446,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return
+     * @return testo da segmentare
      */
     public JTextArea getSegmentText() {
         return segmentText;

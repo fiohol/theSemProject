@@ -58,9 +58,10 @@ import org.mcavallo.opencloud.Tag;
 public class Example {
 
     /**
+     * Programma demo
      *
-     * @param args
-     * @throws Exception
+     * @param args argomenti
+     * @throws Exception Eccezione
      */
     public static void main(String args[]) throws Exception {
         //-------------------- PARSER ------------------------------------------
@@ -190,7 +191,7 @@ public class Example {
             double weigth = tag.getWeight(); //Anche questo in varie modalità
             //Su sem i pesi vengono usati per la grandezza del carattere ma possono essere usati anche per la colorazione 
             //In funzione dell'algoritmo di presentazione che si decide di scegliere.
-                    
+
             //L'oggetto Tag Class contiene una serie di info aggiuntive oltre la frequenza
             TagClass tc = result.getTagClass(tag);
             //Ad esempio l'elenco di tutti i documentId che afferiscono a quel tag specifico

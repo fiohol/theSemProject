@@ -308,7 +308,7 @@ public class DateUtils {
      * @param from anno inizio
      * @param to anno fine
      * @return elenco anni
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static String[] getYears(int from, int to) throws Exception {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -323,7 +323,7 @@ public class DateUtils {
      * @param from anno inizio
      * @param to anno fine
      * @return elenco dei mesi
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static String[] getMonths(int from, int to) throws Exception {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

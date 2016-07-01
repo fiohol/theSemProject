@@ -120,7 +120,7 @@ public class Durations {
      * sommare o comunque concatenare. Questo metodo permette di addizionare una
      * durata di un segmento alla durata di un altro
      *
-     * @param srDuration
+     * @param srDuration duration
      */
     public void update(Durations srDuration) {
         if (srDuration == null) {

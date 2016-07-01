@@ -145,7 +145,7 @@ public class SemDocument implements Serializable {
      * Imposta i risultati del processo di segmentazione
      *
      * @param identifiedSegments risultato del processo di segmentazione
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public void setIdentifiedSegments(Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) throws Exception {
         this.identifiedSegments = identifiedSegments;

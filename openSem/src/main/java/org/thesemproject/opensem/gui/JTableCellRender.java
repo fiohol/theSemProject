@@ -61,7 +61,7 @@ public class JTableCellRender extends DefaultTableCellRenderer {
      * @param hasFocus true se la cella ha il focus
      * @param row numero di riga
      * @param column numero di colonna
-     * @return
+     * @return Componente
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

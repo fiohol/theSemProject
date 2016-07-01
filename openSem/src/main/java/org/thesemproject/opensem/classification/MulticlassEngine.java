@@ -374,7 +374,7 @@ public class MulticlassEngine {
      *
      * @param language lingua dell'analizzatore
      * @return Analizzatore Sintattico
-     * @throws IOException
+     * @throws IOException Eccezione di input/output
      */
     public MyAnalyzer getAnalyzer(String language) throws IOException {
         MyAnalyzer analyzer = analyzers.get(language);
@@ -657,7 +657,7 @@ public class MulticlassEngine {
      * @param uuid id univoco del docuemnto
      * @param description descrizione modificata
      * @param language lingua
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public void updateDocumentDescription(String uuid, String description, String language) throws Exception {
         String indexFolder = getIndexFolder(language);

@@ -46,7 +46,7 @@ public class KeepLastIndexDeletionPolicy extends IndexDeletionPolicy {
      * Cancella tutti i commit ad eccezione dell'ultimo
      *
      * @param commits lista dei commit
-     * @throws java.io.IOException
+     * @throws java.io.IOException eccezione di input/output
      */
     public void onCommit(List commits) throws IOException {
         //System.out.println("onCommit: " + commits);

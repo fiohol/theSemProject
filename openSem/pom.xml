@@ -220,9 +220,9 @@
         <netbeans.hint.license>apache20</netbeans.hint.license>
     </properties>
     
-    <!-- <build>
+    <build>
         <plugins>
-            <plugin>
+<!--            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -235,7 +235,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -257,6 +257,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build> -->
+    </build> 
     <name>SemProject</name>
 </project>

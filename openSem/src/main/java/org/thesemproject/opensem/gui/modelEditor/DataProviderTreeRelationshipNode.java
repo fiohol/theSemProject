@@ -23,7 +23,7 @@ import org.jdom2.Element;
 
 /**
  *
- * @author Administrator
+ * Gestisce il nodo di relazione del dataprovider
  */
 public class DataProviderTreeRelationshipNode extends ModelTreeNode {
 
@@ -34,9 +34,10 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
     boolean priority;
 
     /**
+     * inizializza il nodo
      *
-     * @param nodeName
-     * @param father
+     * @param nodeName nome della relazione
+     * @param father dataprovider
      */
     public DataProviderTreeRelationshipNode(String nodeName, DataProviderTreeNode father) {
         super(nodeName, TYPE_DATA_PROVIDER_RELATIONSHIP);
@@ -50,11 +51,12 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
     }
 
     /**
+     * Imposta il mapping dei fields
      *
-     * @param field
-     * @param capture
-     * @param key
-     * @param toImport
+     * @param field field
+     * @param capture nome della cattura
+     * @param key true se il field è chiave
+     * @param toImport true se il field è da importare in caso di match
      */
     public void setMapping(String field, String capture, boolean key, boolean toImport) {
         if (fields.containsKey(field)) {
@@ -67,9 +69,10 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
     }
 
     /**
+     * Ritorna le righe di mapping
      *
-     * @param father
-     * @return
+     * @param father nodo
+     * @return lista delle righe per popolare la JTable
      */
     public List<Object[]> getMappingRows(DataProviderTreeNode father) {
         List<Object[]> ret = new ArrayList();
@@ -92,16 +95,18 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
     }
 
     /**
+     * Ritorna il nome del segmento
      *
-     * @return
+     * @return nome del segmento
      */
     public String getSegmentName() {
         return segmentName;
     }
 
     /**
+     * Imposta il segment dove deve agire l'arricchimento
      *
-     * @param segmentName
+     * @param segmentName nome del segmento
      */
     public void setSegmentName(String segmentName) {
         if (segmentName == null) {
@@ -118,7 +123,12 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
         }
     }
 
-    Element getXmlElement() {
+    /**
+     * Ritorna la rappresentazione XML del componente
+     *
+     * @return Elemento per il JDOM
+     */
+    public Element getXmlElement() {
         Element segment = new Element("dpr");
         segment.setAttribute("n", getNodeName());
         segment.setAttribute("p", String.valueOf(priority));
@@ -138,16 +148,18 @@ public class DataProviderTreeRelationshipNode extends ModelTreeNode {
     }
 
     /**
+     * Verifica se l'arricchimento ha priorità sulla cattura
      *
-     * @return
+     * @return true in caso di priorità
      */
     public boolean hasPriority() {
         return priority;
     }
 
     /**
+     * Imposta la priorità
      *
-     * @param priority
+     * @param priority true se ha priorità
      */
     public void setPriority(boolean priority) {
         this.priority = priority;

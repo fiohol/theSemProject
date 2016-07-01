@@ -43,7 +43,7 @@ public class SegmentationUtils {
      * @param document BSON in cui inserire i risultati
      * @param identifiedSegments risultato della segmentazione
      * @return Documento BSON con i risultati della segmentazione
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static Document getDocument(Document document, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) throws Exception {
         return writeDocumentSegments(document, identifiedSegments, "");
@@ -57,7 +57,7 @@ public class SegmentationUtils {
      * @param identifiedSegments risultato della segmentazione
      * @param language lingua del documento
      * @return rappresentazione JTree del risultato della segmentazione
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static DefaultMutableTreeNode getJTree(DefaultMutableTreeNode root, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, String language) throws Exception {
         if (root == null) {
@@ -80,7 +80,7 @@ public class SegmentationUtils {
      * @param identifiedSegments risultati della segmentazione
      * @param language lingua del documento
      * @return Righe segmentate
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static List<Pair<Object[], List<ClassificationPath>>> getSegmentsRows(String id, String fileName, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, String language) throws Exception {
         return getSegmentsRows(id, fileName, new ArrayList<>(), identifiedSegments, "", language);
@@ -340,7 +340,7 @@ public class SegmentationUtils {
      * @param identifiedSegments risultati della segmentazione
      * @param language lingua
      * @return testo html
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static String getHtml(Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, String language) throws Exception {
         Writer sdOutSeg = new StringWriter();
@@ -451,7 +451,6 @@ public class SegmentationUtils {
      * @param key esperienza o nome della cattura che si vuole misurare. Se si
      * vuole misurare un parametro basato sulla classificazione la chiave deve
      * essere DurationsMap.CLASSIFICATIONS
-     *
      * @param type Tipo di misura (più lunga, più corta etc)
      * @return chiave per accedere alla DurationsMap e farsi dare i valori
      * dell'esperienza.
@@ -463,11 +462,21 @@ public class SegmentationUtils {
     }
 
     /**
+     * Ritorna l'esperienza richiesta dal parametro come coppia nome esperienza,
+     * valore esperienza. Si supponga che una degli elementi catturati siano le
+     * esperienze di una persona in una scheda personale. Si supponga che questa
+     * esperienza venga memorizzata in una cattura chiamata
+     * "EsperienzaFormativa". Attraverso questo metodo è possibile conoscere la
+     * prima, l'ultima, la più lunga, la più corta esperienza formativa della
+     * persona
      *
-     * @param durations
-     * @param key
-     * @param type
-     * @return
+     * @param durations durata
+     * @param key esperienza o nome della cattura che si vuole misurare. Se si
+     * vuole misurare un parametro basato sulla classificazione la chiave deve
+     * essere DurationsMap.CLASSIFICATIONS
+     * @param type Tipo di misura (più lunga, più corta etc)
+     * @return chiave per accedere alla DurationsMap e farsi dare i valori
+     * dell'esperienza.
      */
     public Pair<String, String> getExperience(DurationsMap durations, String key, int type) {
         Pair<String, String> ret = null;

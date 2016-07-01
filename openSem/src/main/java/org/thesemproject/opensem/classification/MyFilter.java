@@ -46,7 +46,8 @@ public class MyFilter extends FilteringTokenFilter {
      * Analizza un token e decide se accettarlo o meno escludendo le parole con
      * meno di 3 caratteri e i numeri
      *
-     * @return @throws IOException
+     * @return true se il token è accettato
+     * @throws IOException Eccezione di input/output
      */
     @Override
     protected boolean accept() throws IOException {

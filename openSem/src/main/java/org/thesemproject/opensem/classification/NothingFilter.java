@@ -44,7 +44,8 @@ public class NothingFilter extends FilteringTokenFilter {
     /**
      * Accetta qualsiasi token
      *
-     * @return @throws IOException
+     * @return true se è accettato
+     * @throws IOException Eccezione di input/output
      */
     @Override
     protected boolean accept() throws IOException {

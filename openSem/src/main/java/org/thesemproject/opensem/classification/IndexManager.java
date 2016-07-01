@@ -161,9 +161,9 @@ public class IndexManager {
      * @param factor fattore di istruzione (quanti documenti uguali devono
      * essere inseriti nell'indice per istruirlo)
      * @param tokenize a true se si vuole che il testo venga tokenizzato
-     * @throws IOException Eccezione di lettura indice
+     * @throws IOException Eccezione di input/output Eccezione di lettura indice
      * @throws FileNotFoundException file non trovato
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static void addToIndex(String structurePath, String text, Object[] path, String language, int factor, boolean tokenize) throws IOException, FileNotFoundException, Exception {
         File fPath = new File(structurePath);
@@ -235,7 +235,7 @@ public class IndexManager {
      * @param fStop file di stop words
      * @param language lingua dell'indice
      * @return IndexWriter
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static IndexWriter getIndexWriter(Path indexDir, File fStop, String language) throws Exception {
         return getIndexWriter(indexDir, fStop, language, true);
@@ -250,7 +250,7 @@ public class IndexManager {
      * @param language lingua
      * @param optimize true se l'apertura deve ottimizzare il file
      * @return IndexWriter
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static IndexWriter getIndexWriter(Path indexDir, File fStop, String language, boolean optimize) throws Exception {
         return getIndexWriter(indexDir, fStop, language, optimize, IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
@@ -267,7 +267,7 @@ public class IndexManager {
      * @param openMode specifica se l'indice deve essere aperto in append o in
      * create
      * @return IndexWriter
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static IndexWriter getIndexWriter(Path indexDir, File fStop, String language, boolean optimize, IndexWriterConfig.OpenMode openMode) throws Exception {
         MyAnalyzer analyzer = getAnalyzer(fStop, language);
@@ -282,7 +282,7 @@ public class IndexManager {
      * @param openMode indice aperto in append o in create
      * @param analyzer analyzer da utilizzare
      * @return IndexWriter
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static IndexWriter getIndexWriter(Path indexDir, boolean optimize, IndexWriterConfig.OpenMode openMode, Analyzer analyzer) throws Exception {
         Directory fsDir = FSDirectory.open(indexDir);
@@ -307,8 +307,8 @@ public class IndexManager {
      * @param language lingua
      * @param useCategoryName a true se si vuole istruire le categorie anche con
      * il loro nome
-     * @throws Exception
-     * @throws FileNotFoundException
+     * @throws Exception Eccezione eccezione
+     * @throws FileNotFoundException file non trovato
      */
     public static void buildIndex(String structurePath, File trainingExcel, File fStop, String language, boolean useCategoryName) throws Exception, FileNotFoundException {
         File fPath = new File(structurePath);
@@ -449,7 +449,7 @@ public class IndexManager {
      * @param fStop file delle stopwords
      * @param language lingua
      * @return analizzatore sintattico
-     * @throws IOException
+     * @throws IOException Eccezione di input/output
      */
     public static MyAnalyzer getAnalyzer(File fStop, String language) throws IOException {
         CharArraySet stopwords = new CharArraySet(1, true);
@@ -527,7 +527,7 @@ public class IndexManager {
      *
      * @param structurePath percorso dove sono memorizzati gli indici
      * @param path percorso di classificazione da deistruire
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static void removeFromIndex(String structurePath, Object[] path) throws Exception {
         File fStructurePath = new File(structurePath); //Verifica che esistano le structure path
@@ -591,7 +591,7 @@ public class IndexManager {
      * @param indexDir path dell'indice
      * @param fStop file di stopwords
      * @param language lingua
-     * @throws Exception
+     * @throws Exception Eccezione eccezione
      */
     public static void reindex(List<Document> reindexDoc, Path indexDir, File fStop, String language) throws Exception {
         IndexWriter indexWriter = getIndexWriter(indexDir, fStop, language, false, IndexWriterConfig.OpenMode.CREATE);

@@ -383,7 +383,7 @@ public class GuiUtils {
      *
      * @param file file
      * @return JDOM
-     * @throws Exception
+     * @throws Exception Eccezione
      */
     public static Document readXml(String file) throws Exception {
         SAXBuilder saxBuilder = new SAXBuilder();
@@ -879,7 +879,7 @@ public class GuiUtils {
      *
      * @param evt evento
      * @param semGui frame
-     * @throws NumberFormatException
+     * @throws NumberFormatException eccezione sui valori numerici
      */
     public static void importTree(ActionEvent evt, SemGui semGui) throws NumberFormatException {
         semGui.getSelectImportTree().setVisible(false);
@@ -958,7 +958,7 @@ public class GuiUtils {
 
         /**
          *
-         * @param line
+         * @param line linea letta
          */
         public void applyTo(String line);
     }

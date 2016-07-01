@@ -190,7 +190,7 @@ public class FilesAndSegmentsUtils {
      *
      * @param evt event
      * @param semGui frame
-     * @throws NumberFormatException
+     * @throws NumberFormatException eccezione sui valori numerici
      */
     public static void segmentsTableMouseEventManagement(MouseEvent evt, SemGui semGui) throws NumberFormatException {
         int currentFilesPosition = semGui.getSegmentsTable().getSelectedRow();
@@ -310,7 +310,7 @@ public class FilesAndSegmentsUtils {
      * sottosoglia
      *
      * @param semGui frame
-     * @throws NumberFormatException
+     * @throws NumberFormatException eccezione sui valori numerici
      */
     public static void segmentsTableUnderTreshold(SemGui semGui) throws NumberFormatException {
         double sg = Double.parseDouble(semGui.getSoglia().getText());
@@ -677,7 +677,7 @@ public class FilesAndSegmentsUtils {
      *
      * @param evt evento
      * @param semGui frame
-     * @throws HeadlessException
+     * @throws HeadlessException eccezione
      */
     public static void resetSegmentationsActionManagement(ActionEvent evt, SemGui semGui) throws HeadlessException {
         if (semGui.isIsClassify()) {

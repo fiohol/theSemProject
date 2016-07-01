@@ -273,7 +273,7 @@ public class DictionaryUtils {
     /**
      * Ripulisce il pannello della definizione
      *
-     * @param semGui
+     * @param semGui frame
      */
     public static void clearDefinitionPanel(SemGui semGui) {
         semGui.getDefinitionName().setEditable(true);
