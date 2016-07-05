@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.jdom2.Element;
 
 /**
@@ -204,6 +206,25 @@ public class SegmentTreeNode extends ModelTreeNode {
         patterns.values().stream().forEach((row) -> {
             row[1] = row[1].replace("#" + table + " ", "#" + newName + " ");
         });
+    }
+
+    /**
+     * Aggiorna l'ordine dei pattern secondo quanto rappresentato graficamente
+     *
+     * @since 1.0.2
+     * @param segmentPatternsTable tabella dei pattern da cui riprendere
+     * l'ordine
+     */
+    public void updatePatternsFromTable(JTable segmentPatternsTable) {
+        Map<String, String[]> tmp = new LinkedHashMap<>(patterns);
+        patterns.clear();
+        DefaultTableModel model = (DefaultTableModel) segmentPatternsTable.getModel();
+        int rows = model.getRowCount();
+        for (int i = 0; i < rows; i++) {
+            String id = (String) model.getValueAt(i, 0);
+            patterns.put(id, tmp.get(id));
+        }
+
     }
 
 }

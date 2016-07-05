@@ -300,6 +300,7 @@ public class SemGui extends javax.swing.JFrame {
         globalTagCloud = new javax.swing.JFrame();
         selectCSVDataProvider = new javax.swing.JDialog();
         csvdpchooser = new javax.swing.JFileChooser();
+        jSeparator45 = new javax.swing.JSeparator();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
@@ -498,6 +499,11 @@ public class SemGui extends javax.swing.JFrame {
         segmentPatternsPanel = new javax.swing.JPanel();
         segmentPatternsToolbar = new javax.swing.JToolBar();
         segmentPatternDelete = new javax.swing.JButton();
+        jSeparator47 = new javax.swing.JToolBar.Separator();
+        moveUp1 = new javax.swing.JButton();
+        moveDown1 = new javax.swing.JButton();
+        moveTop1 = new javax.swing.JButton();
+        moveBottom1 = new javax.swing.JButton();
         segmentPatternsScrollPanel = new javax.swing.JScrollPane();
         segmentPatternsTable = new javax.swing.JTable();
         segmentConfigurationPanel = new javax.swing.JPanel();
@@ -551,6 +557,11 @@ public class SemGui extends javax.swing.JFrame {
         jSeparator30 = new javax.swing.JToolBar.Separator();
         patternsImport = new javax.swing.JButton();
         patternsExport = new javax.swing.JButton();
+        jSeparator46 = new javax.swing.JToolBar.Separator();
+        moveUp = new javax.swing.JButton();
+        moveDown = new javax.swing.JButton();
+        moveTop = new javax.swing.JButton();
+        moveBottom = new javax.swing.JButton();
         jSeparator31 = new javax.swing.JToolBar.Separator();
         removeSearchFilter = new javax.swing.JButton();
         jSeparator37 = new javax.swing.JToolBar.Separator();
@@ -2944,6 +2955,55 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         segmentPatternsToolbar.add(segmentPatternDelete);
+        segmentPatternsToolbar.add(jSeparator47);
+
+        moveUp1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_up.gif"))); // NOI18N
+        moveUp1.setToolTipText("Muovi su");
+        moveUp1.setFocusable(false);
+        moveUp1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveUp1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveUp1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveUp1ActionPerformed(evt);
+            }
+        });
+        segmentPatternsToolbar.add(moveUp1);
+
+        moveDown1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_down.gif"))); // NOI18N
+        moveDown1.setToolTipText("Muovi Giu");
+        moveDown1.setFocusable(false);
+        moveDown1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveDown1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveDown1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveDown1ActionPerformed(evt);
+            }
+        });
+        segmentPatternsToolbar.add(moveDown1);
+
+        moveTop1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_up.gif"))); // NOI18N
+        moveTop1.setToolTipText("Muovi Inizio");
+        moveTop1.setFocusable(false);
+        moveTop1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveTop1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveTop1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveTop1ActionPerformed(evt);
+            }
+        });
+        segmentPatternsToolbar.add(moveTop1);
+
+        moveBottom1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_down.gif"))); // NOI18N
+        moveBottom1.setToolTipText("Muovi alla fine");
+        moveBottom1.setFocusable(false);
+        moveBottom1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveBottom1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveBottom1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveBottom1ActionPerformed(evt);
+            }
+        });
+        segmentPatternsToolbar.add(moveBottom1);
 
         segmentPatternsPanel.add(segmentPatternsToolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -2971,6 +3031,7 @@ public class SemGui extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        segmentPatternsTable.getTableHeader().setReorderingAllowed(false);
         segmentPatternsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 segmentPatternsTableMouseClicked(evt);
@@ -3388,6 +3449,55 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         capturePatternsToolbar.add(patternsExport);
+        capturePatternsToolbar.add(jSeparator46);
+
+        moveUp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_up.gif"))); // NOI18N
+        moveUp.setToolTipText("Muovi su");
+        moveUp.setFocusable(false);
+        moveUp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveUp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveUpActionPerformed(evt);
+            }
+        });
+        capturePatternsToolbar.add(moveUp);
+
+        moveDown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_down.gif"))); // NOI18N
+        moveDown.setToolTipText("Muovi Giu");
+        moveDown.setFocusable(false);
+        moveDown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveDown.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveDownActionPerformed(evt);
+            }
+        });
+        capturePatternsToolbar.add(moveDown);
+
+        moveTop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_up.gif"))); // NOI18N
+        moveTop.setToolTipText("Muovi Inizio");
+        moveTop.setFocusable(false);
+        moveTop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveTop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveTopActionPerformed(evt);
+            }
+        });
+        capturePatternsToolbar.add(moveTop);
+
+        moveBottom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_down.gif"))); // NOI18N
+        moveBottom.setToolTipText("Muovi alla fine");
+        moveBottom.setFocusable(false);
+        moveBottom.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveBottom.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveBottom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveBottomActionPerformed(evt);
+            }
+        });
+        capturePatternsToolbar.add(moveBottom);
         capturePatternsToolbar.add(jSeparator31);
 
         removeSearchFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
@@ -6154,6 +6264,46 @@ public class SemGui extends javax.swing.JFrame {
     private void rebuildIndexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rebuildIndexActionPerformed
     }//GEN-LAST:event_rebuildIndexActionPerformed
 
+    private void moveUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpActionPerformed
+        GuiUtils.moveUp(capturePatternTable);
+        ((CaptureTreeNode) me.getCurrentNode()).updatePatternsFromTable(capturePatternTable);
+    }//GEN-LAST:event_moveUpActionPerformed
+
+    private void moveDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownActionPerformed
+        GuiUtils.moveDown(capturePatternTable);
+        ((CaptureTreeNode) me.getCurrentNode()).updatePatternsFromTable(capturePatternTable);
+    }//GEN-LAST:event_moveDownActionPerformed
+
+    private void moveTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveTopActionPerformed
+        GuiUtils.moveTop(capturePatternTable);
+        ((CaptureTreeNode) me.getCurrentNode()).updatePatternsFromTable(capturePatternTable);
+    }//GEN-LAST:event_moveTopActionPerformed
+
+    private void moveBottomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveBottomActionPerformed
+        GuiUtils.moveBottom(capturePatternTable);
+        ((CaptureTreeNode) me.getCurrentNode()).updatePatternsFromTable(capturePatternTable);
+    }//GEN-LAST:event_moveBottomActionPerformed
+
+    private void moveUp1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUp1ActionPerformed
+        GuiUtils.moveUp(segmentPatternsTable);
+        ((SegmentTreeNode) me.getCurrentNode()).updatePatternsFromTable(segmentPatternsTable);
+    }//GEN-LAST:event_moveUp1ActionPerformed
+
+    private void moveDown1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDown1ActionPerformed
+        GuiUtils.moveDown(segmentPatternsTable);
+        ((SegmentTreeNode) me.getCurrentNode()).updatePatternsFromTable(segmentPatternsTable);
+    }//GEN-LAST:event_moveDown1ActionPerformed
+
+    private void moveTop1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveTop1ActionPerformed
+        GuiUtils.moveTop(segmentPatternsTable);
+        ((SegmentTreeNode) me.getCurrentNode()).updatePatternsFromTable(segmentPatternsTable);
+    }//GEN-LAST:event_moveTop1ActionPerformed
+
+    private void moveBottom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveBottom1ActionPerformed
+        GuiUtils.moveBottom(segmentPatternsTable);
+        ((SegmentTreeNode) me.getCurrentNode()).updatePatternsFromTable(segmentPatternsTable);
+    }//GEN-LAST:event_moveBottom1ActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6536,6 +6686,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator42;
     private javax.swing.JToolBar.Separator jSeparator43;
     private javax.swing.JToolBar.Separator jSeparator44;
+    private javax.swing.JSeparator jSeparator45;
+    private javax.swing.JToolBar.Separator jSeparator46;
+    private javax.swing.JToolBar.Separator jSeparator47;
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
@@ -6592,6 +6745,14 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTree modelTree;
     private javax.swing.JScrollPane modelTreeScrollPanel;
     private javax.swing.JPanel modelTreeSplitPanel;
+    private javax.swing.JButton moveBottom;
+    private javax.swing.JButton moveBottom1;
+    private javax.swing.JButton moveDown;
+    private javax.swing.JButton moveDown1;
+    private javax.swing.JButton moveTop;
+    private javax.swing.JButton moveTop1;
+    private javax.swing.JButton moveUp;
+    private javax.swing.JButton moveUp1;
     private javax.swing.JComboBox<String> multipleYN;
     private javax.swing.JButton newDefinition;
     private javax.swing.JButton notMarked;

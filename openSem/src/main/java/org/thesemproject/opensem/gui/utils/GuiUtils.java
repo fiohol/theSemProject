@@ -656,7 +656,6 @@ public class GuiUtils {
         semGui.getStatusSegments().setText("Totale filtrati elementi: " + semGui.getSegmentsTable().getRowCount());
     }
 
-
     /**
      * Disegna l'albero
      *
@@ -949,7 +948,6 @@ public class GuiUtils {
         t.start();
     }
 
-
     /**
      * Filtro sulle righe, utilizzato per fare qualche cosa quando si legge un
      * file
@@ -976,6 +974,58 @@ public class GuiUtils {
         table.getColumnModel().getColumn(col).setMinWidth((int) (min * getReshapeFactor(72)));
         table.getColumnModel().getColumn(col).setPreferredWidth((int) (preferred * getReshapeFactor(72)));
         table.getColumnModel().getColumn(col).setMaxWidth((int) (max * getReshapeFactor(72)));
+    }
+
+    /**
+     * Muove una riga di una tabella in alto
+     *
+     * @since 1.0.2
+     * @param table tabella
+     */
+    public static void moveUp(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int[] rows = table.getSelectedRows();
+        model.moveRow(rows[0], rows[rows.length - 1], rows[0] - 1);
+        table.setRowSelectionInterval(rows[0] - 1, rows[rows.length - 1] - 1);
+    }
+
+    /**
+     * Muove una riga di una tabella in alto come prima
+     *
+     * @since 1.0.2
+     * @param table tabella
+     */
+    public static void moveTop(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int[] rows = table.getSelectedRows();
+        model.moveRow(rows[0], rows[rows.length - 1], 0);
+        table.setRowSelectionInterval(0, rows.length - 1);
+    }
+
+    /**
+     * Muove una riga di una tabella in basso
+     *
+     * @since 1.0.2
+     * @param table tabella
+     */
+    public static void moveBottom(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int[] rows = table.getSelectedRows();
+        model.moveRow(rows[0], rows[rows.length - 1], model.getRowCount() - rows.length);
+        table.setRowSelectionInterval(model.getRowCount() - rows.length, model.getRowCount() - 1);
+    }
+
+    /**
+     * Muove una riga di una tabella in basso come ultima
+     *
+     * @since 1.0.2
+     * @param table tabella
+     */
+    public static void moveDown(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int[] rows = table.getSelectedRows();
+        model.moveRow(rows[0], rows[rows.length - 1], rows[0] + 1);
+        table.setRowSelectionInterval(rows[0] + 1, rows[rows.length - 1] + 1);
     }
 
 }
