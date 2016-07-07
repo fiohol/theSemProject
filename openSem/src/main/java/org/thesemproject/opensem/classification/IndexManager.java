@@ -112,6 +112,22 @@ public class IndexManager {
     public static final String LEVEL_4 = "level4";
 
     /**
+     * Identifica il nome del field che deve contenere l'ID della categoria di
+     * quinto livello dove è classificato il documento
+     *
+     * @since 1.1
+     */
+    public static final String LEVEL_5 = "level5";
+
+    /**
+     * Identifica il nome del field che deve contenere l'ID della categoria di
+     * sesto livello dove è classificato il documento
+     *
+     * @since 1.1
+     */
+    public static final String LEVEL_6 = "level6";
+
+    /**
      * Nome del field che contiene il nome della categoria di primo livello su
      * cui è classificato il documento
      */
@@ -136,6 +152,18 @@ public class IndexManager {
     public static final String LEVEL4_NAME = "level4Name";
 
     /**
+     * Nome del field che contiene il nome della categoria di quinto livello su
+     * cui è classificato il documento
+     */
+    public static final String LEVEL5_NAME = "level5Name";
+
+    /**
+     * Nome del field che contiene il nome della categoria di sesto livello su
+     * cui è classificato il documento
+     */
+    public static final String LEVEL6_NAME = "level6Name";
+
+    /**
      * Ritorna un tipo field, stored, not tokenized e indexed
      *
      * @return field type utilizzabili per chiavi o elementi che non si vogliono
@@ -155,8 +183,9 @@ public class IndexManager {
      * @param structurePath path dove è memorizzato il sistema di indici
      * @param text testo da indicizzare (da usare come training set per la
      * classificazione)
-     * @param path percorso di classificazione (massimo 4 livelli non
-     * necessariamente popolato)
+     * @param path percorso di classificazione (massimo 6 livelli non
+     * necessariamente popolato). Il livello 0 è la root e viene ignorato. I
+     * livelli vanno quindi al relativo indice
      * @param language lingua del testo
      * @param factor fattore di istruzione (quanti documenti uguali devono
      * essere inseriti nell'indice per istruirlo)
@@ -196,7 +225,7 @@ public class IndexManager {
                 doc.add(new TextField(BODY, body, Field.Store.YES));
                 doc.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
                 doc.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
-                for (int i = 0; i < path.length; i++) {
+                for (int i = 0; i < path.length; i++) { //IL path 0 del threepath è la root quindi non ci inderessa
                     if (i == 1) {
                         doc.add(new StringField(LEVEL_1, path[i].toString().hashCode() + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL1_NAME, path[i].toString(), Field.Store.YES));
@@ -212,6 +241,14 @@ public class IndexManager {
                     if (i == 4) {
                         doc.add(new StringField(LEVEL_4, path[i].toString().hashCode() + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL4_NAME, path[i].toString(), Field.Store.YES));
+                    }
+                    if (i == 5) {
+                        doc.add(new StringField(LEVEL_5, path[i].toString().hashCode() + "", Field.Store.YES));
+                        doc.add(new StringField(LEVEL5_NAME, path[i].toString(), Field.Store.YES));
+                    }
+                    if (i == 6) {
+                        doc.add(new StringField(LEVEL_6, path[i].toString().hashCode() + "", Field.Store.YES));
+                        doc.add(new StringField(LEVEL6_NAME, path[i].toString(), Field.Store.YES));
                     }
                 }
                 indexWriter.addDocument(doc);
@@ -413,7 +450,19 @@ public class IndexManager {
                             d.add(new StringField(LEVEL_4, level4.getStringCellValue().hashCode() + "", Field.Store.YES));
                             d.add(new StringField(LEVEL4_NAME, level4.getStringCellValue(), Field.Store.YES));
                         }
-                        Cell textCell = row.getCell(4);
+                        //New versione 1.1 i livelli aumentano 
+                        Cell level5 = row.getCell(4);
+                        if (level5 != null) {
+                            d.add(new StringField(LEVEL_5, level5.getStringCellValue().hashCode() + "", Field.Store.YES));
+                            d.add(new StringField(LEVEL5_NAME, level5.getStringCellValue(), Field.Store.YES));
+                        }
+                        Cell level6 = row.getCell(5);
+                        if (level6 != null) {
+                            d.add(new StringField(LEVEL_6, level6.getStringCellValue().hashCode() + "", Field.Store.YES));
+                            d.add(new StringField(LEVEL6_NAME, level6.getStringCellValue(), Field.Store.YES));
+                        }
+                        // New versione 1.1 il testo adesso è nella 7ma colonna
+                        Cell textCell = row.getCell(6);
                         if (textCell != null) {
                             if (textCell.getCellType() == Cell.CELL_TYPE_STRING) {
                                 String text = textCell.getStringCellValue().toLowerCase();
@@ -424,6 +473,7 @@ public class IndexManager {
                                 }
                             }
                         }
+
                     }
                     if (count++ % 100 == 0) {
                         LogGui.info("Commit... " + count);
@@ -473,6 +523,11 @@ public class IndexManager {
         String l3n = d.get(LEVEL3_NAME);
         String l4 = d.get(LEVEL_4);
         String l4n = d.get(LEVEL4_NAME);
+        // Versione 1.1
+        String l5 = d.get(LEVEL_5);
+        String l5n = d.get(LEVEL5_NAME);
+        String l6 = d.get(LEVEL_6);
+        String l6n = d.get(LEVEL6_NAME);
         Document dCat = new Document();
         dCat.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
         dCat.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
@@ -518,6 +573,42 @@ public class IndexManager {
             dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
             dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
             dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            indexWriter.addDocument(dCat);
+        }
+        if (l5 != null) {
+            dCat = new Document();
+            dCat.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
+            dCat.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
+            dCat.add(new TextField(BODY, l5n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
+            indexWriter.addDocument(dCat);
+        }
+        if (l6 != null) {
+            dCat = new Document();
+            dCat.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
+            dCat.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_6, l6, Field.Store.YES));
+            dCat.add(new TextField(BODY, l6n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL6_NAME, l6n, Field.Store.YES));
             indexWriter.addDocument(dCat);
         }
     }
@@ -566,6 +657,12 @@ public class IndexManager {
             }
             if (i == 4) {
                 query = new TermQuery(new Term(LEVEL_4, path[i].toString().hashCode() + ""));
+            }
+            if (i == 5) {
+                query = new TermQuery(new Term(LEVEL_5, path[i].toString().hashCode() + ""));
+            }
+            if (i == 6) {
+                query = new TermQuery(new Term(LEVEL_6, path[i].toString().hashCode() + ""));
             }
         }
         try {

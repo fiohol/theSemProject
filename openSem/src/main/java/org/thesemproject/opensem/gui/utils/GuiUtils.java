@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -707,7 +708,8 @@ public class GuiUtils {
                     txt = "tutte le descrizioni selezionate";
                     tokenized = "I testi di tutte le righe selezionate";
                 }
-                ActionListener menuListener = new ActionListener() {
+                ActionListener menuListener;
+                menuListener = new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         TreePath tp = tree.getLeadSelectionPath();
                         Object[] path = tp.getPath();
@@ -753,17 +755,16 @@ public class GuiUtils {
                                     semGui.getSegmentaEBasta().setEnabled(true);
                                 }
                             } else if (event.getActionCommand().startsWith("Aggiungi")) {
-                                semGui.setNeedUpdate(true);
                                 String name = JOptionPane.showInputDialog(null, "Aggiungi nodo: ");
                                 if (name != null && name.trim().length() > 0) {
                                     List<TreePath> paths = GuiUtils.find((DefaultMutableTreeNode) tree.getModel().getRoot(), name, true);
                                     if (paths.isEmpty()) {
+                                        semGui.setNeedUpdate(true);
                                         node.add(new DefaultMutableTreeNode(name));
                                         DefaultTreeModel model = (DefaultTreeModel) (tree.getModel());
                                         model.reload();
                                         List<TreePath> paths2 = GuiUtils.find((DefaultMutableTreeNode) model.getRoot(), name, true);
                                         GuiUtils.scrollToPath(tree, paths2);
-
                                         //String language = DP.getLanguageFromText(nct);
                                         Thread t = new Thread(() -> {
                                             semGui.getSegmentaEClassifica().setEnabled(false);
@@ -800,7 +801,7 @@ public class GuiUtils {
                 if (semGui.isIsInit()) {
                     JPopupMenu popup = new JPopupMenu();
                     JMenuItem item;
-                    if (txt.length() > 0) {
+                    if (txt.length() > 0 && !node.isRoot()) {
                         String label = "Istruisci [" + node.toString() + "] con: '" + txt + "'";
                         popup.add(item = new JMenuItem(label, new ImageIcon(semGui.getClass().getResource("/org/thesemproject/opensem/gui/icons16/flag_blue.png"))));
                         item.setHorizontalTextPosition(JMenuItem.RIGHT);
@@ -812,7 +813,7 @@ public class GuiUtils {
                         item.setHorizontalTextPosition(JMenuItem.RIGHT);
                         item.addActionListener(menuListener);
                     }
-                    if (node.getLevel() < 4) {
+                    if (node.getLevel() < ClassificationPath.MAX_DEEP) {
                         String label = "Aggiungi nodo";
                         popup.add(item = new JMenuItem(label, new ImageIcon(semGui.getClass().getResource("/org/thesemproject/opensem/gui/icons16/add.png"))));
                         item.setHorizontalTextPosition(JMenuItem.RIGHT);

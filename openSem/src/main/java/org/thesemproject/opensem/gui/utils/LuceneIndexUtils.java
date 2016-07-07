@@ -103,6 +103,12 @@ public class LuceneIndexUtils {
                     case 5:
                         semGui.getSerachDocumentBody().setText("Level4:" + path[4].toString());
                         break;
+                    case 6:
+                        semGui.getSerachDocumentBody().setText("Level5:" + path[5].toString());
+                        break;
+                    case 7:
+                        semGui.getSerachDocumentBody().setText("Level6:" + path[6].toString());
+                        break;
                     default:
                         break;
                 }
@@ -130,7 +136,11 @@ public class LuceneIndexUtils {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 4);
         } else if (text.toLowerCase().startsWith("level4:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 5);
-        } else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
+        } else if (text.toLowerCase().startsWith("level5:") && text.length() > 7) {
+            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 6);
+        } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
+            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 7);
+        }else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(6).trim(), 1);
         } else {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text, idxs);

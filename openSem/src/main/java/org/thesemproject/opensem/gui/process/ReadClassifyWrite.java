@@ -175,14 +175,22 @@ public class ReadClassifyWrite {
                 header.createCell(6).setCellValue("1st Score3");
                 header.createCell(7).setCellValue("1st Level4");
                 header.createCell(8).setCellValue("1st Score4");
-                header.createCell(9).setCellValue("2nd Level1");
-                header.createCell(10).setCellValue("2nd Score1");
-                header.createCell(11).setCellValue("2nd Level2");
-                header.createCell(12).setCellValue("2nd Score2");
-                header.createCell(13).setCellValue("2nd Level3");
-                header.createCell(14).setCellValue("2nd Score3");
-                header.createCell(15).setCellValue("2nd Level4");
-                header.createCell(16).setCellValue("2nd Score4");
+                header.createCell(7).setCellValue("1st Level5");
+                header.createCell(8).setCellValue("1st Score5");
+                header.createCell(9).setCellValue("1st Level6");
+                header.createCell(10).setCellValue("1st Score6");
+                header.createCell(11).setCellValue("2nd Level1");
+                header.createCell(12).setCellValue("2nd Score1");
+                header.createCell(13).setCellValue("2nd Level2");
+                header.createCell(14).setCellValue("2nd Score2");
+                header.createCell(15).setCellValue("2nd Level3");
+                header.createCell(16).setCellValue("2nd Score3");
+                header.createCell(17).setCellValue("2nd Level4");
+                header.createCell(18).setCellValue("2nd Score4");
+                header.createCell(19).setCellValue("2nd Level5");
+                header.createCell(20).setCellValue("2nd Score5");
+                header.createCell(21).setCellValue("2nd Level6");
+                header.createCell(22).setCellValue("2nd Score6");
                 while (true) {
                     //Ciclo infinito
                     Document document = toWriteList.poll(); //Prende la testa della coda
@@ -202,7 +210,7 @@ public class ReadClassifyWrite {
                         double[] score1 = (double[]) document.get("BayesScore1");
                         double[] score2 = (double[]) document.get("BayesScore2");
                         if (bayesPath1 != null) {
-                            for (int i = 0; i < 4; i++) {
+                            for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                 String node = bayesPath1[i];
                                 if (node != null) {
                                     double score = score1[i];
@@ -211,7 +219,7 @@ public class ReadClassifyWrite {
                                 }
                             }
                             if (bayesPath2 != null) {
-                                for (int i = 0; i < 4; i++) {
+                                for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                     String node = bayesPath2[i];
                                     if (node != null) {
                                         double score = score2[i];

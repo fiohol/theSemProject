@@ -128,7 +128,7 @@ public class SemGui extends javax.swing.JFrame {
         capturePatternSuggestor = new AutoSuggestor(capturePatternDefinition, this, me.getSuggestions((DefaultMutableTreeNode) modelTree.getModel().getRoot()), Color.WHITE.brighter(), Color.BLACK, Color.BLUE.brighter(), 0.95f);
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         this.setMaximizedBounds(env.getMaximumWindowBounds());
-
+        
         this.setExtendedState(this.getExtendedState() | this.MAXIMIZED_BOTH);
         LogGui.setjTextArea(logInizializzazione);
         LogGui.setMemInfo(memInfo);
@@ -176,35 +176,35 @@ public class SemGui extends javax.swing.JFrame {
         int oneThirdScreenWidth = (int) (env.getMaximumWindowBounds().width * 0.3);
         int oneQuarterScreenWidth = (int) (env.getMaximumWindowBounds().width * 0.2);
         modelEditorContainer.setDividerLocation(twoThirdScreenWidth);
-
+        
         jSplitPane6.setDividerLocation(halfScreenWidth);
         jSplitPane4.setDividerLocation(halfScreenWidth);
-
+        
         coverageSplitPanel.setDividerLocation(halfScreenWidth);
-
+        
         jSplitPane5.setDividerLocation((int) (halfScreenWidth * .7));
-
+        
         jSplitPane1.setDividerLocation(oneQuarterScreenWidth);
         segments.setDividerLocation(oneQuarterScreenWidth);
         changes.setDividerLocation(oneQuarterScreenWidth);
         modelEditor.setDividerLocation(oneQuarterScreenWidth);
         jSplitPane8.setDividerLocation(oneQuarterScreenWidth);
-
+        
         dictionarySplit.setDividerLocation(halfScreenHeight);
         segmentsSplit.setDividerLocation(halfScreenHeight);
         captureSplit.setDividerLocation(halfScreenHeight);
-
+        
         jSplitPane9.setDividerLocation((int) (halfScreenHeight * 1.3));
-
+        
         filesSplitPanel.setDividerLocation((int) (halfScreenHeight * 1.1));
         jSplitPane2.setDividerLocation((int) (halfScreenHeight * 1.1));
         segmentsConsolleSplitPanel.setDividerLocation((int) (halfScreenHeight * 1.1));
         coverage.setDividerLocation((int) (halfScreenHeight * 1.1));
         dataproviderSplit.setDividerLocation((int) (halfScreenHeight * 1.1));
         dataproviderRelationship.setDividerLocation((int) (halfScreenHeight * 1.1));
-
+        
         jSplitPane7.setDividerLocation((int) (halfScreenHeight * .7));
-
+        
         filesPanelHtml.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         filesPanelHtmlFormatted.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         filesPanelHtml1.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
@@ -213,7 +213,7 @@ public class SemGui extends javax.swing.JFrame {
         htmlFormatted.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlResult.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlTimeline.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-
+        
     }
 
     /**
@@ -311,6 +311,8 @@ public class SemGui extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         soglia = new javax.swing.JTextField();
         jSeparator22 = new javax.swing.JToolBar.Separator();
+        jLabel12 = new javax.swing.JLabel();
+        classStartLevel = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         fattoreK = new javax.swing.JTextField();
         jSeparator24 = new javax.swing.JToolBar.Separator();
@@ -1604,6 +1606,7 @@ public class SemGui extends javax.swing.JFrame {
         consolleToolbar.add(jLabel7);
 
         soglia.setText(cc.getThreshold());
+        soglia.setToolTipText("Valore della soglia per accettare una classificazione");
         soglia.setMaximumSize(new java.awt.Dimension(72, 20));
         soglia.setMinimumSize(new java.awt.Dimension(72, 20));
         soglia.addActionListener(new java.awt.event.ActionListener() {
@@ -1613,6 +1616,22 @@ public class SemGui extends javax.swing.JFrame {
         });
         consolleToolbar.add(soglia);
         consolleToolbar.add(jSeparator22);
+
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/ruler_crop.png"))); // NOI18N
+        jLabel12.setText("Livello di classificazione");
+        consolleToolbar.add(jLabel12);
+
+        classStartLevel.setModel(getClassTreeDepth());
+        classStartLevel.setToolTipText("Indica il levello a partire dal quale il sistema deve classificare");
+        classStartLevel.setMaximumSize(new java.awt.Dimension(50, 22));
+        classStartLevel.setMinimumSize(new java.awt.Dimension(50, 22));
+        classStartLevel.setPreferredSize(new java.awt.Dimension(50, 22));
+        classStartLevel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                classStartLevelActionPerformed(evt);
+            }
+        });
+        consolleToolbar.add(classStartLevel);
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/inbox.png"))); // NOI18N
         jLabel8.setText("Fattore K ");
@@ -2658,7 +2677,7 @@ public class SemGui extends javax.swing.JFrame {
         imagesPanel.setLayout(imagesPanelLayout);
         imagesPanelLayout.setHorizontalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1038, Short.MAX_VALUE)
+            .addGap(0, 1322, Short.MAX_VALUE)
         );
         imagesPanelLayout.setVerticalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2895,7 +2914,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(definitionDefinitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
                     .addComponent(definitionName)
                     .addComponent(definitionPatternTestScrollPanel)
                     .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
@@ -3108,7 +3127,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(defaultYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(segmentName, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(classifyYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(444, Short.MAX_VALUE))
+                .addContainerGap(574, Short.MAX_VALUE))
         );
         segmentConfigurationPanelLayout.setVerticalGroup(
             segmentConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3224,7 +3243,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
                     .addComponent(segmentPatternDefinitionScrollPanel)
                     .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3839,8 +3858,8 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
-                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
+                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
                     .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                         .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4237,7 +4256,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel51, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel54, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                     .addComponent(jLabel57, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4266,7 +4285,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dpFieldTableRelationship, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel57))
-                .addContainerGap(759, Short.MAX_VALUE))
+                .addContainerGap(723, Short.MAX_VALUE))
         );
 
         capturePatternEditPanel1.add(capturePatternContentTable1, java.awt.BorderLayout.CENTER);
@@ -4380,7 +4399,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(dprPriority))
                     .addComponent(dprSegment, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(207, Short.MAX_VALUE))
         );
         captureConfigurationPanel5Layout.setVerticalGroup(
             captureConfigurationPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4465,7 +4484,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(dprFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(290, Short.MAX_VALUE))
+                .addContainerGap(417, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4482,7 +4501,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addComponent(dprEnrich)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dprKey)
-                .addContainerGap(780, Short.MAX_VALUE))
+                .addContainerGap(744, Short.MAX_VALUE))
         );
 
         capturePatternEditPanel3.add(jPanel7, java.awt.BorderLayout.CENTER);
@@ -4837,14 +4856,14 @@ public class SemGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Testo", "Level1", "Level2", "Level3", "Level4"
+                "ID", "Testo", "Level1", "Level2", "Level3", "Level4", "Level5", "Level6"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false
+                false, true, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -5044,7 +5063,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(fileExcel, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(stopWords2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
                     .addComponent(percorsoIndice1))
-                .addContainerGap(611, Short.MAX_VALUE))
+                .addContainerGap(895, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -5378,7 +5397,7 @@ public class SemGui extends javax.swing.JFrame {
     private void segmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_segmentsTableMouseClicked
         FilesAndSegmentsUtils.segmentsTableMouseEventManagement(evt, this);
     }//GEN-LAST:event_segmentsTableMouseClicked
-
+    
 
     private void categorieSegmentsPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categorieSegmentsPanelMouseClicked
         GuiUtils.treeActionPerformed(categorieSegmentsPanel, segmentText, segmentTokens.getText(), evt, false, this);
@@ -5389,10 +5408,10 @@ public class SemGui extends javax.swing.JFrame {
     private void cercaCategoriaSegmentsPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cercaCategoriaSegmentsPanelActionPerformed
         String searched = cercaCategoriaSegmentsPanel.getText();
         if (searched.length() > 0) {
-
+            
             List<TreePath> paths = GuiUtils.find((DefaultMutableTreeNode) categorieSegmentsPanel.getModel().getRoot(), searched, false);
             GuiUtils.scrollToPath(categorieSegmentsPanel, paths);
-
+            
         }
     }//GEN-LAST:event_cercaCategoriaSegmentsPanelActionPerformed
 
@@ -5423,7 +5442,7 @@ public class SemGui extends javax.swing.JFrame {
     private void changedFilterTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changedFilterTreeMouseClicked
         ChangedUtils.changedFilterTree(evt, this);
     }//GEN-LAST:event_changedFilterTreeMouseClicked
-
+    
 
     private void firstLevelOnlyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstLevelOnlyActionPerformed
         if (isClassify) {
@@ -5431,7 +5450,7 @@ public class SemGui extends javax.swing.JFrame {
         }
         FilesAndSegmentsUtils.segmentsTableFilterOnFirstLevel(this);
     }//GEN-LAST:event_firstLevelOnlyActionPerformed
-
+    
 
     private void underTresholdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underTresholdActionPerformed
         if (isClassify) {
@@ -5439,13 +5458,13 @@ public class SemGui extends javax.swing.JFrame {
         }
         FilesAndSegmentsUtils.segmentsTableUnderTreshold(this);
     }//GEN-LAST:event_underTresholdActionPerformed
-
+    
 
     private void removeFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeFiltersActionPerformed
         if (isClassify) {
             return;
         }
-
+        
         GuiUtils.filterTable(segmentsTable, null, 4);
         statusSegments.setText("Totale filtrati elementi: " + segmentsTable.getRowCount());
     }//GEN-LAST:event_removeFiltersActionPerformed
@@ -5456,7 +5475,7 @@ public class SemGui extends javax.swing.JFrame {
         }
         ChangedUtils.changedTableMouseEventManagement(this);
     }//GEN-LAST:event_changedTableMouseClicked
-
+    
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if (isClassify) {
@@ -5757,7 +5776,7 @@ public class SemGui extends javax.swing.JFrame {
     private void excelCorpusChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excelCorpusChooserActionPerformed
         FilesAndSegmentsUtils.doFilesTableImportExcel(evt, this);
     }//GEN-LAST:event_excelCorpusChooserActionPerformed
-
+    
 
     private void renameDefinitionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameDefinitionActionPerformed
         DictionaryUtils.renameDefinition(this);
@@ -6304,6 +6323,12 @@ public class SemGui extends javax.swing.JFrame {
         ((SegmentTreeNode) me.getCurrentNode()).updatePatternsFromTable(segmentPatternsTable);
     }//GEN-LAST:event_moveBottom1ActionPerformed
 
+    private void classStartLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classStartLevelActionPerformed
+        ME.getRoot().setStartLevel(classStartLevel.getSelectedIndex() + 1);
+        ME.storeXml(NodeData.getDocument(ME.getRoot()));
+        needUpdate = true;
+    }//GEN-LAST:event_classStartLevelActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6348,7 +6373,7 @@ public class SemGui extends javax.swing.JFrame {
     private Map<String, Integer> classes = new HashMap<>();
     private boolean needUpdate = false;
     private boolean isClassify = false;
-
+    
     private final FinalBoolean stopSegmentAndClassify = new FinalBoolean(false);
     private final FinalBoolean stopTagCloud = new FinalBoolean(false);
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -6405,6 +6430,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JSplitPane changes;
     private javax.swing.JScrollPane changesTableScrollPanel;
     private javax.swing.JScrollPane changesTreeScrollPanel;
+    private javax.swing.JComboBox<String> classStartLevel;
     private javax.swing.JButton classificaTesto;
     private javax.swing.JTree classificationResult;
     private javax.swing.JLabel classificationStatus;
@@ -6558,6 +6584,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -7287,7 +7314,7 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return textfield 
+     * @return textfield
      */
     public JTextField getjTextField1() {
         return jTextField1;
@@ -8570,11 +8597,11 @@ public class SemGui extends javax.swing.JFrame {
     public void resetFilesFilters() {
         GuiUtils.filterTable(filesTable, null, 4);
     }
-
+    
     private void segmentPatternsTableAction() {
         SegmentsUtils.segmentPatternsTableAction(this);
     }
-
+    
     private void changeDocument(TableCellListener tcl) {
         LuceneIndexUtils.changeIndexDocument(tcl, this);
     }
@@ -8850,6 +8877,7 @@ public class SemGui extends javax.swing.JFrame {
                     classificaTesto.setEnabled(true);
                     jButton3.setEnabled(true);
                     batch.setEnabled(true);
+                    
                 }
             }
             LogGui.printMemorySummary();
@@ -8889,7 +8917,9 @@ public class SemGui extends javax.swing.JFrame {
             configurationDialog.setVisible(false);
             isInit = true;
             needUpdate = false;
-
+            classStartLevel.setModel(getClassTreeDepth());
+            classStartLevel.setSelectedIndex(root.getStartLevel() - 1);
+            
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -8916,7 +8946,7 @@ public class SemGui extends javax.swing.JFrame {
         statusSegments.setText("Totale elementi: " + segmentsTable.getRowCount());
         filesTab.setTitleAt(2, "Cambiamenti (" + changedTable.getRowCount() + ")");
     }
-
+    
     private void segmentTreeSetText() {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) segmentTree.getLastSelectedPathComponent();
         if (node == null) {
@@ -8938,10 +8968,10 @@ public class SemGui extends javax.swing.JFrame {
                     break;
                 }
             }
-
+            
         }
     }
-
+    
     private void doDockModelEditor() {
         jButton8.setToolTipText("UnDock");
         modelEditorFrame.setVisible(false);
@@ -8957,7 +8987,7 @@ public class SemGui extends javax.swing.JFrame {
     public void serachDocumentBodyKeyReleased() {
         serachDocumentBodyKeyReleased(null);
     }
-
+    
     private void doReadClassifyWriteExcel(ActionEvent evt) {
         selectExcelFileClass.setVisible(false);
         String command = evt.getActionCommand();
@@ -8979,7 +9009,7 @@ public class SemGui extends javax.swing.JFrame {
             t.start();
         }
     }
-
+    
     private void doFileSegmentation(ActionEvent evt) {
         selectFileToSegment.setVisible(false);
         String command = evt.getActionCommand();
@@ -9009,7 +9039,7 @@ public class SemGui extends javax.swing.JFrame {
                         imagesPanel.setMaximumSize(size);
                         imagesPanel.setSize(size);
                     }
-
+                    
                     String language = DP.getLanguageFromText(text);
                     imagesPanel.repaint();
                     testoDaSegmentare.setText(text);
@@ -9027,7 +9057,7 @@ public class SemGui extends javax.swing.JFrame {
             });
             t.setDaemon(true);
             t.start();
-
+            
         }
     }
 
@@ -9072,7 +9102,7 @@ public class SemGui extends javax.swing.JFrame {
                     }
                     identifiedSegments = SE.getSegments(text, ME, Double.parseDouble(soglia.getText()), language);
                     dto.setIdentifiedSegments(identifiedSegments);
-
+                    
                     List<Object[]> rows = dto.getSegmentRows();
                     rows.stream().forEach((row) -> {
                         model.addRow(row);
@@ -9117,7 +9147,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-
+    
     private void doTextClassification() {
         Thread t = new Thread(
                 () -> {
@@ -9176,7 +9206,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-
+    
     private void changeStopWord(TableCellListener tcl) { //OK
         StopWordsUtils.changeStopWord(tcl, this);
     }
@@ -9239,7 +9269,7 @@ public class SemGui extends javax.swing.JFrame {
             model.addRow(row);
         });
     }
-
+    
     private void doReadTagWrite() {
         File sourceDir = folderChooser.getSelectedFile();
         updateLastSelectFolder(sourceDir.getAbsolutePath());
@@ -9257,7 +9287,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-
+    
     private void doTextSegmentation() {
         Thread t = new Thread(() -> {
             htmlResult.setContentType("text/html");
@@ -9284,7 +9314,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-
+    
     private void classTree1MouseEventManagement(MouseEvent evt) {
         int selRow = classificationTree1.getRowForLocation(evt.getX(), evt.getY());
         TreePath selPath = classificationTree1.getPathForLocation(evt.getX(), evt.getY());
@@ -9302,25 +9332,47 @@ public class SemGui extends javax.swing.JFrame {
             catClass.setText(x);
         }
     }
-
+    
     private void filesTableDelete() {
         FilesAndSegmentsUtils.filesTableDelete(this);
     }
-
+    
     private void segmentsTableSelectedRow() {
         segmentsTableMouseClicked(null);
     }
-
+    
     private void fileTableSelectedRow() {
         filesTableMouseClicked(null);
     }
-
+    
     private void hilightSegment() {
         FilesAndSegmentsUtils.segmentsTableHilightSegment(this);
     }
-
+    
     private void filesTableSelectedRow() {
         filesTableMouseClicked(null);
     }
-
+    
+    private javax.swing.DefaultComboBoxModel getClassTreeDepth() {
+        if (isInit) {
+            int depth = getClassDepth();
+            String[] lev = new String[depth - 1];
+            for (int i = 0; i < lev.length; i++) {
+                lev[i] = String.valueOf((i + 1));
+            }
+            return new javax.swing.DefaultComboBoxModel<>(lev);
+            
+        }
+        return new javax.swing.DefaultComboBoxModel<>(new String[]{});
+    }
+    
+    private int getClassDepth() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot();
+        if (node != null) {
+            return node.getDepth();
+            
+        }
+        return 1;
+    }
+    
 }

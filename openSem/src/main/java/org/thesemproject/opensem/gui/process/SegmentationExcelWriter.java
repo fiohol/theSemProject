@@ -15,7 +15,6 @@
  */
 package org.thesemproject.opensem.gui.process;
 
-import org.thesemproject.opensem.classification.ClassificationPath;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.segmentation.CaptureConfiguration;
 import org.thesemproject.opensem.segmentation.SegmentConfiguration;
 import org.thesemproject.opensem.segmentation.SegmentEngine;
@@ -105,14 +105,22 @@ public class SegmentationExcelWriter {
         header.createCell(7).setCellValue("1st Score3");
         header.createCell(8).setCellValue("1st Level4");
         header.createCell(9).setCellValue("1st Score4");
-        header.createCell(10).setCellValue("2nd Level1");
-        header.createCell(11).setCellValue("2nd Score1");
-        header.createCell(12).setCellValue("2nd Level2");
-        header.createCell(13).setCellValue("2nd Score2");
-        header.createCell(14).setCellValue("2nd Level3");
-        header.createCell(15).setCellValue("2nd Score3");
-        header.createCell(16).setCellValue("2nd Level4");
-        header.createCell(17).setCellValue("2nd Score4");
+        header.createCell(10).setCellValue("1st Level5");
+        header.createCell(11).setCellValue("1st Score5");
+        header.createCell(12).setCellValue("1st Level6");
+        header.createCell(13).setCellValue("1st Score7");
+        header.createCell(14).setCellValue("2nd Level1");
+        header.createCell(15).setCellValue("2nd Score1");
+        header.createCell(16).setCellValue("2nd Level2");
+        header.createCell(17).setCellValue("2nd Score2");
+        header.createCell(18).setCellValue("2nd Level3");
+        header.createCell(19).setCellValue("2nd Score3");
+        header.createCell(20).setCellValue("2nd Level4");
+        header.createCell(21).setCellValue("2nd Score4");
+        header.createCell(22).setCellValue("2nd Level5");
+        header.createCell(23).setCellValue("2nd Score5");
+        header.createCell(24).setCellValue("2nd Level6");
+        header.createCell(25).setCellValue("2nd Score6");
     }
 
     private static void writeSegments(String fileName, SXSSFRow row, SXSSFWorkbook wb, Map<String, Map<String, Integer>> sheetCellIndex, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, String parentName) throws IOException {
@@ -209,7 +217,8 @@ public class SegmentationExcelWriter {
                             score2 = (double[]) cps.get(1).getScore();
                         }
                         if (bayesPath1 != null) {
-                            for (int i = 0; i < 4; i++) {
+                            int ClassficationPath;
+                            for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                 String node = bayesPath1[i];
                                 if (node != null) {
                                     double score = score1[i];
@@ -218,7 +227,7 @@ public class SegmentationExcelWriter {
                                 }
                             }
                             if (bayesPath2 != null) {
-                                for (int i = 0; i < 4; i++) {
+                                for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                     String node = bayesPath2[i];
                                     if (node != null) {
                                         double score = score2[i];

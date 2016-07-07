@@ -40,14 +40,15 @@ public class ClassificationPath implements Serializable {
     String[] path;
 
     /**
-     * Istanzia l'oggetto ClassificationPath vuoto
+     * Istanzia l'oggetto ClassificationPath vuoto Nella versione 1.1 la max
+     * deep di profondità sale a 6 livelli
      *
      * @param technology tecnologia utilizzata
      */
     public ClassificationPath(String technology) {
         this.technology = technology;
-        this.score = new double[4];
-        this.path = new String[4];
+        this.score = new double[MAX_DEEP];
+        this.path = new String[MAX_DEEP];
     }
 
     /**
@@ -55,11 +56,11 @@ public class ClassificationPath implements Serializable {
      *
      * @param nodeName Nome del nodo (categoria) su cui l'oggetto è classificato
      * @param score valore associato alla classificazione
-     * @param level livello di classificazione (da 3 a 0). O è il livello base 3
+     * @param level livello di classificazione (da 5 a 0). O è il livello base 5
      * è la foglia
      */
     public void addResult(String nodeName, double score, int level) {
-        if (level < 0 || level > 3) {
+        if (level < 0 || level > (MAX_DEEP - 1)) {
             return;
         }
         this.score[level] = score;
@@ -138,7 +139,7 @@ public class ClassificationPath implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(technology).append(": ");
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MAX_DEEP; i++) {
             String node = path[i];
             if (node != null) {
                 if (i != 0) {
@@ -158,7 +159,7 @@ public class ClassificationPath implements Serializable {
      */
     public String toSmallString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MAX_DEEP; i++) {
             String node = path[i];
             if (node != null) {
                 if (i != 0) {
@@ -178,7 +179,7 @@ public class ClassificationPath implements Serializable {
      */
     public String toSmallClassString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MAX_DEEP; i++) {
             String node = path[i];
             if (node != null) {
                 if (i != 0) {
@@ -198,7 +199,7 @@ public class ClassificationPath implements Serializable {
      */
     public String getLeaf() {
         String ret = new String();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MAX_DEEP; i++) {
             String node = path[i];
             if (node != null) {
                 ret = node;
@@ -206,5 +207,12 @@ public class ClassificationPath implements Serializable {
         }
         return ret;
     }
+
+    /**
+     * Numero massimo di livelli della struttura
+     *
+     * @since 1.1
+     */
+    public static final int MAX_DEEP = 6;
 
 }

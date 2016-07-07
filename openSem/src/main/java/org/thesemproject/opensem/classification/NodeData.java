@@ -44,7 +44,7 @@ public class NodeData {
     /**
      * Nome della categoria
      */
-    public String nodeName; //Nome della catgoria
+    public String nodeName; //Nome del nodo
 
     /**
      * Livello della categoria
@@ -52,7 +52,7 @@ public class NodeData {
     public String level;
     private final Map<String, SimpleNaiveBayesClassifier> classifiers; //classificatore sui suoi figli
     private final Map<String, KNearestNeighborClassifier> knns; //classificatore sui suoi figli
-
+    private int startLevel;
     private final int k;
     private NodeData parent;
     private final Map<String, NodeData> children;
@@ -66,7 +66,7 @@ public class NodeData {
      * @param k soglia KNN
      * @param intern internizzatore di stringhe
      */
-    public NodeData(int k, InternPool intern) {
+    public NodeData(int startLevel, int k, InternPool intern) {
         this.nodeName = "root";
         this.k = 1;
         this.classifiers = new HashMap<>();
@@ -77,6 +77,7 @@ public class NodeData {
         this.reverseMap = new HashMap<>();
         this.labels = new HashMap<>();
         this.intern = intern;
+        this.startLevel = startLevel;
     }
 
     /**
@@ -105,8 +106,12 @@ public class NodeData {
                     this.level = IndexManager.LEVEL_2;
                 } else if (parent.parent.parent.parent == null) {
                     this.level = IndexManager.LEVEL_3;
-                } else {
+                } else if (parent.parent.parent.parent.parent == null) {
                     this.level = IndexManager.LEVEL_4;
+                } else if (parent.parent.parent.parent.parent.parent == null) {
+                    this.level = IndexManager.LEVEL_5;
+                } else {
+                    this.level = IndexManager.LEVEL_6;
                 }
                 this.parent = parent;
                 parent.children.put((String) intern.intern(nodeName), this);
@@ -117,6 +122,7 @@ public class NodeData {
         } else { //Caso root non ho padri
             this.level = null;
         }
+        this.startLevel = -1;
     }
 
     /**
@@ -149,13 +155,35 @@ public class NodeData {
             LogGui.info("Istrisco il nodo: " + nodeName);
             if (level == null) { //root
                 //Dobbiamo istruire il nodo con tutti i documenti usando il field level1
-                classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_1, analyzer);
-                knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_1, analyzer);
+                switch (startLevel) {
+                    case 1:
+                        classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_1, analyzer);
+                        knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_1, analyzer);
+                        break;
+                    case 2:
+                        classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_2, analyzer);
+                        knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_2, analyzer);
+                        break;
+                    case 3:
+                        classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_3, analyzer);
+                        knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_3, analyzer);
+                        break;
+                    case 4:
+                        classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_4, analyzer);
+                        knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_4, analyzer);
+                        break;
+                    case 5:
+                        classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_5, analyzer);
+                        knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_5, analyzer);
+                        break;
+                    default:
+                        break;
+                }
             } else if (IndexManager.LEVEL_1.equalsIgnoreCase(level)) {
                 //Ci troviamo su una categoria figlia di root
                 //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_1 il nome della categoria
                 //con i soli campi di Level_2
-                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_1, nodeName.hashCode() + ""));
+                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_1, getNodeCodeForFilter()));
                 //IndexSearcher indexSearcher = new IndexSearcher(ar);
                 //TopDocs td = indexSearcher.search(query,Integer.MAX_VALUE);
                 classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_2, analyzer, query);
@@ -164,22 +192,45 @@ public class NodeData {
                 //Ci troviamo su una categoria figlia di un livello 1
                 //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_2 il nome della categoria
                 //con i soli campi di Level_3
-                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_2, nodeName.hashCode() + ""));
+                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_2, getNodeCodeForFilter()));
                 classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_3, analyzer, query);
                 knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_3, analyzer, query);
             } else if (IndexManager.LEVEL_3.equalsIgnoreCase(level)) {
                 //Ci troviamo su una categoria figlia di un livello 2
                 //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_3 il nome della categoria
                 //con i soli campi di Level_4
-                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_3, nodeName.hashCode() + ""));
+                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_3, getNodeCodeForFilter()));
                 classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_4, analyzer, query);
                 knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_4, analyzer, query);
+            } else if (IndexManager.LEVEL_4.equalsIgnoreCase(level)) {
+                //Ci troviamo su una categoria figlia di un livello 3
+                //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_4 il nome della categoria
+                //con i soli campi di Level_5
+                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_4, getNodeCodeForFilter()));
+                classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_5, analyzer, query);
+                knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_5, analyzer, query);
+            } else if (IndexManager.LEVEL_5.equalsIgnoreCase(level)) {
+                //Ci troviamo su una categoria figlia di un livello 4
+                //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_5 il nome della categoria
+                //con i soli campi di Level_6
+                TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_5, getNodeCodeForFilter()));
+                classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_6, analyzer, query);
+                knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_6, analyzer, query);
             }
             classifiers.put(language, classifier);
             knns.put(language, knn);
         } catch (Exception e) {
             LogGui.printException(e);
         }
+    }
+
+    private String getNodeCodeForFilter() {
+        //Dato che questo popola il filtro, se il nodo non è attivato per la clssificazione
+        //La query potrà essere completamente libera.
+        //   if (isClassify)
+        return String.valueOf(nodeName.hashCode());
+        // else
+        //   return "*";
     }
 
     /**
@@ -189,7 +240,16 @@ public class NodeData {
      * @return figlio oppure null se non trovato.
      */
     public NodeData getNode(String childrenName) {
-        return children.get(childrenName);
+        NodeData nd = children.get(childrenName);
+        if (nd == null) {
+            for (NodeData ch : children.values()) {
+                nd = ch.getNode(childrenName);
+                if (nd != null) {
+                    return nd;
+                }
+            }
+        }
+        return nd;
     }
 
     /**
@@ -219,7 +279,16 @@ public class NodeData {
      * @return nome del nodo
      */
     public String getNameFromId(String nid) {
-        return reverseMap.get(nid);
+        String name = reverseMap.get(nid);
+        if (name == null) { //Provo a vedere se nei figli c'è il nome
+            for (NodeData nd : children.values()) {
+                name = nd.getNameFromId(nid);
+                if (name != null) {
+                    return name;
+                }
+            }
+        }
+        return name;
     }
 
     /**
@@ -264,6 +333,7 @@ public class NodeData {
         Element element = new Element("Node");
         element.setAttribute("nodeName", nodeName);
         element.setAttribute("k", String.valueOf(k));
+        element.setAttribute("sl", String.valueOf(startLevel));
         Element labelsElement = new Element("labels");
         labels.keySet().stream().forEach((key) -> {
             labelsElement.setAttribute(key, labels.get(key));
@@ -334,7 +404,12 @@ public class NodeData {
                     String nodeName = element.getAttributeValue("nodeName");
                     if ("root".equals(nodeName)) {
                         int k = Integer.parseInt(element.getAttributeValue("k"));
-                        root = new NodeData(k, intern);
+                        int s = 1;
+                        String sl = element.getAttributeValue("sl");
+                        if (sl != null) {
+                            s = Integer.parseInt(sl);
+                        }
+                        root = new NodeData(s, k, intern);
                         Element labelsElement = element.getChild("labels");
                         if (labelsElement != null) {
                             List<Attribute> attributes = labelsElement.getAttributes();
@@ -451,7 +526,7 @@ public class NodeData {
      * @return root della struttura
      */
     public static NodeData getNodeData(List<String> rows, int k, InternPool intern) {
-        NodeData root = new NodeData(k, intern);
+        NodeData root = new NodeData(1, k, intern);
         Set<String> categories = new HashSet<>();
         for (String row : rows) {
             String[] doc = row.split("\t");
@@ -488,6 +563,41 @@ public class NodeData {
                                         }
                                     }
                                 }
+                                if (doc.length > 4) {
+                                    String level5 = (String) intern.intern(doc[4]);
+                                    if (!categories.contains(level5)) { //Nuova categoria di livello 5
+                                        NodeData p1 = root.getNode(level1);
+                                        if (p1 != null) {
+                                            NodeData p2 = p1.getNode(level2);
+                                            if (p2 != null) {
+                                                NodeData p3 = p2.getNode(level3);
+                                                if (p3 != null) {
+                                                    NodeData p4 = p3.getNode(level4);
+                                                    addNode(p4, categories, level5, k, intern);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (doc.length > 5) {
+                                        String level6 = (String) intern.intern(doc[5]);
+                                        if (!categories.contains(level6)) { //Nuova categoria di livello 6
+                                            NodeData p1 = root.getNode(level1);
+                                            if (p1 != null) {
+                                                NodeData p2 = p1.getNode(level2);
+                                                if (p2 != null) {
+                                                    NodeData p3 = p2.getNode(level3);
+                                                    if (p3 != null) {
+                                                        NodeData p4 = p3.getNode(level4);
+                                                        if (p4 != null) {
+                                                            NodeData p5 = p4.getNode(level5);
+                                                            addNode(p5, categories, level6, k, intern);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -510,6 +620,39 @@ public class NodeData {
                 }
             }
             cats.add((String) intern.intern(name));
+        }
+    }
+
+    /**
+     * Ritorna il livello da cui inizia a classificare
+     *
+     * @since 1.1
+     * @return livello da cui iniziare a classificare
+     */
+    public int getStartLevel() {
+        return startLevel;
+    }
+
+    /**
+     * Imposta il livello da cui iniziare a classificare
+     *
+     * @param startLevel livello da cui iniziare a classificare
+     */
+    public void setStartLevel(int startLevel) {
+        this.startLevel = startLevel;
+    }
+
+    /**
+     * Ritrova il percorso di classificazione di un nodo a partire dalla root
+     *
+     * @param cp
+     * @param node
+     * @param level
+     */
+    public static void findPath(ClassificationPath cp, NodeData node, int level) {
+        cp.addResult(node.parent.nodeName, 1, level - 1);
+        if (level > 0) {
+            findPath(cp, node.parent, level - 1);
         }
     }
 

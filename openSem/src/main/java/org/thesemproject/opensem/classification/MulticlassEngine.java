@@ -179,7 +179,7 @@ public class MulticlassEngine {
                 if (fIndex.exists()) {
                     if (fIndex.listFiles().length > 0) {
                         try {
-                            ret = ret && init(indexFolder, stopWords, language, k, reindex);
+                            ret = ret && init(indexFolder, stopWords, language, root.getStartLevel(), k, reindex);
                         } catch (Exception e) {
                             LogGui.printException(e);
                         }
@@ -196,7 +196,7 @@ public class MulticlassEngine {
         }
     }
 
-    private boolean init(String index, String stop, String language, int k, boolean needReindex) {
+    private boolean init(String index, String stop, String language, int startLevel, int k, boolean needReindex) {
         try {
 
             List<Document> reindexDoc = new ArrayList<>();
@@ -212,7 +212,7 @@ public class MulticlassEngine {
             analyzers.put(language, analyzer);
             final int maxdoc = reader.maxDoc();
             if (root == null) {
-                root = new NodeData(k, intern); //Root
+                root = new NodeData(startLevel, k, intern); //Root
             }
             LogGui.info("Init language: " + language);
             LogGui.info("Documents: " + maxdoc);
@@ -268,6 +268,41 @@ public class MulticlassEngine {
                                         }
                                     }
                                 }
+                                String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
+                                if (level5 != null) {
+                                    if (!categories.contains(level5)) { //Nuova categoria di livello 5
+                                        NodeData p1 = root.getNode(level1);
+                                        if (p1 != null) {
+                                            NodeData p2 = p1.getNode(level2);
+                                            if (p2 != null) {
+                                                NodeData p3 = p2.getNode(level3);
+                                                if (p3 != null) {
+                                                    NodeData p4 = p3.getNode(level4);
+                                                    addNode(ar, analyzer, p4, categories, level5, k, language);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
+                                    if (level6 != null) {
+                                        if (!categories.contains(level6)) { //Nuova categoria di livello 6
+                                            NodeData p1 = root.getNode(level1);
+                                            if (p1 != null) {
+                                                NodeData p2 = p1.getNode(level2);
+                                                if (p2 != null) {
+                                                    NodeData p3 = p2.getNode(level3);
+                                                    if (p3 != null) {
+                                                        NodeData p4 = p3.getNode(level4);
+                                                        if (p4 != null) {
+                                                            NodeData p5 = p4.getNode(level5);
+                                                            addNode(ar, analyzer, p5, categories, level6, k, language);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -313,7 +348,7 @@ public class MulticlassEngine {
                     continue;
                 }
                 Document doc = ar.document(i);
-                String[] row = new String[6];
+                String[] row = new String[8];
                 row[0] = doc.get(IndexManager.UUID);
                 row[1] = doc.get(IndexManager.BODY);
                 String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
@@ -328,6 +363,14 @@ public class MulticlassEngine {
                             String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
                             if (level4 != null) {
                                 row[5] = level4;
+                                String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
+                                if (level5 != null) {
+                                    row[6] = level5;
+                                    String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
+                                    if (level6 != null) {
+                                        row[7] = level6;
+                                    }
+                                }
                             }
                         }
                     }
@@ -403,7 +446,7 @@ public class MulticlassEngine {
             return null;
         }
         try {
-            return classifyOnNode(tokenize(text, language), root, th, false, language);
+            return classifyOnRoot(tokenize(text, language), root, th, false, language);
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -423,7 +466,7 @@ public class MulticlassEngine {
             return null;
         }
         try {
-            return classifyOnNode(tokenize(text, language), root, th, true, language).get(0);
+            return classifyOnRoot(tokenize(text, language), root, th, true, language).get(0);
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -468,21 +511,30 @@ public class MulticlassEngine {
         return cp;
     }
 
-    private List<ClassificationPath> classifyOnNode(String text, NodeData nd, double threshold, boolean knn, String language) throws IOException {
+    private List<ClassificationPath> classifyOnRoot(String text, NodeData root, double threshold, boolean knn, String language) throws IOException {
         try {
             List<ClassificationPath> results = new ArrayList<>();
-            int level = 0;
+            int level = root.getStartLevel() - 1;
             if (!knn) {
                 ClassificationPath bChoice1 = new ClassificationPath(ClassificationPath.BAYES);
                 ClassificationPath bChoice2 = new ClassificationPath(ClassificationPath.BAYES);
                 //Classifica bayes
-                SimpleNaiveBayesClassifier snbc = nd.getClassifier(language);
+                SimpleNaiveBayesClassifier snbc = root.getClassifier(language);
                 if (snbc != null) {
-                    List<ClassificationResult<BytesRef>> resultNdList = snbc.getClasses(text);
-                    bChoice1.addResult(nd.getNameFromId(resultNdList.get(0).getAssignedClass().utf8ToString()), resultNdList.get(0).getScore(), level);
+                    List<ClassificationResult<BytesRef>> resultNdList;
+                    try {
+                        resultNdList = snbc.getClasses(text);
+                    } catch (Exception e) {
+                        return results;
+                    }
 
-                    NodeData child1 = nd.getNode(bChoice1.getNodeName(level));
+                    bChoice1.addResult(root.getNameFromId(resultNdList.get(0).getAssignedClass().utf8ToString()), resultNdList.get(0).getScore(), level);
+
+                    NodeData child1 = root.getNode(bChoice1.getNodeName(level));
                     if (child1 != null) {
+                        if (level != 0) { //Sto classificando a root ma con un level != 0 (cioè parto da un livello più basso nell'albero
+                            NodeData.findPath(bChoice1, child1, level);
+                        }
                         if (child1.hasChildren()) {
                             bChoice1 = classifyOnSubNode(text, child1, level + 1, bChoice1, threshold, language);
                         }
@@ -491,9 +543,12 @@ public class MulticlassEngine {
                     if (resultNdList.size() > 1) {
                         double score2 = resultNdList.get(1).getScore();
                         if (score2 >= threshold) {
-                            bChoice2.addResult(nd.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
-                            NodeData child2 = nd.getNode(bChoice2.getNodeName(level));
+                            bChoice2.addResult(root.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
+                            NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
+                                if (level != 0) { //Sto classificando a root ma con un level != 0 (cioè parto da un livello più basso nell'albero
+                                    NodeData.findPath(bChoice1, child2, level);
+                                }
                                 if (child2.hasChildren()) {
                                     bChoice2 = classifyOnSubNode(text, child2, level + 1, bChoice2, threshold, language);
                                 }
@@ -504,12 +559,20 @@ public class MulticlassEngine {
                 }
             } else {
                 ClassificationPath kChoice1 = new ClassificationPath(ClassificationPath.KNN);
-                KNearestNeighborClassifier knnc = nd.getKnn(language);
+                KNearestNeighborClassifier knnc = root.getKnn(language);
                 if (knnc != null) {
-                    ClassificationResult<BytesRef> res = knnc.assignClass(text);
-                    kChoice1.addResult(nd.getNameFromId(res.getAssignedClass().utf8ToString()), res.getScore(), level);
-                    NodeData child1 = nd.getNode(kChoice1.getNodeName(level));
+                    ClassificationResult<BytesRef> res;
+                    try {
+                        res = knnc.assignClass(text);
+                    } catch (Exception exception) {
+                        return results;
+                    }
+                    kChoice1.addResult(root.getNameFromId(res.getAssignedClass().utf8ToString()), res.getScore(), level);
+                    NodeData child1 = root.getNode(kChoice1.getNodeName(level));
                     if (child1 != null) {
+                        if (level != 0) { //Sto classificando a root ma con un level != 0 (cioè parto da un livello più basso nell'albero
+                            NodeData.findPath(kChoice1, child1, level);
+                        }
                         if (child1.hasChildren()) {
                             kChoice1 = classifyOnSubNode(text, child1, level + 1, kChoice1, threshold, language);
                         }
