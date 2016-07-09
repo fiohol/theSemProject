@@ -20,8 +20,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
@@ -48,6 +49,7 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
 
     /**
      * Istanzia l'oggetto
+     *
      * @param context contesto di parsing
      * @param parser parser
      */
@@ -56,12 +58,13 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
         detector = ((AutoDetectParser) parser).getDetector();
         config = TikaConfig.getDefaultConfig();
         fileCount = 0;
-        embedded = new HashMap<>();
-        embeddedImages = new HashMap<>();
+        embedded = new LinkedHashMap<>();
+        embeddedImages = new LinkedHashMap<>();
     }
 
     /**
      * Ritorna sempre true (ovvero che il contenuto è parsabile)
+     *
      * @param metadata metadati
      * @return true
      */
@@ -72,7 +75,9 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
 
     /**
      * Processa i contenuti
-     * @param stream stream binario del contenuto 
+     *
+     * @since 1.1: aggiunto il trattamento dei TIFF
+     * @param stream stream binario del contenuto
      * @param handler handler
      * @param metadata metadati del documento
      * @param outputHtml necessario per l'override del metodo ma mai usato
@@ -92,19 +97,22 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
         }
         byte[] bytes = IOUtils.toByteArray(stream);
         embedded.put(name, bytes);
-        if (name.toLowerCase().endsWith("jpg") || name.toLowerCase().endsWith("png") || name.toLowerCase().endsWith("gif")) {
+        if (name.toLowerCase().endsWith("jpg") || name.toLowerCase().endsWith("tiff") || name.toLowerCase().endsWith("tif") || name.toLowerCase().endsWith("png") || name.toLowerCase().endsWith("gif")) {
+
             BufferedImage pl = ImageIO.read(new ByteArrayInputStream(bytes));
             if (pl != null) {
-                if (pl.getWidth() > 32 && pl.getHeight() > 32) //No Icone
+                if ((pl.getWidth() > 32 && pl.getHeight() > 32)) //No Icone
                 {
                     embeddedImages.put(name, pl);
                 }
             }
+
         }
     }
 
     /**
-     * Ritorna la mappa dei contenuti 
+     * Ritorna la mappa dei contenuti
+     *
      * @return mappa nome del contenuto (come se fosse un file), array di byte
      */
     public Map<String, byte[]> getEmbeddedContent() {
@@ -112,7 +120,8 @@ public class SemEmbeddedDocumentsExtractor extends ParsingEmbeddedDocumentExtrac
     }
 
     /**
-     * Ritorna la mappa di tutte le immagini 
+     * Ritorna la mappa di tutte le immagini
+     *
      * @return mappa nome del contenuto, BufferedImage
      */
     public Map<String, BufferedImage> getEmbeddedImages() {

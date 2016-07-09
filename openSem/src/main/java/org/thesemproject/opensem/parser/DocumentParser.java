@@ -27,6 +27,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.tika.language.LanguageIdentifier;
 import org.apache.tika.sax.ExpandedTitleContentHandler;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.xml.transform.TransformerConfigurationException;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.extractor.EmbeddedDocumentExtractor;
@@ -56,6 +60,7 @@ public class DocumentParser {
     public DocumentParser() {
         adp = new AutoDetectParser();
         intern = new InternPool();
+
     }
 
     /**
@@ -66,24 +71,143 @@ public class DocumentParser {
     public DocumentParser(InternPool intern) {
         adp = new AutoDetectParser();
         this.intern = intern;
+
+    }
+
+    private ParseContext getOCR(String language, String path) {
+        path = path.replace("\\", "/");
+        if (!path.endsWith("/")) {
+            path += '/';
+        }
+        TesseractOCRConfig config = new TesseractOCRConfig();
+        config.setTesseractPath(path);
+        if (language != null) {
+            String lang = "eng";
+            if ("it".equals(language)) {
+                lang = "ita";
+            }
+            if ("bg".equals(language)) {
+                lang = "bul";
+            }
+            if ("br".equals(language)) {
+                lang = "por";
+            }
+            if ("cz".equals(language)) {
+                lang = "ces";
+            }
+            if ("en".equals(language)) {
+                lang = "eng";
+            }
+            if ("de".equals(language)) {
+                lang = "deu";
+            }
+            if ("es".equals(language)) {
+                lang = "spa";
+            }
+            if ("fr".equals(language)) {
+                lang = "fra";
+            }
+            if ("nl".equals(language)) {
+                lang = "nld";
+            }
+            if ("pl".equals(language)) {
+                lang = "pol";
+            }
+            if ("pt".equals(language)) {
+                lang = "por";
+            }
+            if ("ru".equals(language)) {
+                lang = "rus";
+            }
+            if ("ro".equals(language)) {
+                lang = "ron";
+            }
+            if ("tr".equals(language)) {
+                lang = "tur";
+            }
+            if ("sk".equals(language)) {
+                lang = "slk";
+            }
+
+            config.setLanguage(lang);
+        }
+        ParseContext tesseractContext = new ParseContext();
+        tesseractContext.set(TesseractOCRConfig.class, config);
+        return tesseractContext;
     }
 
     /**
      * Estrare il testo da un file
      *
+     * @since 1.1
      * @param file file da parsare
+     * @param ocrInstallPath percorso dove è installato l'OCR (C:\Program Files
+     * (x86)\Tesseract-OCR\)
      * @return testo estratto dal file. null se nulla è stato estratto
      */
-    public String getTextFromFile(File file) {
+    public String getTextFromFile(File file, String ocrInstallPath) {
         try {
             Metadata metadata = new Metadata();
             metadata.set(Metadata.RESOURCE_NAME_KEY, file.toString());
             BodyContentHandler handler = new BodyContentHandler(1000000);
-            adp.parse(file.toURI().toURL().openStream(), handler, metadata, new ParseContext());
-            return handler.toString();
+            InputStream is = file.toURI().toURL().openStream();
+            adp.parse(is, handler, metadata, new ParseContext());
+            is.close();
+            String ret = handler.toString();
+            if (ret.trim().length() < 2) {
+                if (ocrInstallPath != null && ocrInstallPath.length() > 0) {
+                    if (file.getAbsolutePath().toLowerCase().endsWith("pdf")) { //Siamo in PDF
+                        LogGui.info("PDF without content... Try OCR...");
+                        LogGui.info("Exctrat images...");
+                        Map<String, BufferedImage> imgs = getImagesFromFile(file);
+                        List<File> images = new ArrayList<>();
+                        int count = 0;
+                        for (BufferedImage img : imgs.values()) {
+                            File image = File.createTempFile("Page", "-" + String.valueOf(count++) + ".jpg");
+                            ImageIO.write(img, "jpg", image);
+                            images.add(image);
+                        }
+                        LogGui.info("Images extracted: " + images.size());
+                        if (imgs != null) {
+                            LogGui.info("Extract with ita pattern...");
+                            ret = extractTextFromImages(images, "ita", ocrInstallPath);
+                            if (ret.length() > 0) {
+                                String lang = getLanguageFromText(ret);
+                                LogGui.info("Detected language: " + lang);
+                                if (!lang.equalsIgnoreCase("it")) { //Seconda passata
+                                    LogGui.info("Extract with " + lang + " pattern...");
+                                    ret = extractTextFromImages(images, lang, ocrInstallPath);
+                                }
+                            }
+                        }
+                        LogGui.info("Done...");
+                        for (File image : images) {
+                            image.delete();
+                        }
+                    }
+                }
+            }
+            return ret;
         } catch (IOException | SAXException | TikaException ex) {
             return "!ERROR: " + ex.getLocalizedMessage();
         }
+    }
+
+    private synchronized String extractTextFromImages(List<File> images, String language, String path) throws TikaException, IOException, SAXException {
+        String ret = "";
+        BodyContentHandler handler;
+        Metadata metadata;
+        //Prende tutte le immagini (in ordine)
+        TesseractOCRParser top = new TesseractOCRParser();
+        for (File image : images) {
+            handler = new BodyContentHandler(1000000);
+            metadata = new Metadata();
+            InputStream is = image.toURI().toURL().openStream();
+            top.parse(is, handler, metadata, getOCR(language, path)); //fa il parsing..
+            is.close();
+            ret += handler.toString();
+        }
+        return ret;
     }
 
     /**
@@ -106,7 +230,9 @@ public class DocumentParser {
             context.set(PDFParserConfig.class, pdc);
             SemEmbeddedDocumentsExtractor ex = new SemEmbeddedDocumentsExtractor(context, adp);
             context.set(EmbeddedDocumentExtractor.class, ex);
-            adp.parse(file.toURI().toURL().openStream(), handler, metadata, context);
+            InputStream is = file.toURI().toURL().openStream();
+            adp.parse(is, handler, metadata, context);
+            is.close();
             return ex.getEmbeddedContent();
         } catch (IOException | SAXException | TikaException ex) {
             return null;
@@ -131,7 +257,9 @@ public class DocumentParser {
             context.set(PDFParserConfig.class, pdc);
             SemEmbeddedDocumentsExtractor ex = new SemEmbeddedDocumentsExtractor(context, adp);
             context.set(EmbeddedDocumentExtractor.class, ex);
-            adp.parse(file.toURI().toURL().openStream(), handler, metadata, context);
+            InputStream is = file.toURI().toURL().openStream();
+            adp.parse(is, handler, metadata, context);
+            is.close();
             return ex.getEmbeddedImages();
         } catch (IOException | SAXException | TikaException ex) {
             LogGui.printException(ex);
@@ -184,7 +312,9 @@ public class DocumentParser {
             handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             handler.setResult(new StreamResult(out));
             ExpandedTitleContentHandler handler1 = new ExpandedTitleContentHandler(handler);
-            adp.parse(file.toURI().toURL().openStream(), handler1, new Metadata());
+            InputStream is = file.toURI().toURL().openStream();
+            adp.parse(is, handler1, new Metadata());
+            is.close();
             return new String(out.toByteArray(), "UTF-8").replaceAll("<img .*?</img>", "").replaceAll("<img .*?/>", "");
         } catch (TransformerConfigurationException | IllegalArgumentException | IOException | SAXException | TikaException ex) {
             return "!ERROR: " + ex.getLocalizedMessage();

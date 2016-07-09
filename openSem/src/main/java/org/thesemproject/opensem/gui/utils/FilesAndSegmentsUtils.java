@@ -295,7 +295,7 @@ public class FilesAndSegmentsUtils {
                 }
                 semGui.updateLastSelectFolder(sourceDir);
                 semGui.getFilesTab().requestFocus();
-                semGui.getRtt().process(sourceDir, filter, semGui.getDP(), semGui.getFilesTable(), semGui.getFilesInfoLabel(), semGui.getTableData());
+                semGui.getRtt().process(sourceDir, filter, semGui.getDP(), semGui.getFilesTable(), semGui.getFilesInfoLabel(), semGui.getTableData(), semGui.getPercorsoOCR().getText());
                 semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ")");
                 semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ")");
                 semGui.setRtt(null);

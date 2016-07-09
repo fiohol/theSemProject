@@ -89,8 +89,9 @@ public class ReadSegmentWrite {
      * @param me multiclass engine
      * @param th soglia bayes
      * @param writeHtml true se nel processo deve generare anche i files HTML
+     * @param ocrInstallPath percorso OCR
      */
-    public void process(final String inputDir, final DocumentParser dp, final SegmentEngine se, final MulticlassEngine me, final double th, boolean writeHtml) {
+    public void process(final String inputDir, final DocumentParser dp, final SegmentEngine se, final MulticlassEngine me, final double th, boolean writeHtml, String ocrInstallPath) {
         //Costruisce 2+n processi: uno per leggere, n per classificare, uno per scrivere
         isReading.setValue(true); //dice che sta leggendo
         segmentThread.set(processors); //dice che sta classificando
@@ -137,7 +138,7 @@ public class ReadSegmentWrite {
                 LogGui.info("Read: " + file);
                 return file;
             }).map((file) -> {
-                String text = dp.getTextFromFile(file);
+                String text = dp.getTextFromFile(file, ocrInstallPath);
                 Document document = new Document();
                 document.put(BSonUtils.TEXT, text);
                 document.put(BSonUtils.SOURCE, file.getName());

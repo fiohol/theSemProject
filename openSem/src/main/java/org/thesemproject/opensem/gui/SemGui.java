@@ -128,7 +128,7 @@ public class SemGui extends javax.swing.JFrame {
         capturePatternSuggestor = new AutoSuggestor(capturePatternDefinition, this, me.getSuggestions((DefaultMutableTreeNode) modelTree.getModel().getRoot()), Color.WHITE.brighter(), Color.BLACK, Color.BLUE.brighter(), 0.95f);
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         this.setMaximizedBounds(env.getMaximumWindowBounds());
-        
+
         this.setExtendedState(this.getExtendedState() | this.MAXIMIZED_BOTH);
         LogGui.setjTextArea(logInizializzazione);
         LogGui.setMemInfo(memInfo);
@@ -176,35 +176,35 @@ public class SemGui extends javax.swing.JFrame {
         int oneThirdScreenWidth = (int) (env.getMaximumWindowBounds().width * 0.3);
         int oneQuarterScreenWidth = (int) (env.getMaximumWindowBounds().width * 0.2);
         modelEditorContainer.setDividerLocation(twoThirdScreenWidth);
-        
+
         jSplitPane6.setDividerLocation(halfScreenWidth);
         jSplitPane4.setDividerLocation(halfScreenWidth);
-        
+
         coverageSplitPanel.setDividerLocation(halfScreenWidth);
-        
+
         jSplitPane5.setDividerLocation((int) (halfScreenWidth * .7));
-        
+
         jSplitPane1.setDividerLocation(oneQuarterScreenWidth);
         segments.setDividerLocation(oneQuarterScreenWidth);
         changes.setDividerLocation(oneQuarterScreenWidth);
         modelEditor.setDividerLocation(oneQuarterScreenWidth);
         jSplitPane8.setDividerLocation(oneQuarterScreenWidth);
-        
+
         dictionarySplit.setDividerLocation(halfScreenHeight);
         segmentsSplit.setDividerLocation(halfScreenHeight);
         captureSplit.setDividerLocation(halfScreenHeight);
-        
+
         jSplitPane9.setDividerLocation((int) (halfScreenHeight * 1.3));
-        
+
         filesSplitPanel.setDividerLocation((int) (halfScreenHeight * 1.1));
         jSplitPane2.setDividerLocation((int) (halfScreenHeight * 1.1));
         segmentsConsolleSplitPanel.setDividerLocation((int) (halfScreenHeight * 1.1));
         coverage.setDividerLocation((int) (halfScreenHeight * 1.1));
         dataproviderSplit.setDividerLocation((int) (halfScreenHeight * 1.1));
         dataproviderRelationship.setDividerLocation((int) (halfScreenHeight * 1.1));
-        
+
         jSplitPane7.setDividerLocation((int) (halfScreenHeight * .7));
-        
+
         filesPanelHtml.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         filesPanelHtmlFormatted.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         filesPanelHtml1.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
@@ -213,7 +213,6 @@ public class SemGui extends javax.swing.JFrame {
         htmlFormatted.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlResult.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlTimeline.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-        
     }
 
     /**
@@ -290,6 +289,8 @@ public class SemGui extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         onlySegment = new javax.swing.JCheckBox();
         rebuildIndex = new javax.swing.JCheckBox();
+        selezionaOCR = new javax.swing.JButton();
+        percorsoOCR = new javax.swing.JTextField();
         initLabel = new javax.swing.JLabel();
         selectExportTree = new javax.swing.JDialog();
         exportTreeFileChooser = new javax.swing.JFileChooser();
@@ -301,6 +302,8 @@ public class SemGui extends javax.swing.JFrame {
         selectCSVDataProvider = new javax.swing.JDialog();
         csvdpchooser = new javax.swing.JFileChooser();
         jSeparator45 = new javax.swing.JSeparator();
+        selectOCRFolder = new javax.swing.JDialog();
+        ocrFileChooser = new javax.swing.JFileChooser();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
@@ -1349,7 +1352,9 @@ public class SemGui extends javax.swing.JFrame {
         );
 
         configurationDialog.setTitle("Configurazione sistema");
-        configurationDialog.setMinimumSize(new java.awt.Dimension(630, 150));
+        configurationDialog.setMaximumSize(new java.awt.Dimension(630, 200));
+        configurationDialog.setMinimumSize(new java.awt.Dimension(630, 200));
+        configurationDialog.setPreferredSize(new java.awt.Dimension(630, 200));
         configurationDialog.setResizable(false);
         configurationDialog.setSize(new java.awt.Dimension(630, 150));
 
@@ -1401,25 +1406,44 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
 
+        selezionaOCR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/page_lightning.png"))); // NOI18N
+        selezionaOCR.setText("OCR Path");
+        selezionaOCR.setFocusable(false);
+        selezionaOCR.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        selezionaOCR.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        selezionaOCR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selezionaOCRActionPerformed(evt);
+            }
+        });
+
+        percorsoOCR.setEditable(false);
+        percorsoOCR.setText(cc.getOcrPath());
+        percorsoOCR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                percorsoOCRActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(selezionaIndice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(selezionaOCR, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(selezionaIndice, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(16, 16, 16)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(percorsoIndice)
-                        .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(onlySegment)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
-                        .addComponent(rebuildIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                        .addComponent(rebuildIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(percorsoOCR)
+                    .addComponent(percorsoIndice, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1428,12 +1452,16 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(selezionaIndice)
                     .addComponent(percorsoIndice, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(selezionaOCR)
+                    .addComponent(percorsoOCR, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(onlySegment)
                     .addComponent(rebuildIndex))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         configurationDialog.getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -1538,6 +1566,29 @@ public class SemGui extends javax.swing.JFrame {
         selectCSVDataProviderLayout.setVerticalGroup(
             selectCSVDataProviderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(csvdpchooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        selectOCRFolder.setMinimumSize(new java.awt.Dimension(590, 380));
+
+        ocrFileChooser.setApproveButtonText("Seleziona");
+        ocrFileChooser.setCurrentDirectory(new java.io.File("C:\\Program Files\\NetBeans 8.1"));
+        ocrFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+        ocrFileChooser.setMaximumSize(new java.awt.Dimension(425, 245));
+        ocrFileChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ocrFileChooserActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout selectOCRFolderLayout = new javax.swing.GroupLayout(selectOCRFolder.getContentPane());
+        selectOCRFolder.getContentPane().setLayout(selectOCRFolderLayout);
+        selectOCRFolderLayout.setHorizontalGroup(
+            selectOCRFolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ocrFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        selectOCRFolderLayout.setVerticalGroup(
+            selectOCRFolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ocrFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -5397,7 +5448,7 @@ public class SemGui extends javax.swing.JFrame {
     private void segmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_segmentsTableMouseClicked
         FilesAndSegmentsUtils.segmentsTableMouseEventManagement(evt, this);
     }//GEN-LAST:event_segmentsTableMouseClicked
-    
+
 
     private void categorieSegmentsPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categorieSegmentsPanelMouseClicked
         GuiUtils.treeActionPerformed(categorieSegmentsPanel, segmentText, segmentTokens.getText(), evt, false, this);
@@ -5408,10 +5459,10 @@ public class SemGui extends javax.swing.JFrame {
     private void cercaCategoriaSegmentsPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cercaCategoriaSegmentsPanelActionPerformed
         String searched = cercaCategoriaSegmentsPanel.getText();
         if (searched.length() > 0) {
-            
+
             List<TreePath> paths = GuiUtils.find((DefaultMutableTreeNode) categorieSegmentsPanel.getModel().getRoot(), searched, false);
             GuiUtils.scrollToPath(categorieSegmentsPanel, paths);
-            
+
         }
     }//GEN-LAST:event_cercaCategoriaSegmentsPanelActionPerformed
 
@@ -5442,7 +5493,7 @@ public class SemGui extends javax.swing.JFrame {
     private void changedFilterTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changedFilterTreeMouseClicked
         ChangedUtils.changedFilterTree(evt, this);
     }//GEN-LAST:event_changedFilterTreeMouseClicked
-    
+
 
     private void firstLevelOnlyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstLevelOnlyActionPerformed
         if (isClassify) {
@@ -5450,7 +5501,7 @@ public class SemGui extends javax.swing.JFrame {
         }
         FilesAndSegmentsUtils.segmentsTableFilterOnFirstLevel(this);
     }//GEN-LAST:event_firstLevelOnlyActionPerformed
-    
+
 
     private void underTresholdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underTresholdActionPerformed
         if (isClassify) {
@@ -5458,13 +5509,13 @@ public class SemGui extends javax.swing.JFrame {
         }
         FilesAndSegmentsUtils.segmentsTableUnderTreshold(this);
     }//GEN-LAST:event_underTresholdActionPerformed
-    
+
 
     private void removeFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeFiltersActionPerformed
         if (isClassify) {
             return;
         }
-        
+
         GuiUtils.filterTable(segmentsTable, null, 4);
         statusSegments.setText("Totale filtrati elementi: " + segmentsTable.getRowCount());
     }//GEN-LAST:event_removeFiltersActionPerformed
@@ -5475,7 +5526,7 @@ public class SemGui extends javax.swing.JFrame {
         }
         ChangedUtils.changedTableMouseEventManagement(this);
     }//GEN-LAST:event_changedTableMouseClicked
-    
+
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         if (isClassify) {
@@ -5776,7 +5827,7 @@ public class SemGui extends javax.swing.JFrame {
     private void excelCorpusChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excelCorpusChooserActionPerformed
         FilesAndSegmentsUtils.doFilesTableImportExcel(evt, this);
     }//GEN-LAST:event_excelCorpusChooserActionPerformed
-    
+
 
     private void renameDefinitionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameDefinitionActionPerformed
         DictionaryUtils.renameDefinition(this);
@@ -6329,6 +6380,27 @@ public class SemGui extends javax.swing.JFrame {
         needUpdate = true;
     }//GEN-LAST:event_classStartLevelActionPerformed
 
+    private void selezionaOCRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selezionaOCRActionPerformed
+        String path = cc.getOcrPath();
+        if (path != null && path.length() != 0) {
+            ocrFileChooser.setCurrentDirectory(new File(path));
+        }
+        selectOCRFolder.setVisible(true);
+    }//GEN-LAST:event_selezionaOCRActionPerformed
+
+    private void percorsoOCRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_percorsoOCRActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_percorsoOCRActionPerformed
+
+    private void ocrFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ocrFileChooserActionPerformed
+        String command = evt.getActionCommand();
+        if (command.equals(JFileChooser.APPROVE_SELECTION)) {
+            percorsoOCR.setText(ocrFileChooser.getSelectedFile().getAbsolutePath());
+        }
+        selectOCRFolder.setVisible(false);
+
+    }//GEN-LAST:event_ocrFileChooserActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6373,7 +6445,7 @@ public class SemGui extends javax.swing.JFrame {
     private Map<String, Integer> classes = new HashMap<>();
     private boolean needUpdate = false;
     private boolean isClassify = false;
-    
+
     private final FinalBoolean stopSegmentAndClassify = new FinalBoolean(false);
     private final FinalBoolean stopTagCloud = new FinalBoolean(false);
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -6784,6 +6856,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton newDefinition;
     private javax.swing.JButton notMarked;
     private javax.swing.JButton nuvoletta;
+    private javax.swing.JFileChooser ocrFileChooser;
     private javax.swing.JCheckBox onlySegment;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JButton openSegmentRelationshipPanel;
@@ -6798,6 +6871,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton patternsImport;
     private javax.swing.JTextField percorsoIndice;
     private javax.swing.JTextField percorsoIndice1;
+    private javax.swing.JTextField percorsoOCR;
     private javax.swing.JComboBox<String> processori;
     private javax.swing.JComboBox<String> processori1;
     private javax.swing.JComboBox<String> processori2;
@@ -6875,12 +6949,14 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JDialog selectImportTree;
     private javax.swing.JDialog selectIndexFoderIstruzione;
     private javax.swing.JDialog selectIndexFolder;
+    private javax.swing.JDialog selectOCRFolder;
     private javax.swing.JDialog selectOpenStorage;
     private javax.swing.JDialog selectSaveStorageAs;
     private javax.swing.JDialog selectStopWords2;
     private javax.swing.JButton selezionaExcel;
     private javax.swing.JButton selezionaIndice;
     private javax.swing.JButton selezionaIndiceIstruzione;
+    private javax.swing.JButton selezionaOCR;
     private javax.swing.JButton selezionaStop;
     private javax.swing.JTextField serachDocumentBody;
     private javax.swing.JTextField soglia;
@@ -8597,11 +8673,11 @@ public class SemGui extends javax.swing.JFrame {
     public void resetFilesFilters() {
         GuiUtils.filterTable(filesTable, null, 4);
     }
-    
+
     private void segmentPatternsTableAction() {
         SegmentsUtils.segmentPatternsTableAction(this);
     }
-    
+
     private void changeDocument(TableCellListener tcl) {
         LuceneIndexUtils.changeIndexDocument(tcl, this);
     }
@@ -8856,7 +8932,7 @@ public class SemGui extends javax.swing.JFrame {
      */
     public void initializeModel() {
         isInit = false;
-        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText());
+        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
         //LogGui.setjTextArea(logInizializzazione);
         logInizializzazione.setEditable(false);
         logInizializzazione.setEnabled(true);
@@ -8877,7 +8953,7 @@ public class SemGui extends javax.swing.JFrame {
                     classificaTesto.setEnabled(true);
                     jButton3.setEnabled(true);
                     batch.setEnabled(true);
-                    
+
                 }
             }
             LogGui.printMemorySummary();
@@ -8919,7 +8995,7 @@ public class SemGui extends javax.swing.JFrame {
             needUpdate = false;
             classStartLevel.setModel(getClassTreeDepth());
             classStartLevel.setSelectedIndex(root.getStartLevel() - 1);
-            
+
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -8934,7 +9010,7 @@ public class SemGui extends javax.swing.JFrame {
      */
     public void updateLastSelectFolder(String absolutePath) {
         lastFolder = absolutePath;
-        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText());
+        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
     }
 
     /**
@@ -8946,7 +9022,7 @@ public class SemGui extends javax.swing.JFrame {
         statusSegments.setText("Totale elementi: " + segmentsTable.getRowCount());
         filesTab.setTitleAt(2, "Cambiamenti (" + changedTable.getRowCount() + ")");
     }
-    
+
     private void segmentTreeSetText() {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) segmentTree.getLastSelectedPathComponent();
         if (node == null) {
@@ -8968,10 +9044,10 @@ public class SemGui extends javax.swing.JFrame {
                     break;
                 }
             }
-            
+
         }
     }
-    
+
     private void doDockModelEditor() {
         jButton8.setToolTipText("UnDock");
         modelEditorFrame.setVisible(false);
@@ -8987,7 +9063,7 @@ public class SemGui extends javax.swing.JFrame {
     public void serachDocumentBodyKeyReleased() {
         serachDocumentBodyKeyReleased(null);
     }
-    
+
     private void doReadClassifyWriteExcel(ActionEvent evt) {
         selectExcelFileClass.setVisible(false);
         String command = evt.getActionCommand();
@@ -9009,7 +9085,7 @@ public class SemGui extends javax.swing.JFrame {
             t.start();
         }
     }
-    
+
     private void doFileSegmentation(ActionEvent evt) {
         selectFileToSegment.setVisible(false);
         String command = evt.getActionCommand();
@@ -9027,7 +9103,7 @@ public class SemGui extends javax.swing.JFrame {
                     segmentTree.setModel(new javax.swing.tree.DefaultTreeModel(new DefaultMutableTreeNode("Segmentazione in corso...")));
                     segmentTextArea.setText("");
                     imagesPanel.removeAll();
-                    String text = DP.getTextFromFile(file);
+                    String text = DP.getTextFromFile(file, percorsoOCR.getText());
                     String html = DP.getHtmlFromFile(file);
                     BufferedImage image = DP.getLargestImageFromFile(file);
                     if (image != null) {
@@ -9039,7 +9115,7 @@ public class SemGui extends javax.swing.JFrame {
                         imagesPanel.setMaximumSize(size);
                         imagesPanel.setSize(size);
                     }
-                    
+
                     String language = DP.getLanguageFromText(text);
                     imagesPanel.repaint();
                     testoDaSegmentare.setText(text);
@@ -9057,7 +9133,7 @@ public class SemGui extends javax.swing.JFrame {
             });
             t.setDaemon(true);
             t.start();
-            
+
         }
     }
 
@@ -9102,7 +9178,7 @@ public class SemGui extends javax.swing.JFrame {
                     }
                     identifiedSegments = SE.getSegments(text, ME, Double.parseDouble(soglia.getText()), language);
                     dto.setIdentifiedSegments(identifiedSegments);
-                    
+
                     List<Object[]> rows = dto.getSegmentRows();
                     rows.stream().forEach((row) -> {
                         model.addRow(row);
@@ -9147,7 +9223,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-    
+
     private void doTextClassification() {
         Thread t = new Thread(
                 () -> {
@@ -9206,7 +9282,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-    
+
     private void changeStopWord(TableCellListener tcl) { //OK
         StopWordsUtils.changeStopWord(tcl, this);
     }
@@ -9269,7 +9345,17 @@ public class SemGui extends javax.swing.JFrame {
             model.addRow(row);
         });
     }
-    
+
+    /**
+     * Ritorna il percorso dove è installato OCR
+     *
+     * @return percorso fisico OCR
+     */
+    public JTextField getPercorsoOCR() {
+        return percorsoOCR;
+
+    }
+
     private void doReadTagWrite() {
         File sourceDir = folderChooser.getSelectedFile();
         updateLastSelectFolder(sourceDir.getAbsolutePath());
@@ -9282,12 +9368,12 @@ public class SemGui extends javax.swing.JFrame {
         logInizializzazione.requestFocus();
         Thread t = new Thread(() -> {
             ReadSegmentWrite rtw = new ReadSegmentWrite(processors);
-            rtw.process(sourceDir.getAbsolutePath(), DP, SE, ME, Double.parseDouble(soglia.getText()), html);
+            rtw.process(sourceDir.getAbsolutePath(), DP, SE, ME, Double.parseDouble(soglia.getText()), html, percorsoOCR.getText());
         });
         t.setDaemon(true);
         t.start();
     }
-    
+
     private void doTextSegmentation() {
         Thread t = new Thread(() -> {
             htmlResult.setContentType("text/html");
@@ -9314,7 +9400,7 @@ public class SemGui extends javax.swing.JFrame {
         t.setDaemon(true);
         t.start();
     }
-    
+
     private void classTree1MouseEventManagement(MouseEvent evt) {
         int selRow = classificationTree1.getRowForLocation(evt.getX(), evt.getY());
         TreePath selPath = classificationTree1.getPathForLocation(evt.getX(), evt.getY());
@@ -9332,27 +9418,27 @@ public class SemGui extends javax.swing.JFrame {
             catClass.setText(x);
         }
     }
-    
+
     private void filesTableDelete() {
         FilesAndSegmentsUtils.filesTableDelete(this);
     }
-    
+
     private void segmentsTableSelectedRow() {
         segmentsTableMouseClicked(null);
     }
-    
+
     private void fileTableSelectedRow() {
         filesTableMouseClicked(null);
     }
-    
+
     private void hilightSegment() {
         FilesAndSegmentsUtils.segmentsTableHilightSegment(this);
     }
-    
+
     private void filesTableSelectedRow() {
         filesTableMouseClicked(null);
     }
-    
+
     private javax.swing.DefaultComboBoxModel getClassTreeDepth() {
         if (isInit) {
             int depth = getClassDepth();
@@ -9361,18 +9447,18 @@ public class SemGui extends javax.swing.JFrame {
                 lev[i] = String.valueOf((i + 1));
             }
             return new javax.swing.DefaultComboBoxModel<>(lev);
-            
+
         }
         return new javax.swing.DefaultComboBoxModel<>(new String[]{});
     }
-    
+
     private int getClassDepth() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot();
         if (node != null) {
             return node.getDepth();
-            
+
         }
         return 1;
     }
-    
+
 }

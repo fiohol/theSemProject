@@ -32,6 +32,7 @@ public class SemConfiguration {
     private String lastFolder;
     private String language;
     private String learningFactor;
+    private String ocrPath;
 
     private final static String FILE_NAME = "./configuration.ini";
 
@@ -66,6 +67,9 @@ public class SemConfiguration {
                     if (line.startsWith("learning")) {
                         learningFactor = line.substring(line.indexOf("=") + 1);
                     }
+                    if (line.startsWith("ocr")) {
+                        ocrPath = line.substring(line.indexOf("=") + 1);
+                    }
                 }
                 RAF.close();
             } else {
@@ -77,6 +81,7 @@ public class SemConfiguration {
                 lastFolder = ".";
                 language = "it";
                 learningFactor = "10";
+                ocrPath = "";
                 writeToFile(RAF);
                 RAF.close();
             }
@@ -97,8 +102,10 @@ public class SemConfiguration {
      * @param language ultimia lingua usata
      * @param learningFactor fattore di istruzione del bayesiano (quanti esempi
      * uguali usare)
+     * @param ocr path dove è installato l'ocr
+     *
      */
-    public void updateConfiguration(String indexFolder, String threshold, String kFactor, String segmentFile, String lastFolder, String language, String learningFactor) {
+    public void updateConfiguration(String indexFolder, String threshold, String kFactor, String segmentFile, String lastFolder, String language, String learningFactor, String ocr) {
         this.indexFolder = indexFolder;
 
         this.threshold = threshold;
@@ -109,6 +116,7 @@ public class SemConfiguration {
         }
         this.language = language;
         this.learningFactor = learningFactor;
+        this.ocrPath = ocr;
         File F = new File(FILE_NAME);
         if (F.exists()) {
             F.delete();
@@ -142,6 +150,7 @@ public class SemConfiguration {
         RAF.writeBytes("segment=" + segmentFile + "\r\n");
         RAF.writeBytes("last=" + lastFolder + "\r\n");
         RAF.writeBytes("lang=" + language + "\r\n");
+        RAF.writeBytes("ocrPath=" + ocrPath + "\r\n");
     }
 
     /**
@@ -202,6 +211,16 @@ public class SemConfiguration {
             learningFactor = "10";
         }
         return learningFactor;
+    }
+
+    /**
+     * Ritorna la cartella dove è installato l'OCR
+     *
+     * @since 1.1
+     * @return percorso OCR
+     */
+    public String getOcrPath() {
+        return ocrPath;
     }
 
 }

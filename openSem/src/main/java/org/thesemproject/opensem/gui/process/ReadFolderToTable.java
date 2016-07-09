@@ -88,8 +88,9 @@ public class ReadFolderToTable {
      * @param table tabella in cui caricare i dati
      * @param infoLabel label di status
      * @param fileList lista dei document
+     * @param ocrInstallPath percorso OCR
      */
-    public void process(final String inputDir, File[] filter, final DocumentParser dp, JTable table, JLabel infoLabel, final Map<Integer, SemDocument> fileList) {
+    public void process(final String inputDir, File[] filter, final DocumentParser dp, JTable table, JLabel infoLabel, final Map<Integer, SemDocument> fileList, String ocrInstallPath) {
         final Set<String> selectedFiles = new HashSet<>();
         if (filter != null) {
             for (File f : filter) {
@@ -138,7 +139,7 @@ public class ReadFolderToTable {
                     String text;
                     String html = "";
                     try {
-                        text = dp.getTextFromFile(file);
+                        text = dp.getTextFromFile(file, ocrInstallPath);
                         html = dp.getHtmlFromFile(file);
                     } catch (Exception e) {
                         text = "!ERROR: " + e.getLocalizedMessage();

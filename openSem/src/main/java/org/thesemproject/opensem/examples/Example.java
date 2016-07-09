@@ -69,7 +69,7 @@ public class Example {
         //vita del software
         DocumentParser dp = new DocumentParser();
         //Se voglio il testo a partire da un file mi basta semplicemente fare
-        String text = dp.getTextFromFile(new File("C:\\esempi\\esempio.docx"));
+        String text = dp.getTextFromFile(new File("C:\\esempi\\esempio.docx"),"");
         //Se voglio sapere la lingua in cui è scritto il testo mi basta fare
         String language = dp.getLanguageFromText(text);
         //Se volessi avere la vista formatta (Html) di un testo mi basta fare
