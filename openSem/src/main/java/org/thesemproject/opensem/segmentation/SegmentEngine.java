@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.thesemproject.opensem.parser.DocumentParser;
 
 /**
  * Motore di segmentazione. Applicando la configurazione del patternMatrix ad un
@@ -52,8 +53,8 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class SegmentEngine {
 
-    private static final String CR = "\n";
-    private static final String TAB = "\t";
+    public static final String CR = "\n";
+    public static final String TAB = "\t";
     private final Map<String, Pattern> bigRegexPattern;
     private DefaultTreeModel visualStructure;
     private final DictionaryTreeNode dictionaryNode;
@@ -913,19 +914,48 @@ public class SegmentEngine {
         patternMatrix.stream().forEach((segmentBean) -> {
             processSegment(segmentBean, identifiedSegments, me, threshold, language);
         });
+        if (me != null) {
+            //Fa le pulizie di primavera ovvero toglie tutti i segmenti con testo tokenizzato non significativo
+            Set<SegmentConfiguration> toRemove = new HashSet<>();
+            for (SegmentConfiguration segConf : identifiedSegments.keySet()) {
+                List<SegmentationResults> resList = identifiedSegments.get(segConf);
+                for (int i = resList.size() - 1; i >= 0; i--) {
+                    SegmentationResults sr = resList.get(i);
+                    String text = sr.getText();
+                    text = me.tokenize(text, language);
+                    if (text.isEmpty()) {
+                        resList.remove(i);
+                    }
+                }
+                if (resList.isEmpty()) {
+                    toRemove.add(segConf);
+                }
+            }
+            toRemove.stream().forEach((sc) -> {
+                identifiedSegments.remove(sc);
+            });
+        }
         return identifiedSegments;
+    }
+
+    private void addCaptureToIndex(CaptureConfiguration c, Map<String, CaptureConfiguration> capturesIndex) {
+        capturesIndex.put(c.getName(), c);
+        List<CaptureConfiguration> subCaptures = c.getSubCaptures();
+        subCaptures.stream().forEach((sc) -> {
+            addCaptureToIndex(sc, capturesIndex);
+        });
     }
 
     private void processSegment(SegmentConfiguration segmentBean, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, MulticlassEngine me, double threshold, String language) {
         List<CaptureConfiguration> captureConfigurations = segmentBean.getCaptureConfigurations();
         List<CaptureConfiguration> sCaptureConfigurations = segmentBean.getSentenceCaptureConfigurations();
         Map<String, CaptureConfiguration> capturesIndex = new HashMap<>();
-        for (CaptureConfiguration c : captureConfigurations) {
-            capturesIndex.put(c.getName(), c);
-        }
-        for (CaptureConfiguration c : sCaptureConfigurations) {
-            capturesIndex.put(c.getName(), c);
-        }
+        captureConfigurations.stream().forEach((c) -> {
+            addCaptureToIndex(c, capturesIndex);
+        });
+        sCaptureConfigurations.stream().forEach((c) -> {
+            addCaptureToIndex(c, capturesIndex);
+        });
         List<SegmentConfiguration> segmentConfigurations = segmentBean.getSegments();
         List<SegmentationResults> segmentResults = identifiedSegments.get(segmentBean);
         List<DataProviderRelationship> relationships = segmentBean.getRelationships();
@@ -1003,7 +1033,7 @@ public class SegmentEngine {
                             capturedValue = value;
                             break;
                         } catch (Exception e) {
-                            LogGui.info("Exception during capture: "+captureConfiguration.getName()+" "+captureConfiguration.getType());
+                            LogGui.info("Exception during capture: " + captureConfiguration.getName() + " " + captureConfiguration.getType());
                             LogGui.printException(e);
                         }
                     }

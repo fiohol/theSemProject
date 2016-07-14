@@ -52,6 +52,9 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.thesemproject.opensem.parser.DocumentParser;
 import org.thesemproject.opensem.utils.interning.InternPool;
 
 /**
@@ -387,6 +390,65 @@ public class MulticlassEngine {
         return rows;
     }
 
+    /**
+     * Popola un excel con il contenuto dell'indice
+     * 
+     * @since 1.2
+     * @param language lingua indice
+     * @param sheetResults excel da popolare
+     */
+    public void getDocumentsExcel(String language, SXSSFSheet sheetResults) {
+        try {
+            int rownum = 1;
+            String index = getIndexFolder(language);
+            IndexReader reader = DirectoryReader.open(getFolderDir(index));
+            final LeafReader ar = SlowCompositeReaderWrapper.wrap(reader);
+            Bits liveDocs = MultiFields.getLiveDocs(reader);
+            final int maxdoc = reader.maxDoc();
+            for (int i = 0; i < maxdoc; i++) {
+                if (liveDocs != null && !liveDocs.get(i)) {
+                    continue;
+                }
+                Document doc = ar.document(i);
+                SXSSFRow row = sheetResults.createRow(rownum++);
+                String text = doc.get(IndexManager.TEXT);
+                if (text == null) text = "";
+                row.createCell(0).setCellValue(text);
+                row.createCell(1).setCellValue(doc.get(IndexManager.BODY));
+                String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
+                row.createCell(2).setCellValue(level1);
+                if (level1 != null) {
+                    String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
+                    if (level2 != null) {
+                        row.createCell(3).setCellValue(level2);
+                        String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
+                        if (level3 != null) {
+                            row.createCell(4).setCellValue(level3);
+                            String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
+                            if (level4 != null) {
+                                row.createCell(5).setCellValue(level4);
+                                String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
+                                if (level5 != null) {
+                                    row.createCell(6).setCellValue(level5);
+                                    String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
+                                    if (level6 != null) {
+                                        row.createCell(7).setCellValue(level6);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (i % 1000 == 0) {
+                    LogGui.info("Read Progress... " + i);
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            LogGui.printException(e);
+        }
+    }
+    
     /**
      * Tokenizza un testo utilizzando l'analizzatore sintattico e le stop words
      * di lingua
@@ -791,5 +853,5 @@ public class MulticlassEngine {
     public void storeXml(org.jdom2.Document document) {
         GuiUtils.storeXml(document, getStructurePath());
     }
-
+    
 }

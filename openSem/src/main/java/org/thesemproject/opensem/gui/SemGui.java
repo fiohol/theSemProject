@@ -304,6 +304,8 @@ public class SemGui extends javax.swing.JFrame {
         jSeparator45 = new javax.swing.JSeparator();
         selectOCRFolder = new javax.swing.JDialog();
         ocrFileChooser = new javax.swing.JFileChooser();
+        selectExportExcelIndex = new javax.swing.JDialog();
+        expotExcelIndexFileChooser = new javax.swing.JFileChooser();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
@@ -742,6 +744,7 @@ public class SemGui extends javax.swing.JFrame {
         documentsTable = new javax.swing.JTable();
         tableToolbar2 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
+        exportIndex = new javax.swing.JButton();
         deleteDocument = new javax.swing.JButton();
         jSeparator39 = new javax.swing.JToolBar.Separator();
         removeDocumentFilter = new javax.swing.JButton();
@@ -1352,9 +1355,7 @@ public class SemGui extends javax.swing.JFrame {
         );
 
         configurationDialog.setTitle("Configurazione sistema");
-        configurationDialog.setMaximumSize(new java.awt.Dimension(630, 200));
         configurationDialog.setMinimumSize(new java.awt.Dimension(630, 200));
-        configurationDialog.setPreferredSize(new java.awt.Dimension(630, 200));
         configurationDialog.setResizable(false);
         configurationDialog.setSize(new java.awt.Dimension(630, 150));
 
@@ -1589,6 +1590,29 @@ public class SemGui extends javax.swing.JFrame {
         selectOCRFolderLayout.setVerticalGroup(
             selectOCRFolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(ocrFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        selectExportExcelIndex.setMinimumSize(new java.awt.Dimension(590, 380));
+
+        expotExcelIndexFileChooser.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        expotExcelIndexFileChooser.setCurrentDirectory(new java.io.File("C:\\Program Files\\NetBeans 8.1"));
+        expotExcelIndexFileChooser.setFileFilter(new ExtensionFileFilter("Microsoft Excel", new String[]{"xslx"}));
+        expotExcelIndexFileChooser.setMaximumSize(new java.awt.Dimension(425, 245));
+        expotExcelIndexFileChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                expotExcelIndexFileChooserActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout selectExportExcelIndexLayout = new javax.swing.GroupLayout(selectExportExcelIndex.getContentPane());
+        selectExportExcelIndex.getContentPane().setLayout(selectExportExcelIndexLayout);
+        selectExportExcelIndexLayout.setHorizontalGroup(
+            selectExportExcelIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(expotExcelIndexFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        selectExportExcelIndexLayout.setVerticalGroup(
+            selectExportExcelIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(expotExcelIndexFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -4970,6 +4994,18 @@ public class SemGui extends javax.swing.JFrame {
         });
         tableToolbar2.add(jButton1);
 
+        exportIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_out.png"))); // NOI18N
+        exportIndex.setText("Esporta Indice");
+        exportIndex.setFocusable(false);
+        exportIndex.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        exportIndex.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        exportIndex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportIndexActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(exportIndex);
+
         deleteDocument.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bin_closed.png"))); // NOI18N
         deleteDocument.setText("Cancella selezionati");
         deleteDocument.setToolTipText("Cancella");
@@ -5108,13 +5144,17 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(selezionaIndiceIstruzione, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
                     .addComponent(selezionaExcel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(startBuildIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(usaCategorie, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fileExcel, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(stopWords2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
-                    .addComponent(percorsoIndice1))
-                .addContainerGap(895, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(fileExcel, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(stopWords2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
+                            .addComponent(percorsoIndice1)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(usaCategorie, javax.swing.GroupLayout.PREFERRED_SIZE, 744, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(891, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -6401,6 +6441,20 @@ public class SemGui extends javax.swing.JFrame {
 
     }//GEN-LAST:event_ocrFileChooserActionPerformed
 
+    private void exportIndexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIndexActionPerformed
+        setLastFolder(expotExcelIndexFileChooser);
+        selectExportExcelIndex.setVisible(true);
+    }//GEN-LAST:event_exportIndexActionPerformed
+
+    private void expotExcelIndexFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expotExcelIndexFileChooserActionPerformed
+        String command = evt.getActionCommand();
+        if (command.equals(JFileChooser.APPROVE_SELECTION)) {
+            String fileToExport = expotExcelIndexFileChooser.getSelectedFile().getAbsolutePath();
+            LuceneIndexUtils.exportExcelFile(fileToExport, this);
+        }
+        selectExportExcelIndex.setVisible(false);
+    }//GEN-LAST:event_expotExcelIndexFileChooserActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6591,9 +6645,11 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JFileChooser excelCorpusChooser;
     private javax.swing.JFileChooser excelFileChooser;
     private javax.swing.JFileChooser excelFileChooserClass;
+    private javax.swing.JButton exportIndex;
     private javax.swing.JButton exportToExcel;
     private javax.swing.JFileChooser exportTreeFileChooser;
     private javax.swing.JFileChooser expotExcelFileChooser;
+    private javax.swing.JFileChooser expotExcelIndexFileChooser;
     private javax.swing.JFileChooser expotPatternsFileChooser;
     private javax.swing.JFileChooser expotTableFileChooser;
     private javax.swing.JTextField fattoreK;
@@ -6937,6 +6993,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JDialog selectExcelFileClass;
     private javax.swing.JDialog selectExcelFileSer;
     private javax.swing.JDialog selectExportExcel;
+    private javax.swing.JDialog selectExportExcelIndex;
     private javax.swing.JDialog selectExportPatterns;
     private javax.swing.JDialog selectExportTable;
     private javax.swing.JDialog selectExportTree;

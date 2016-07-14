@@ -151,7 +151,14 @@ public class DocumentParser {
             metadata.set(Metadata.RESOURCE_NAME_KEY, file.toString());
             BodyContentHandler handler = new BodyContentHandler(1000000);
             InputStream is = file.toURI().toURL().openStream();
-            adp.parse(is, handler, metadata, new ParseContext());
+            ParseContext context = new ParseContext();
+            PDFParserConfig pdfConfig = new PDFParserConfig();
+            pdfConfig.setSortByPosition(true);
+           // LogGui.info(String.valueOf("Sort by position "+pdfConfig.getSortByPosition()));
+           // LogGui.info(String.valueOf("Not seq parser "+pdfConfig.getUseNonSequentialParser()));
+            
+            context.set(PDFParserConfig.class, pdfConfig);
+            adp.parse(is, handler, metadata, context);
             is.close();
             String ret = handler.toString();
             if (ret.trim().length() < 2) {

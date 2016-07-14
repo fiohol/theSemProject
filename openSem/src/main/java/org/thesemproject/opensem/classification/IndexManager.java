@@ -63,6 +63,11 @@ public class IndexManager {
      * indicizzare
      */
     public static final String BODY = "body";
+    
+    /**
+     * Testo originale...
+     */
+    public static final String TEXT = "text";
 
     /**
      * Identifica il nome del field che deve contenere lo stato del docuemnto
@@ -467,6 +472,7 @@ public class IndexManager {
                             if (textCell.getCellType() == Cell.CELL_TYPE_STRING) {
                                 String text = textCell.getStringCellValue().toLowerCase();
                                 d.add(new TextField(BODY, Tokenizer.tokenize(text, indexWriter.getAnalyzer()), Field.Store.YES));
+                                d.add(new StringField(TEXT, text, Field.Store.YES));
                                 indexWriter.addDocument(d);
                                 if (useCategoryName) {
                                     checkForCat(d, indexWriter, (MyAnalyzer) indexWriter.getAnalyzer(), ft);

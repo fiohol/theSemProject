@@ -21,11 +21,19 @@ import org.thesemproject.opensem.gui.SemGui;
 import org.thesemproject.opensem.gui.TableCellListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreePath;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.thesemproject.opensem.classification.MulticlassEngine;
+import org.thesemproject.opensem.gui.SemDocument;
+import org.thesemproject.opensem.gui.process.SegmentationExcelWriter;
 
 /**
  *
@@ -140,7 +148,7 @@ public class LuceneIndexUtils {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 6);
         } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 7);
-        }else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
+        } else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(6).trim(), 1);
         } else {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text, idxs);
@@ -192,6 +200,47 @@ public class LuceneIndexUtils {
             semGui.getStartBuildIndex().setEnabled(true);
         });
         t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Esporta il contenuto di un indice su Excel
+     *
+     * @since 1.2
+     * @param fileToExport file su cui esportare
+     * @param semGui frame
+     */
+    public static void exportExcelFile(String fileToExport, SemGui semGui) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String path = fileToExport;
+                if (!path.endsWith(".xlsx")) {
+                    path = path + ".xlsx";
+                }
+                try {
+
+                    FileOutputStream fos = new FileOutputStream(path);
+                    SXSSFWorkbook wb = new SXSSFWorkbook();
+                    SXSSFSheet sheetResults = wb.createSheet("Index");
+                    SXSSFRow headerResults = sheetResults.createRow(0);
+                    headerResults.createCell(0).setCellValue("Text");
+                    headerResults.createCell(1).setCellValue("Tokens");
+                    headerResults.createCell(2).setCellValue("Level1");
+                    headerResults.createCell(3).setCellValue("Level2");
+                    headerResults.createCell(4).setCellValue("Level3");
+                    headerResults.createCell(5).setCellValue("Level4");
+                    headerResults.createCell(6).setCellValue("Level5");
+                    headerResults.createCell(7).setCellValue("Level6");
+                    semGui.getME().getDocumentsExcel((String) semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem(), sheetResults);
+                    wb.write(fos);
+                    fos.close();
+                } catch (Exception e) {
+                    LogGui.printException(e);
+                }
+                semGui.getFilesInfoLabel().setText("Esportazione terminata");
+            }
+        });
         t.start();
     }
 

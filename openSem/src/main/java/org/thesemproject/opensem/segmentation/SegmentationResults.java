@@ -141,6 +141,18 @@ public class SegmentationResults implements Serializable {
      * @param value valore catturato
      */
     public void addCaptureResult(CaptureConfiguration captureConfiguration, String value) {
+        addCaptureResult(captureConfiguration, value, false);
+    }
+
+    /**
+     * Aggiunge il risultato di una cattura
+     *
+     * @since 1.2
+     * @param captureConfiguration configurazione della cattura
+     * @param value valore catturato
+     * @param override true se si vuole andare in sovrascrittura
+     */
+    public void addCaptureResult(CaptureConfiguration captureConfiguration, String value, boolean override) {
         if (value == null) {
             return;
         }
@@ -239,7 +251,7 @@ public class SegmentationResults implements Serializable {
         value = value.trim();
         captureConfigurationResults.put(captureConfiguration, value);
         String old = captureResults.get(captureConfiguration.getName());
-        if (old != null) {
+        if (old != null && !override) {
             if (!old.equalsIgnoreCase(value) && !old.contains(value + ", ") && !old.endsWith(", " + value)) {
                 captureResults.put(captureConfiguration.getName(), old + ", " + value);
             }
@@ -448,6 +460,20 @@ public class SegmentationResults implements Serializable {
     public void setEndYear(int endYear) {
         this.endYear = endYear;
         endDate = DateUtils.parseDate("31/12/" + endYear);
+    }
+
+    /**
+     * Ritorna il testo del segmentation result
+     *
+     * @since 1.2
+     * @return testo
+     */
+    public String getText() {
+        StringBuilder text = new StringBuilder();
+        lines.stream().forEach((line) -> {
+            text.append(line).append(SegmentEngine.CR);
+        });
+        return text.toString();
     }
 
 }

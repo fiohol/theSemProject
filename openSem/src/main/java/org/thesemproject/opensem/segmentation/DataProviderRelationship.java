@@ -23,6 +23,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
+import org.thesemproject.opensem.gui.LogGui;
 
 /**
  *
@@ -121,14 +122,14 @@ public class DataProviderRelationship implements Serializable {
                     String value = search.get(field);
                     if (value != null) {
                         if (override || (sr.getCaptureResults().get(capture) == null)) {
-                            sr.addCaptureResult(captures.get(capture), value);
+                            sr.addCaptureResult(captures.get(capture), value, override);
                         }
                     }
                 }
 
             }
         } catch (Exception e) {
-
+            LogGui.printException(e);
         }
 
     }
