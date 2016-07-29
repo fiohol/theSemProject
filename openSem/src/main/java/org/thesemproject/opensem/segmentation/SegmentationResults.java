@@ -245,7 +245,11 @@ public class SegmentationResults implements Serializable {
             }
         } else if ("text".equalsIgnoreCase(type)) {
             if (toFormat) {
-                value = formatter.format(value).toString();
+                if (format.contains("@clean")) {
+                    value = value.replace(" ", "").replace(".", "").replace(";", "").replace(":", "");
+                } else {
+                    value = formatter.format(format, value).toString();
+                }
             }
         }
         value = value.trim();

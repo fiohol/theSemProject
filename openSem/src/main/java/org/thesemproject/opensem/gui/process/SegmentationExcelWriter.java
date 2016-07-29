@@ -85,7 +85,7 @@ public class SegmentationExcelWriter {
         row.createCell(1).setCellValue(language);
         if (text != null) {
             if (text.length() > 32767) {
-                text = text.substring(0, 32000);
+                text = text.substring(0, 32766);
             }
             row.createCell(2).setCellValue(text);
         }
@@ -172,9 +172,14 @@ public class SegmentationExcelWriter {
                             }
 
                             if (cell != null) {
+                                if (txt.length() > 32767) {
+                                    txt = txt.substring(0, 32766);
+                                }
                                 cell.setCellValue(txt);
                             } else {
-
+                                if (txt.length() > 32767) {
+                                    txt = txt.substring(0, 32766);
+                                }
                                 row.createCell(idxSeg).setCellValue(txt);
                             }
                         }
@@ -198,6 +203,9 @@ public class SegmentationExcelWriter {
                             if (txt.endsWith("\n")) {
                                 txt = txt.substring(0, txt.length() - 2);
                             }
+                            if (txt.length() > 32767) {
+                                txt = txt.substring(0, 32766);
+                            }
                             row.createCell(idxSeg).setCellValue(txt);
                         }
                     }
@@ -207,6 +215,9 @@ public class SegmentationExcelWriter {
                         Sheet sheet = wb.getSheet("Bayes");
                         Row rx = sheet.createRow(sheet.getLastRowNum() + 1);
                         rx.createCell(0).setCellValue(fileName);
+                        if (txt.length() > 32767) {
+                            txt = txt.substring(0, 32766);
+                        }
                         rx.createCell(1).setCellValue(txt);
                         String[] bayesPath1 = (String[]) cps.get(0).getPath();
                         double[] score1 = (double[]) cps.get(0).getScore();

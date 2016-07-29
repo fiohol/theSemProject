@@ -3918,7 +3918,7 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
 
-        jLabel34.setText("Valore normalizzato");
+        jLabel34.setText("Nomralizzata");
 
         capturePatternFixedValue.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -4707,7 +4707,6 @@ public class SemGui extends javax.swing.JFrame {
         jTabbedPane5.addTab("Testo Formattato", jScrollPane28);
 
         fileText1.setColumns(20);
-        fileText1.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         fileText1.setRows(10);
         jScrollPane26.setViewportView(fileText1);
 

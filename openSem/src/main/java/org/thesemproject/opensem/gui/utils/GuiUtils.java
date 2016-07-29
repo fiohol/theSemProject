@@ -426,8 +426,8 @@ public class GuiUtils {
             }
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
             for (String word : lines) {
-                String value = new String(word.getBytes(), "UTF-8");
-                out.write(value + "\r\n");
+               // String value = new String(word.getBytes(), "UTF-8");
+                out.write(word + "\r\n");
             }
             out.close();
         } catch (Exception e) {
