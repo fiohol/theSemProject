@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -137,7 +138,8 @@ public class FilesAndSegmentsUtils {
             semGui.getFilesPanelHtmlFormatted1().setCaretPosition(0);
         }
         SemDocument dto = semGui.getTableData().get(id);
-        if (dto.getIdentifiedSegments() != null) {
+        if (dto == null) return;
+        if (dto != null && dto.getIdentifiedSegments() != null) {
             Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = dto.getIdentifiedSegments();
             String language = dto.getLanguage();
             try {
@@ -717,4 +719,73 @@ public class FilesAndSegmentsUtils {
         return;
     }
 
+    /**
+     * Rimuove i duplicati nella tabella dei files basandosi sul testo
+     * tokenizzato
+     *
+     * @since 1.2
+     *
+     * @param semGui frame
+     */
+    public static void removeDuplicates(SemGui semGui) {
+        if (semGui.isIsClassify()) {
+            semGui.getStopTagCloud().setValue(true);
+            semGui.getInterrompi().setEnabled(false);
+        } else {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!semGui.isIsClassify()) {
+                        semGui.getStopTagCloud().setValue(false);
+                        semGui.getInterrompi().setEnabled(true);
+                        semGui.setIsClassify(true);
+                        semGui.resetFilesFilters();
+                        ChangedUtils.prepareChanged(semGui);
+                        JTable filesTable = semGui.getFilesTable();
+                        JTable segTable = semGui.getSegmentsTable();
+                        DefaultTableModel model = (DefaultTableModel) filesTable.getModel();
+                        DefaultTableModel segModel = (DefaultTableModel) segTable.getModel();
+                        int count = model.getRowCount();
+                        Set<String> texts = new HashSet<>();
+                        Set<String> segToDelete = new HashSet<>();
+                        Set<String> fileToDelete = new HashSet<>();
+                        for (int i = count - 1; i >= 0; i--) {
+                            int pos = filesTable.convertRowIndexToModel(i);
+                            Integer id = (Integer) filesTable.getValueAt(pos, 0);
+                            SemDocument dto = semGui.getTableData().get(id);
+                            if (dto == null) continue;
+                            String text = String.valueOf(dto.getRow()[8]);
+                            if (text == null) {
+                                text = "";
+                            }
+                            text = semGui.getME().tokenize(text, String.valueOf(dto.getRow()[2]),-1);
+                            if (!texts.contains(text)) {
+                                texts.add(text);
+                            } else {
+                                List<Object[]> sr = dto.getSegmentRows();
+                                for (Object[] s : sr) {
+                                    segToDelete.add((String) s[0]);
+                                }
+                                semGui.getTableData().remove(id);
+                                model.removeRow(pos);
+                            }
+                        }
+                        int rc = segModel.getRowCount();
+                        for (int i = rc - 1; i >= 0; i--) {
+                            if (segToDelete.contains(segModel.getValueAt(i, 0))) {
+                                segModel.removeRow(i);
+                            }
+                        }
+                        semGui.updateStats();
+                        LogGui.info("Terminated...");
+                        semGui.getFilesInfoLabel().setText("Fine");
+                        semGui.setIsClassify(false);
+                        semGui.getInterrompi().setEnabled(false);
+                    }
+                }
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+    }
 }

@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.thesemproject.opensem.gui.modelEditor.CapturesGroupTreeNode;
 import org.thesemproject.opensem.parser.DocumentParser;
 
 /**
@@ -507,25 +508,16 @@ public class SegmentEngine {
                     globalCaptures = rootNode.getChild("GC");
                 }
                 if (globalCaptures != null) {
-                    List<Element> children = globalCaptures.getChildren();
-                    children.stream().forEach((child) -> {
-                        if (null != child.getName()) {
-                            String captureName = child.getAttributeValue("name");
-                            if (captureName == null) {
-                                captureName = child.getAttributeValue("n");
-                            }
-                            if (captureName != null) {
-                                CaptureTreeNode capture = new CaptureTreeNode(captureName);
-                                globalCapturesTreeNode.add(capture);
-                                if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
-                                    capture.setScope("sentence");
-                                    globalSentenciesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
-                                } else {
-                                    globalLinesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
-                                }
-                            }
-                        }
-                    });
+                    List<Element> children = globalCaptures.getChildren("c");
+                    processGlobalCapture(globalCapturesTreeNode, children, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations);
+                    List<Element> groups = globalCaptures.getChildren("cg"); //Catture nel gruppo
+                    for (Element group : groups) {
+                        List<Element> gchildren = group.getChildren("c");
+                        CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(group.getAttributeValue("n"));
+                        globalCapturesTreeNode.add(groupNode);
+                        processGlobalCapture(groupNode, gchildren, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations);
+                    }
+
                 }
 
                 LogGui.info("Read segments...");
@@ -540,6 +532,27 @@ public class SegmentEngine {
                 });
             }
         }
+    }
+
+    private void processGlobalCapture(ModelTreeNode captureContainer, List<Element> children, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, List<CaptureConfiguration> globalLinesCaptureConfigurations) {
+        children.stream().forEach((child) -> {
+            if (null != child.getName()) {
+                String captureName = child.getAttributeValue("name");
+                if (captureName == null) {
+                    captureName = child.getAttributeValue("n");
+                }
+                if (captureName != null) {
+                    CaptureTreeNode capture = new CaptureTreeNode(captureName);
+                    captureContainer.add(capture);
+                    if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
+                        capture.setScope("sentence");
+                        globalSentenciesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                    } else {
+                        globalLinesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                    }
+                }
+            }
+        });
     }
 
     private SegmentConfiguration getSegmentBean(Element segment, Map<String, Pattern> dictionary, Map<String, Pattern> tables, SegmentTreeNode parentNode, List<CaptureConfiguration> globalLinesCaptureConfigurations, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, Map<String, List<DataProviderRelationship>> enrichment) {
@@ -611,19 +624,14 @@ public class SegmentEngine {
                         break;
                     case "c":
                     case "capture":
-                        String captureName = child.getAttributeValue("name");
-                        if (captureName == null) {
-                            captureName = child.getAttributeValue("n");
-                        }
-                        if (captureName != null) {
-                            CaptureTreeNode capture = new CaptureTreeNode(captureName);
-                            capturesTreeNode.add(capture);
-                            if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
-                                capture.setScope("sentence");
-                                sb.addSentenceCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
-                            } else {
-                                sb.addCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
-                            }
+                        processCapture(sb, capturesTreeNode, child);
+                        break;
+                    case "cg":
+                        List<Element> gchildren = child.getChildren("c");
+                        CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(child.getAttributeValue("n"));
+                        capturesTreeNode.add(groupNode);
+                        for (Element gChild:gchildren) {
+                            processCapture(sb, groupNode, gChild);
                         }
                         break;
                     default:
@@ -633,6 +641,23 @@ public class SegmentEngine {
         });
 
         return sb;
+    }
+
+    private void processCapture(SegmentConfiguration sb, ModelTreeNode capturesTreeNode, Element child) {
+        String captureName = child.getAttributeValue("name");
+        if (captureName == null) {
+            captureName = child.getAttributeValue("n");
+        }
+        if (captureName != null) {
+            CaptureTreeNode capture = new CaptureTreeNode(captureName);
+            capturesTreeNode.add(capture);
+            if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
+                capture.setScope("sentence");
+                sb.addSentenceCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+            } else {
+                sb.addCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+            }
+        }
     }
 
     /**

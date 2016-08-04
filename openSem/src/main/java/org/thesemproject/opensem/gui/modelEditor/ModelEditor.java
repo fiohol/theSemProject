@@ -178,13 +178,24 @@ public class ModelEditor {
     }
 
     /**
-     * Verifica se un nodo è un contenitore di catture
+     * Verifica se un nodo è un contenitore di catture o gruppi di catture
      *
      * @param node nodo
      * @return true se è un contenitore di catture
      */
     public boolean isCapture(ModelTreeNode node) {
         return node.getNodeType() == ModelTreeNode.TYPE_CAPTURE;
+    }
+
+    /**
+     * Verifica se un nodo è un gruppo di catture
+     *
+     * @since 1.2
+     * @param node nodo
+     * @return true se è un gruppo di catture
+     */
+    public boolean isCaptureGroup(ModelTreeNode node) {
+        return node.getNodeType() == ModelTreeNode.TYPE_CAPTURE_GROUP;
     }
 
     /**
@@ -279,24 +290,32 @@ public class ModelEditor {
                                         addMenuVoice(popup, "Aggiungi segmento", "/org/thesemproject/opensem/gui/icons16/script.png", menuListener);
 
                                     }
-                                    if (isCapture(node) || isCaptureChild(node)) {
+                                    if (isCapture(node) || isCaptureChild(node) || isCaptureGroup(node)) {
                                         addMenuVoice(popup, "Aggiungi cattura", "/org/thesemproject/opensem/gui/icons16/doc_tag.png", menuListener);
-                                        addMenuVoice(popup, "Copia cattura", "/org/thesemproject/opensem/gui/icons16/page_copy.png", menuListener);
-                                        if (copyNode != null) {
+
+                                        if (copyNode != null || cutNode != null) {
                                             addMenuVoice(popup, "Incolla cattura", "/org/thesemproject/opensem/gui/icons16/page_paste.png", menuListener);
                                         }
                                     }
                                     if (isCapture(node)) {
                                         addMenuVoice(popup, "Comprimi catture", "/org/thesemproject/opensem/gui/icons16/compress.png", menuListener);
+                                        addMenuVoice(popup, "Aggiungi gruppo catture", "/org/thesemproject/opensem/gui/icons16/package.png", menuListener);
                                     }
+                                    if (isCaptureGroup(node)) {
+                                        addMenuVoice(popup, "Comprimi catture", "/org/thesemproject/opensem/gui/icons16/compress.png", menuListener);
+                                        addMenuVoice(popup, "Rinomina gruppo catture", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
+                                    }
+
                                     if (isCaptureChild(node)) {
+                                        addMenuVoice(popup, "Copia cattura", "/org/thesemproject/opensem/gui/icons16/page_copy.png", menuListener);
+                                        addMenuVoice(popup, "Taglia cattura", "/org/thesemproject/opensem/gui/icons16/cut.png", menuListener);
                                         addMenuVoice(popup, "Rinomina cattura", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
                                     }
 
                                     if (isTableChild(node)) {
                                         addMenuVoice(popup, "Rinomina tabella", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
                                     }
-                                    if (isTableChild(node) || isSegmentChild(node) || (isCaptureChild(node)) || (isDataProvidersChild(node)) || (isDataProvidersRelationship(node))) {
+                                    if (isTableChild(node) || isSegmentChild(node) || (isCaptureGroup(node)) || (isCaptureChild(node)) || (isDataProvidersChild(node)) || (isDataProvidersRelationship(node))) {
                                         addMenuVoice(popup, "Elimina", "/org/thesemproject/opensem/gui/icons16/cross.png", menuListener);
                                     }
                                     popup.show(tree, evt.getX(), evt.getY());
@@ -428,6 +447,10 @@ public class ModelEditor {
                 Element capture = ((CaptureTreeNode) child).getXmlElement();
                 segment.addContent(capture);
                 processCaptures(child, capture);
+            } else if (isCaptureGroup(child)) { //E' un gruppo
+                Element captureGroup = ((CapturesGroupTreeNode) child).getXmlElement();
+                segment.addContent(captureGroup);
+                processCaptures(child, captureGroup);
             }
         }
     }
@@ -539,6 +562,7 @@ public class ModelEditor {
     }
 
     private CaptureTreeNode copyNode = null;
+    private CaptureTreeNode cutNode = null;
 
     private void processDataProviders(ModelTreeNode node, Element dataproviders) {
         int childrenSize = node.getChildCount();
@@ -709,6 +733,16 @@ public class ModelEditor {
                             GuiUtils.showErrorDialog("Il nome di un dataprovider deve essere valido anche come\nnome di un file.", "Nome errato");
                         }
                     }
+                } else if (event.getActionCommand().startsWith("Aggiungi gruppo catture")) {
+                    String name = JOptionPane.showInputDialog(null, "Nome del gruppo");
+                    if (name != null) {
+                        name = "{" + name + "}";
+                        CapturesGroupTreeNode newNode = new CapturesGroupTreeNode(name);
+                        node.add(newNode);
+                        model.reload();
+                        GuiUtils.scrollToNode(tree, name);
+                        processNode(newNode);
+                    }
                 } else if (event.getActionCommand().startsWith("Aggiungi cattura")) {
                     String name = JOptionPane.showInputDialog(null, "Nome della cattura");
                     if (name != null) {
@@ -721,6 +755,8 @@ public class ModelEditor {
                 } else if (event.getActionCommand().startsWith("Copia cattura")) {
                     CaptureTreeNode mNode = (CaptureTreeNode) node;
                     copyNode = new CaptureTreeNode("copia", mNode);
+                } else if (event.getActionCommand().startsWith("Taglia cattura")) {
+                    cutNode = (CaptureTreeNode) node;
                 } else if (event.getActionCommand().startsWith("Incolla cattura")) {
                     if (copyNode != null) {
                         String name = JOptionPane.showInputDialog(null, "Nome della cattura");
@@ -732,6 +768,15 @@ public class ModelEditor {
                             processNode(newNode);
                         }
                         copyNode = null;
+                    }
+                    if (cutNode != null) {
+                        CaptureTreeNode newNode = new CaptureTreeNode(cutNode.getNodeName(), cutNode);
+                        model.removeNodeFromParent(cutNode);
+                        node.add(newNode);
+                        model.reload();
+                        GuiUtils.scrollToNode(tree, newNode.getNodeName());
+                        processNode(newNode);
+                        cutNode = null;
                     }
                 } else if (event.getActionCommand().startsWith("Elimina")) {
                     if (GuiUtils.showConfirmDialog("Confermi l'eliminazione del sottoramo selezionato?", "Conferma cancellazione")) {
@@ -759,6 +804,32 @@ public class ModelEditor {
                     if (name != null) {
                         CaptureTreeNode mNode = (CaptureTreeNode) node;
                         CaptureTreeNode newNode = new CaptureTreeNode(name, mNode);
+                        int count = mNode.getChildCount();
+                        for (int i = count - 1; i >= 0; i--) {
+                            CaptureTreeNode cnode = (CaptureTreeNode) mNode.getChildAt(i);
+                            mNode.remove(i);
+                            newNode.add(cnode);
+                        }
+                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+                        model.removeNodeFromParent(node);
+                        parent.add(newNode);
+                        model.reload();
+                        GuiUtils.scrollToNode(tree, name);
+                        processNode(newNode);
+                    }
+                } else if (event.getActionCommand().startsWith("Rinomina g")) {
+                    String n = node.toString();
+                    if (n.startsWith("{")) {
+                        n = n.substring(1);
+                    }
+                    if (n.endsWith("}")) {
+                        n = n.substring(0, n.length() - 1);
+                    }
+                    String name = JOptionPane.showInputDialog(null, "Nome dell gruppo", n);
+                    if (name != null) {
+                        name = "{"+name+"}";
+                        CapturesGroupTreeNode mNode = (CapturesGroupTreeNode) node;
+                        CapturesGroupTreeNode newNode = new CapturesGroupTreeNode(name, mNode);
                         int count = mNode.getChildCount();
                         for (int i = count - 1; i >= 0; i--) {
                             CaptureTreeNode cnode = (CaptureTreeNode) mNode.getChildAt(i);

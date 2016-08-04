@@ -392,7 +392,7 @@ public class MulticlassEngine {
 
     /**
      * Popola un excel con il contenuto dell'indice
-     * 
+     *
      * @since 1.2
      * @param language lingua indice
      * @param sheetResults excel da popolare
@@ -412,7 +412,9 @@ public class MulticlassEngine {
                 Document doc = ar.document(i);
                 SXSSFRow row = sheetResults.createRow(rownum++);
                 String text = doc.get(IndexManager.TEXT);
-                if (text == null) text = "";
+                if (text == null) {
+                    text = "";
+                }
                 row.createCell(0).setCellValue(text);
                 row.createCell(1).setCellValue(doc.get(IndexManager.BODY));
                 String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
@@ -448,18 +450,33 @@ public class MulticlassEngine {
             LogGui.printException(e);
         }
     }
-    
+
     /**
      * Tokenizza un testo utilizzando l'analizzatore sintattico e le stop words
      * di lingua
-     *
-     * Il servizio è fatto attraverso Tokenizer.tokenize(text, analyzer)
      *
      * @param text testo da tokenizzare
      * @param language lingua del testo da toeknizzare
      * @return testo tokenizzato
      */
     public String tokenize(String text, String language) {
+        return tokenize(text, language, 12);
+    }
+
+    /**
+     * Tokenizza un testo utilizzando l'analizzatore sintattico e le stop words
+     * di lingua
+     *
+     * Il servizio è fatto attraverso Tokenizer.tokenize(text, analyzer, tokens)
+     *
+     * @since 1.2
+     *
+     * @param text testo da tokenizzare
+     * @param language lingua del testo da toeknizzare
+     * @param tokens numero di token da preservare
+     * @return testo tokenizzato
+     */
+    public String tokenize(String text, String language, int tokens) {
         if (isInit) {
             String ret;
             try {
@@ -853,5 +870,5 @@ public class MulticlassEngine {
     public void storeXml(org.jdom2.Document document) {
         GuiUtils.storeXml(document, getStructurePath());
     }
-    
+
 }

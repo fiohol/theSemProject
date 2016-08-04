@@ -81,6 +81,15 @@ public class ModelTreeNode extends DefaultMutableTreeNode {
     public static int TYPE_DATA_PROVIDER_RELATIONSHIP = 10;
 
     /**
+     * Tipo nodo gruppo di cattura (uno o più nodi figli di TYPE_CAPTURE che può
+     * contenere CAPTURE_DEFINITION)
+     *
+     * @since 1.2
+     *
+     */
+    public static int TYPE_CAPTURE_GROUP = 11;
+
+    /**
      * Pool interno
      */
     protected static InternPool intern = new InternPool();

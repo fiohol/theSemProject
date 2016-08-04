@@ -360,6 +360,7 @@ public class SemGui extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JToolBar.Separator();
         salvaStorage = new javax.swing.JButton();
         exportToExcel = new javax.swing.JButton();
+        removeDuplicates = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         tagCloud = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -1995,6 +1996,18 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(exportToExcel);
+
+        removeDuplicates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/asterisk_orange.png"))); // NOI18N
+        removeDuplicates.setText("Cancella Duplicati");
+        removeDuplicates.setFocusable(false);
+        removeDuplicates.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        removeDuplicates.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        removeDuplicates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeDuplicatesActionPerformed(evt);
+            }
+        });
+        filesToolbar.add(removeDuplicates);
         filesToolbar.add(jSeparator3);
 
         tagCloud.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/eye.png"))); // NOI18N
@@ -6454,6 +6467,10 @@ public class SemGui extends javax.swing.JFrame {
         selectExportExcelIndex.setVisible(false);
     }//GEN-LAST:event_expotExcelIndexFileChooserActionPerformed
 
+    private void removeDuplicatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDuplicatesActionPerformed
+        FilesAndSegmentsUtils.removeDuplicates(this);
+    }//GEN-LAST:event_removeDuplicatesActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6933,6 +6950,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JCheckBox rebuildIndex;
     private javax.swing.JButton removeDefinitionFilters;
     private javax.swing.JButton removeDocumentFilter;
+    private javax.swing.JButton removeDuplicates;
     private javax.swing.JButton removeFilters;
     private javax.swing.JButton removeSearchFilter;
     private javax.swing.JButton removeStopWordFilter;

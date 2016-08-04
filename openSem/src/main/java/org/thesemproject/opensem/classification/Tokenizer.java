@@ -44,6 +44,22 @@ public class Tokenizer {
      * @throws Exception Eccezione
      */
     public static String tokenize(String text, Analyzer analyzer) throws Exception {
+        return tokenize(text, analyzer, 12);
+    }
+
+    /**
+     * Tokenizza un testo. Utile per mostare l'effetto della tokenizzazione su
+     * un testo o per preparare un testo prima dell'istruzione del motore
+     *
+     * @since 1.2
+     *
+     * @param text testo da tokenizzare
+     * @param analyzer analizzatore sintattico
+     * @param tokens numero massimo di token da tenere
+     * @return testo tokenizzato (come testo)
+     * @throws Exception Eccezione
+     */
+    public static String tokenize(String text, Analyzer analyzer, int tokens) throws Exception {
         TokenizerFilter tf = new TokenizerFilter() {
             private final StringBuilder body = new StringBuilder();
 
@@ -56,7 +72,7 @@ public class Tokenizer {
                 return body.toString();
             }
         };
-        tokenize(text, analyzer, 12, tf);
+        tokenize(text, analyzer, tokens, tf);
         return tf.toString();
     }
 
@@ -149,10 +165,10 @@ public class Tokenizer {
      * altro, o l'inserimento di un carattere. Per esempio, per trasformare
      * "bar" in "biro" occorrono due modifiche:
      *
-     * "bar" -&gt; "bir" (sostituzione di 'a' con 'i') "bir" -&gt; "biro" (inserimento
-     * di 'o') Non è possibile trasformare la prima parola nella seconda con
-     * meno di due modifiche, quindi la distanza di Levenshtein fra "bar" e
-     * "biro" è 2.
+     * "bar" -&gt; "bir" (sostituzione di 'a' con 'i') "bir" -&gt; "biro"
+     * (inserimento di 'o') Non è possibile trasformare la prima parola nella
+     * seconda con meno di due modifiche, quindi la distanza di Levenshtein fra
+     * "bar" e "biro" è 2.
      *
      * @param a prima stringa
      * @param b seconda stringa
