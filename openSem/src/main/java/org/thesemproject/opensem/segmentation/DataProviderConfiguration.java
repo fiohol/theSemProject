@@ -23,6 +23,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ import org.apache.lucene.store.RAMDirectory;
  * I dati del csv verranno indicizzati in un indice di lucene in modo da rendere
  * più agevole il matching
  */
-public class DataProviderConfiguration {
+public class DataProviderConfiguration implements Serializable{
 
     /**
      * Tipi di sorgente gestibili da dataprovider CSV UTF-8 oppure CSV ISO
@@ -333,13 +334,16 @@ public class DataProviderConfiguration {
                 Document doc = new Document();
                 for (String field : csvRecord) {
                     String fieldName = invFields.get(String.valueOf(pos));
-                    if (fields.get(fieldName).equals("date")) {
+                    String tmp = fields.get(fieldName);
+                    if (tmp == null) continue;
+                    if (tmp.equals("date")) {
                         field = DateUtils.parseString(field);
                         if (field == null) {
                             field = "";
                         }
                     }
                     doc.add(new StringField(fieldName, field, Field.Store.YES));
+                    doc.add(new StringField(fieldName+"_lower", field.toLowerCase(), Field.Store.YES));
                     pos++;
                 }
                 indexWriter.addDocument(doc);
@@ -420,7 +424,7 @@ public class DataProviderConfiguration {
      * @throws IOException Eccezione di input/output
      */
     public Document search(Query query) throws IOException {
-        LogGui.info("Query: " + query.toString());
+//        LogGui.info("Query: " + query.toString());
         IndexSearcher indexSearcher = new IndexSearcher(reader);
         ScoreDoc[] sDocs = indexSearcher.search(query, 1).scoreDocs;
         if (sDocs.length > 0) {

@@ -59,52 +59,52 @@ public class DateUtils {
     /**
      * Modi di scrivere gennaio
      */
-    public static final String GEN = "genn?aio|january|(gen|jan)(\\.)?";
+    public static final String GEN = "janu(a|á)r|genn?aio|january|(gen|jan)(\\.)?";
 
     /**
      * Modi di scrivere febbraio
      */
-    public static final String FEB = "febb?raio|february|(feb|febbr|febb)(\\.)?";
+    public static final String FEB = "febru(a|ár)|febb?raio|february|(feb|febbr|febb)(\\.)?";
 
     /**
      * Modi di scrivere marzo
      */
-    public static final String MAR = "marzo|march|mar(\\.)?";
+    public static final String MAR = "marec|marzo|march|mar(\\.)?";
 
     /**
      * Modi di scrivere aprile
      */
-    public static final String APR = "aprile|april|apr(\\.)?";
+    public static final String APR = "apri(\\.)?|aprile|april|apr(\\.)?";
 
     /**
      * Modi di scrivere maggio
      */
-    public static final String MAG = "magg?io|may|mag(\\.)?";
+    public static final String MAG = "m(a|á)j|magg?io|may|mag(\\.)?";
 
     /**
      * Modi di scrivere giugno
      */
-    public static final String GIU = "giugno|june|(giu|jun)(\\.)?";
+    public static final String GIU = "j(u|ú)n|giugno|june|(giu|jun)(\\.)?";
 
     /**
      * Modi di scrivere luglio
      */
-    public static final String LUG = "luglio|july|(jul|lug)(\\.)?";
+    public static final String LUG = "j(u|ú)l|luglio|july|(jul|lug)(\\.)?";
 
     /**
      * Modi di scrivere agosto
      */
-    public static final String AGO = "agosto|august|(ago|aug)(\\.)?";
+    public static final String AGO = "agosto|august|(ago|augu|agu|aug)(\\.)?";
 
     /**
      * Modi di scrivere settembre
      */
-    public static final String SET = "sett?embre|september|(set|sett|sept)(\\.)?";
+    public static final String SET = "septemb(ra|er)|sett?embre|september|(set|sep|sett|sept)(\\.)?";
 
     /**
      * Modi di scrivere ottobre
      */
-    public static final String OTT = "ott?obre|october|(ott|oct)(\\.)?";
+    public static final String OTT = "ott?obre|october|okt(o|ó)ber|(ott|okt|oct)(\\.)?";
 
     /**
      * Modi di scrivere novembre
@@ -184,7 +184,7 @@ public class DateUtils {
                 } else if (PATTERNS[9].matcher(stringDate).matches()) {
                     str = stringDate.substring(0, 2) + '/' + stringDate.substring(2, 4) + stringDate.substring(4);
                 } else if (PATTERNS[10].matcher(stringDate).matches()) {
-                    str = '0' + stringDate.substring(0, 1) + "/0" + stringDate.substring(2, 3) + "/20" + stringDate.substring(4);
+                    str = '0' + stringDate.substring(0, 1) + "/0" + stringDate.substring(2, 3) + "/" + stringDate.substring(4);
                 } else if (PATTERNS[11].matcher(stringDate).matches()) {
                     str = stringDate.substring(6) + '/' + stringDate.substring(4, 6) + '/' + stringDate.substring(0, 4);
                 }
@@ -377,4 +377,6 @@ public class DateUtils {
         }
         return retArray;
     }
+    
+    
 }

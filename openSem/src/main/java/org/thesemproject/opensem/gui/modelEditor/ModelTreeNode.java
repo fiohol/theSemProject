@@ -88,6 +88,22 @@ public class ModelTreeNode extends DefaultMutableTreeNode {
      *
      */
     public static int TYPE_CAPTURE_GROUP = 11;
+    
+    /**
+     * Tipo nodo formula definition
+     *
+     * @since 1.3
+     *
+     */
+    public static int TYPE_FORMULA_DEFINITION = 12;
+    
+    /**
+     * Tipo nodo formula 
+     *
+     * @since 1.3
+     *
+     */
+    public static int TYPE_FORMULA = 13;
 
     /**
      * Pool interno

@@ -27,12 +27,10 @@ import java.beans.*;
  *
  *  The source of the Action is a TableCellListener instance.
  */
-
 /**
  *
  * Listner sulle tabelle
  */
-
 public class TableCellListener implements PropertyChangeListener, Runnable {
 
     private JTable table;
@@ -137,8 +135,8 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
         }
     }
 
-    /*
-	 *  Save information of the cell about to be edited
+    /**
+     * Save information of the cell about to be edited
      */
     private void processEditingStarted() {
         //  The invokeLater is necessary because the editing row and editing
@@ -149,12 +147,8 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
         SwingUtilities.invokeLater(this);
     }
 
-    /*
-	 *  See above.
-     */
-
     /**
-     *
+     * See above.
      */
     @Override
     public void run() {

@@ -79,7 +79,7 @@ public class CaptureTreeNode extends ModelTreeNode {
         temporary = cloned.temporary;
         startPeriod = cloned.startPeriod;
         endPeriod = cloned.endPeriod;
-
+        classificationPath = cloned.classificationPath;
     }
 
     /**

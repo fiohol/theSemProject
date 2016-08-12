@@ -62,6 +62,7 @@ public class ModelEditor {
     private final JSplitPane captureSplit;
     private final JSplitPane dataproviderSplit;
     private final JSplitPane dataproviderRelatioshipSplit;
+    private final JPanel forumlaSplitPanel;
     private final JPanel tablePanel;
     private final JPanel helpPanel;
     private final SemGui sem;
@@ -86,6 +87,7 @@ public class ModelEditor {
         helpPanel = (JPanel) this.modelElements.getComponentAt(4);
         dataproviderSplit = (JSplitPane) this.modelElements.getComponentAt(5);
         dataproviderRelatioshipSplit = (JSplitPane) this.modelElements.getComponentAt(6);
+        forumlaSplitPanel = (JPanel) this.modelElements.getComponentAt(7);
         modelElements.removeAll();
         modelElements.addTab("Model Editor", helpPanel);
     }
@@ -145,6 +147,30 @@ public class ModelEditor {
      */
     public boolean isDataProvidersChild(ModelTreeNode node) {
         return node.getClass().equals(DataProviderTreeNode.class);
+    }
+
+    /**
+     * Verifica se un nodo è il nodo Formule
+     *
+     * @since 1.3
+     *
+     * @param node nodo
+     * @return true se è forumla
+     */
+    public boolean isForumlas(ModelTreeNode node) {
+        return (node.getNodeType() == ModelTreeNode.TYPE_FORMULA);
+    }
+
+    /**
+     * Verifica se un nodo è una forumla
+     *
+     * @since 1.3
+     *
+     * @param node nodo
+     * @return true se è un dataprovider
+     */
+    public boolean isForumlaDefinition(ModelTreeNode node) {
+        return node.getClass().equals(FormulaTreeNode.class);
     }
 
     /**
@@ -235,6 +261,10 @@ public class ModelEditor {
             DictionaryUtils.populateDictionarySplit((DictionaryTreeNode) node, sem);
             modelElements.addTab("Dizionario", dictionarySplit);
 
+        } else if (isForumlaDefinition(node)) {
+            setCurrentNode(node);
+            CapturesUtils.populateForumlaSplit((FormulaTreeNode) node, sem);
+            modelElements.addTab(node.toString(), forumlaSplitPanel);
         } else {
             setCurrentNode(null);
             modelElements.addTab("Model Editor", helpPanel);
@@ -305,17 +335,21 @@ public class ModelEditor {
                                         addMenuVoice(popup, "Comprimi catture", "/org/thesemproject/opensem/gui/icons16/compress.png", menuListener);
                                         addMenuVoice(popup, "Rinomina gruppo catture", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
                                     }
-
                                     if (isCaptureChild(node)) {
                                         addMenuVoice(popup, "Copia cattura", "/org/thesemproject/opensem/gui/icons16/page_copy.png", menuListener);
                                         addMenuVoice(popup, "Taglia cattura", "/org/thesemproject/opensem/gui/icons16/cut.png", menuListener);
                                         addMenuVoice(popup, "Rinomina cattura", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
                                     }
-
+                                    if (isForumlas(node)) {
+                                        addMenuVoice(popup, "Aggiungi Formula", "/org/thesemproject/opensem/gui/icons16/doc_tag.png", menuListener);
+                                    }
+                                    if (isForumlaDefinition(node)) {
+                                        addMenuVoice(popup, "Rinomina Formula", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
+                                    }
                                     if (isTableChild(node)) {
                                         addMenuVoice(popup, "Rinomina tabella", "/org/thesemproject/opensem/gui/icons16/application_edit.png", menuListener);
                                     }
-                                    if (isTableChild(node) || isSegmentChild(node) || (isCaptureGroup(node)) || (isCaptureChild(node)) || (isDataProvidersChild(node)) || (isDataProvidersRelationship(node))) {
+                                    if (isForumlaDefinition(node) || isTableChild(node) || isSegmentChild(node) || (isCaptureGroup(node)) || (isCaptureChild(node)) || (isDataProvidersChild(node)) || (isDataProvidersRelationship(node))) {
                                         addMenuVoice(popup, "Elimina", "/org/thesemproject/opensem/gui/icons16/cross.png", menuListener);
                                     }
                                     popup.show(tree, evt.getX(), evt.getY());
@@ -435,6 +469,19 @@ public class ModelEditor {
                 processSegment((SegmentTreeNode) child, subSegment);
             } else if (isCapture(child)) {
                 processCaptures(child, segment);
+            } else if (isForumlas(child)) {
+                processForumlas(child, segment);
+            }
+        }
+    }
+
+    private void processForumlas(ModelTreeNode node, Element segment) {
+        int childrenSize = node.getChildCount();
+        for (int i = 0; i < childrenSize; i++) {
+            ModelTreeNode child = (ModelTreeNode) node.getChildAt(i);
+            if (isForumlaDefinition(child)) { //E' un figlio
+                Element formula = ((FormulaTreeNode) child).getXmlElement();
+                segment.addContent(formula);
             }
         }
     }
@@ -523,20 +570,35 @@ public class ModelEditor {
     }
 
     /**
-     * Ritorna la lista delle catture del segmento
+     * Ritorna la lista delle catture e delle formule del segmento
      *
      * @param root root dell'albero del modello
      * @param segmentName nome del segmento
      * @return lista dei nomi delle catture
      */
     public List<String> getSegmentsCaptures(DefaultMutableTreeNode root, String segmentName) {
+        return getSegmentsCaptures(root, segmentName, true);
+    }
+
+    /**
+     * Ritorna la lista delle catture del segmento
+     *
+     * @since 1.3
+     *
+     * @param root root dell'albero del modello
+     * @param segmentName nome del segmento
+     * @param includeFormulas true se deve includere nella lista anche le
+     * formule (che sono comunque catture)
+     * @return lista dei nomi delle catture
+     */
+    public List<String> getSegmentsCaptures(DefaultMutableTreeNode root, String segmentName, boolean includeFormulas) {
         List<String> names = new ArrayList<>();
         Enumeration<DefaultMutableTreeNode> e = root.depthFirstEnumeration();
         while (e.hasMoreElements()) {
             DefaultMutableTreeNode node = e.nextElement();
             if (node instanceof SegmentTreeNode) {
                 SegmentTreeNode snode = ((SegmentTreeNode) node);
-                if (snode.getNodeName().equals(segmentName)) {
+                if ((segmentName == null) || (snode.getNodeName().equals(segmentName))) {
                     Enumeration<DefaultMutableTreeNode> ex = snode.depthFirstEnumeration();
                     while (ex.hasMoreElements()) {
                         DefaultMutableTreeNode xnode = ex.nextElement();
@@ -546,13 +608,23 @@ public class ModelEditor {
                                 names.add(cname);
                             }
                         }
+                        if (includeFormulas) {
+                            if (xnode instanceof FormulaTreeNode) {
+                                String cname = ((FormulaTreeNode) xnode).getNodeName();
+                                if (!names.contains(cname)) {
+                                    names.add(cname);
+                                }
+                            }
+                        }
                     }
                 }
             } else if (node instanceof CaptureTreeNode) {
                 CaptureTreeNode ctn = (CaptureTreeNode) node;
                 if (ctn.getEnabledSegments() != null) {
-                    if (ctn.getEnabledSegments().contains(segmentName)) {
-                        names.add(ctn.getNodeName());
+                    if ((segmentName == null) || ctn.getEnabledSegments().contains(segmentName)) {
+                        if (!names.contains(ctn.getNodeName())) {
+                            names.add(ctn.getNodeName());
+                        }
                     }
                 }
             }
@@ -778,6 +850,15 @@ public class ModelEditor {
                         processNode(newNode);
                         cutNode = null;
                     }
+                } else if (event.getActionCommand().startsWith("Aggiungi Formula")) {
+                    String name = JOptionPane.showInputDialog(null, "Nome della formula (cattura)");
+                    if (name != null) {
+                        FormulaTreeNode newNode = new FormulaTreeNode(name);
+                        node.add(newNode);
+                        model.reload();
+                        GuiUtils.scrollToNode(tree, name);
+                        processNode(newNode);
+                    }
                 } else if (event.getActionCommand().startsWith("Elimina")) {
                     if (GuiUtils.showConfirmDialog("Confermi l'eliminazione del sottoramo selezionato?", "Conferma cancellazione")) {
                         if (node instanceof DataProviderTreeNode) {
@@ -827,7 +908,7 @@ public class ModelEditor {
                     }
                     String name = JOptionPane.showInputDialog(null, "Nome dell gruppo", n);
                     if (name != null) {
-                        name = "{"+name+"}";
+                        name = "{" + name + "}";
                         CapturesGroupTreeNode mNode = (CapturesGroupTreeNode) node;
                         CapturesGroupTreeNode newNode = new CapturesGroupTreeNode(name, mNode);
                         int count = mNode.getChildCount();
@@ -859,6 +940,18 @@ public class ModelEditor {
                         TableTreeNode newNode = new TableTreeNode(name, mNode);
                         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
                         renameTable(root, mNode.getNodeName(), name);
+                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+                        model.removeNodeFromParent(node);
+                        parent.add(newNode);
+                        model.reload();
+                        GuiUtils.scrollToNode(tree, name);
+                        processNode(newNode);
+                    }
+                } else if (event.getActionCommand().startsWith("Rinomina F")) {
+                    String name = JOptionPane.showInputDialog(null, "Nome della formula", node.toString());
+                    if (name != null) {
+                        FormulaTreeNode mNode = (FormulaTreeNode) node;
+                        FormulaTreeNode newNode = new FormulaTreeNode(name, mNode);
                         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
                         model.removeNodeFromParent(node);
                         parent.add(newNode);

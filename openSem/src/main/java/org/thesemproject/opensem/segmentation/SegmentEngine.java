@@ -46,6 +46,7 @@ import java.util.regex.Matcher;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.thesemproject.opensem.gui.modelEditor.CapturesGroupTreeNode;
+import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 import org.thesemproject.opensem.parser.DocumentParser;
 
 /**
@@ -54,7 +55,14 @@ import org.thesemproject.opensem.parser.DocumentParser;
  */
 public class SegmentEngine {
 
+    /**
+     * Gestisce il ritorno a capo
+     */
     public static final String CR = "\n";
+
+    /**
+     * Gestisce il tab
+     */
     public static final String TAB = "\t";
     private final Map<String, Pattern> bigRegexPattern;
     private DefaultTreeModel visualStructure;
@@ -215,8 +223,7 @@ public class SegmentEngine {
                     if (match) {
                         break;
                     } else //Provo a vedere se c'è un match con linea precedente + \n linea 
-                    {
-                        if (lastLine.length() != 0) {
+                     if (lastLine.length() != 0) {
                             String newLine = lastLine + "@" + line;
                             for (Pattern pattern : patterns) {
                                 if (pattern.matcher(newLine).find()) { //ha matchato la sezione
@@ -246,7 +253,6 @@ public class SegmentEngine {
                                 }
                             }
                         }
-                    }
                 }
                 if (previousLines.length() != 0) {
                     previousLines = previousLines + " " + line;
@@ -586,6 +592,9 @@ public class SegmentEngine {
         segmentModelTreeNode.setSegmentConfiguration(sb);
         ModelTreeNode capturesTreeNode = new ModelTreeNode("Catture", ModelTreeNode.TYPE_CAPTURE);
         segmentModelTreeNode.add(capturesTreeNode);
+        ModelTreeNode formulasTreeNode = new ModelTreeNode("Formule", ModelTreeNode.TYPE_FORMULA);
+        segmentModelTreeNode.add(formulasTreeNode);
+
         if (parentNode == null) {
             segmentsNode.add(segmentModelTreeNode);
         } else {
@@ -630,9 +639,12 @@ public class SegmentEngine {
                         List<Element> gchildren = child.getChildren("c");
                         CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(child.getAttributeValue("n"));
                         capturesTreeNode.add(groupNode);
-                        for (Element gChild:gchildren) {
+                        for (Element gChild : gchildren) {
                             processCapture(sb, groupNode, gChild);
                         }
+                        break;
+                    case "f":
+                        processFormulas(sb, formulasTreeNode, child);
                         break;
                     default:
                         break;
@@ -657,6 +669,18 @@ public class SegmentEngine {
             } else {
                 sb.addCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
             }
+        }
+    }
+
+    private void processFormulas(SegmentConfiguration sb, ModelTreeNode formulasTreeNode, Element child) {
+        String formulaName = child.getAttributeValue("name");
+        if (formulaName == null) {
+            formulaName = child.getAttributeValue("n");
+        }
+        if (formulaName != null) {
+            FormulaTreeNode formula = new FormulaTreeNode(formulaName);
+            formulasTreeNode.add(formula);
+            sb.addFormula(getFormulaConfiguration(child, formulaName, formula));
         }
     }
 
@@ -859,6 +883,20 @@ public class SegmentEngine {
         return cc;
     }
 
+    private FormulaConfiguration getFormulaConfiguration(Element child, String formulaName, FormulaTreeNode formula) {
+        formula.setActBeforeEnrichment("true".equalsIgnoreCase(child.getAttributeValue("b")));
+        formula.setFormatPattern(child.getAttributeValue("f"));
+        FormulaConfiguration cc = new FormulaConfiguration(formulaName, formula.getFormatPattern(), formula.isActBeforeEnrichment());
+        List<Element> captures = child.getChildren();
+        captures.stream().forEach((captureChildren) -> {
+            if ("c".equalsIgnoreCase(captureChildren.getName())) {
+                formula.addCapture(captureChildren.getValue());
+                cc.addCapture(captureChildren.getValue());
+            }
+        });
+        return cc;
+    }
+
     private void addSentenceToResult(String previousLine, SegmentConfiguration currentSegment, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) {
         List<SegmentationResults> sent = identifiedSegments.get(currentSegment);
         if (sent == null) {
@@ -974,6 +1012,8 @@ public class SegmentEngine {
     private void processSegment(SegmentConfiguration segmentBean, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, MulticlassEngine me, double threshold, String language) {
         List<CaptureConfiguration> captureConfigurations = segmentBean.getCaptureConfigurations();
         List<CaptureConfiguration> sCaptureConfigurations = segmentBean.getSentenceCaptureConfigurations();
+        List<FormulaConfiguration> formulasAfter = segmentBean.getFormulasAfterEnrich();
+        List<FormulaConfiguration> formulasBefore = segmentBean.getFormulasBeforeEnrich();
         Map<String, CaptureConfiguration> capturesIndex = new HashMap<>();
         captureConfigurations.stream().forEach((c) -> {
             addCaptureToIndex(c, capturesIndex);
@@ -1004,10 +1044,28 @@ public class SegmentEngine {
                 List<String> srLines = sr.getSentencies();
                 extractCaptures(sCaptureConfigurations, sr, srLines);
             });
+            //Formule pre arricchimento
+            if (!formulasBefore.isEmpty()) {
+                segmentResults.stream().forEach((sr) -> {
+                    for (FormulaConfiguration formula : formulasBefore) {
+                        formula.applyFormula(sr, capturesIndex);
+                    }
+                });
+
+            }
             if (!relationships.isEmpty()) {
                 segmentResults.stream().forEach((sr) -> {
                     for (DataProviderRelationship dpr : relationships) {
                         dpr.enrich(sr, capturesIndex);
+                    }
+                });
+            }
+
+            //Formule post arricchimento
+            if (!formulasAfter.isEmpty()) {
+                segmentResults.stream().forEach((sr) -> {
+                    for (FormulaConfiguration formula : formulasAfter) {
+                        formula.applyFormula(sr, capturesIndex);
                     }
                 });
             }

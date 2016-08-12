@@ -111,7 +111,7 @@ public class DataProviderRelationship implements Serializable {
             if (captureValue == null) {
                 return;
             }
-            TermQuery tq = new TermQuery(new Term(field, captureValue));
+            TermQuery tq = new TermQuery(new Term(field+"_lower", captureValue.toLowerCase()));
             bq.add(tq, BooleanClause.Occur.MUST);
         }
         try {

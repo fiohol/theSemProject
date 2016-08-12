@@ -218,7 +218,7 @@ public class SegmentationResults implements Serializable {
         } else if ("number".equalsIgnoreCase(type)) {
             //Devo validare che sia un numero
             try {
-                double real = Double.parseDouble(value);
+                double real = Double.parseDouble(value.replace(",",".").replace(" ",""));
                 if (toFormat) {
                     DecimalFormat myFormatter = DECIMAL_FORMAT_CACHE.get(format);
                     if (myFormatter == null) {

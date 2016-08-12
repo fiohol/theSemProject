@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 
 /**
  *
@@ -243,16 +244,61 @@ public class CapturesUtils {
                         node.addPattern(position, value, semGui.getCapturePatternFixedValue().getText());
                     }
                 } else //Modifica
-                {
-                    if (PatternsUtils.testPattern(value, false, semGui)) {
+                 if (PatternsUtils.testPattern(value, false, semGui)) {
                         node.updatePattern(id, position, value, semGui.getCapturePatternFixedValue().getText());
                     }
-                }
                 CapturesUtils.populateCaptureSplit(node, semGui);
             }
             List<TreePath> path = new ArrayList<>();
             path.add(new TreePath(node.getPath()));
             GuiUtils.scrollToPath(semGui.getModelTree(), path);
+        }
+    }
+
+    /**
+     * Al click sul nodo popola il pannello con la configurazione della formula
+     *
+     * @param node nodo cliccato
+     * @param semGui frame
+     */
+    public static void populateForumlaSplit(FormulaTreeNode node, SemGui semGui) {
+        semGui.getFormulaName().setText(node.getNodeName());
+        semGui.getFormulaPattern().setText(node.getFormatPattern());
+        semGui.getActBeforeEnrichment().setSelected(node.isActBeforeEnrichment());
+        GuiUtils.clearTable(semGui.getFormulaCapturesTable());
+        DefaultTableModel model = (DefaultTableModel) semGui.getFormulaCapturesTable().getModel();
+        node.getCaptures().stream().forEach((String[] row) -> {
+            model.addRow(row);
+        });
+    }
+
+    /**
+     * Gestisce la cancellazione di una cattura dai parametri di una formula
+     *
+     * @param semGui frame
+     */
+    public static void deleteFormulaCapture(SemGui semGui) {
+        int positions[] = semGui.getFormulaCapturesTable().getSelectedRows();
+        boolean confirm = false;
+        if (positions.length > 1) {
+            confirm = GuiUtils.showConfirmDialog("Sei sicuro di voler cancellare tutte le righe selezionate?", "Confermi cancellazione?");
+        }
+        for (int i = 0; i < positions.length; i++) {
+            int position = semGui.getFormulaCapturesTable().convertRowIndexToModel(positions[i] - i);
+            String id = (String) semGui.getFormulaCapturesTable().getValueAt(position, 0);
+            if (id.length() > 0) {
+
+                if (!confirm) {
+                    confirm = GuiUtils.showConfirmDialog("Sei sicuro di voler cancellare la formula selezionata?", "Confermi cancellazione?");
+                }
+                if (confirm) {
+                    FormulaTreeNode node = (FormulaTreeNode) semGui.getModelEditor().getCurrentNode();
+                    if (node != null) {
+                        node.removeCapture(id);
+                        populateForumlaSplit(node, semGui);
+                    }
+                }
+            }
         }
     }
 

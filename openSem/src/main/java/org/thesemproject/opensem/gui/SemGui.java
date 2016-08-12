@@ -58,6 +58,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,6 +102,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 import org.thesemproject.opensem.utils.FinalBoolean;
 
 /**
@@ -363,12 +365,15 @@ public class SemGui extends javax.swing.JFrame {
         removeDuplicates = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         tagCloud = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jButton6 = new javax.swing.JButton();
+        jSeparator49 = new javax.swing.JToolBar.Separator();
+        capturesFilter = new javax.swing.JButton();
         jSeparator9 = new javax.swing.JToolBar.Separator();
         jLabel13 = new javax.swing.JLabel();
         filterFile = new javax.swing.JTextField();
+        jSeparator48 = new javax.swing.JToolBar.Separator();
+        jButton5 = new javax.swing.JButton();
         segments = new javax.swing.JSplitPane();
         classificationTreePanel = new javax.swing.JPanel();
         etichettaAlberoSegmenti = new javax.swing.JLabel();
@@ -690,9 +695,27 @@ public class SemGui extends javax.swing.JFrame {
         dprCapture = new javax.swing.JComboBox<>();
         dprEnrich = new javax.swing.JCheckBox();
         dprKey = new javax.swing.JCheckBox();
+        formulaPanel = new javax.swing.JPanel();
+        formulaSplitPanel = new javax.swing.JSplitPane();
+        capturesPanel = new javax.swing.JPanel();
+        capturesToolbar = new javax.swing.JToolBar();
+        formulaAddCapture = new javax.swing.JButton();
+        formulaDeleteCapture = new javax.swing.JButton();
+        jSeparator50 = new javax.swing.JToolBar.Separator();
+        moveUpF = new javax.swing.JButton();
+        moveDownF = new javax.swing.JButton();
+        moveTopF = new javax.swing.JButton();
+        moveBottomF = new javax.swing.JButton();
+        capturesScrollPanel = new javax.swing.JScrollPane();
+        capturesTable = new javax.swing.JTable();
+        segmentPatternStatus1 = new javax.swing.JLabel();
+        formulaConfigurationPanel = new javax.swing.JPanel();
+        jLabel40 = new javax.swing.JLabel();
+        jLabel41 = new javax.swing.JLabel();
+        formulaName = new javax.swing.JLabel();
+        formulaFormat = new javax.swing.JTextField();
+        actBeforeEnrichment = new javax.swing.JCheckBox();
         modelTreeSplitPanel = new javax.swing.JPanel();
-        modelTreeScrollPanel = new javax.swing.JScrollPane();
-        modelTree = new javax.swing.JTree();
         jToolBar1 = new javax.swing.JToolBar();
         jButton8 = new javax.swing.JButton();
         jSeparator29 = new javax.swing.JToolBar.Separator();
@@ -703,6 +726,10 @@ public class SemGui extends javax.swing.JFrame {
         segmenta1 = new javax.swing.JButton();
         jSeparator28 = new javax.swing.JToolBar.Separator();
         resetModel = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        modelTreeScrollPanel = new javax.swing.JScrollPane();
+        modelTree = new javax.swing.JTree();
+        jTextField3 = new javax.swing.JTextField();
         filesDx1 = new javax.swing.JPanel();
         jTabbedPane5 = new javax.swing.JTabbedPane();
         jPanel12 = new javax.swing.JPanel();
@@ -2022,18 +2049,6 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(tagCloud);
-
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_undo.png"))); // NOI18N
-        jButton5.setToolTipText("Reset");
-        jButton5.setFocusable(false);
-        jButton5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-        filesToolbar.add(jButton5);
         filesToolbar.add(jSeparator2);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
@@ -2047,6 +2062,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(jButton6);
+        filesToolbar.add(jSeparator49);
+
+        capturesFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/nuclear.png"))); // NOI18N
+        capturesFilter.setText("Catture non definite");
+        capturesFilter.setFocusable(false);
+        capturesFilter.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        capturesFilter.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        capturesFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturesFilterActionPerformed(evt);
+            }
+        });
+        filesToolbar.add(capturesFilter);
         filesToolbar.add(jSeparator9);
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
@@ -2069,6 +2097,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(filterFile);
+        filesToolbar.add(jSeparator48);
+
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_undo.png"))); // NOI18N
+        jButton5.setToolTipText("Reset");
+        jButton5.setFocusable(false);
+        jButton5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        filesToolbar.add(jButton5);
 
         files.add(filesToolbar, java.awt.BorderLayout.NORTH);
 
@@ -3002,7 +3043,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(definitionDefinitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
+                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addComponent(definitionName)
                     .addComponent(definitionPatternTestScrollPanel)
                     .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
@@ -3215,7 +3256,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(defaultYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(segmentName, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(classifyYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(574, Short.MAX_VALUE))
+                .addContainerGap(460, Short.MAX_VALUE))
         );
         segmentConfigurationPanelLayout.setVerticalGroup(
             segmentConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3331,7 +3372,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
+                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addComponent(segmentPatternDefinitionScrollPanel)
                     .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3749,6 +3790,11 @@ public class SemGui extends javax.swing.JFrame {
                 captureFormatActionPerformed(evt);
             }
         });
+        captureFormat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                captureFormatKeyReleased(evt);
+            }
+        });
 
         jLabel30.setText("Scope");
 
@@ -3946,8 +3992,8 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
-                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
+                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                         .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4344,7 +4390,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel51, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel54, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                     .addComponent(jLabel57, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4373,7 +4419,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dpFieldTableRelationship, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel57))
-                .addContainerGap(723, Short.MAX_VALUE))
+                .addContainerGap(694, Short.MAX_VALUE))
         );
 
         capturePatternEditPanel1.add(capturePatternContentTable1, java.awt.BorderLayout.CENTER);
@@ -4487,7 +4533,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(dprPriority))
                     .addComponent(dprSegment, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(207, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
         captureConfigurationPanel5Layout.setVerticalGroup(
             captureConfigurationPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4572,7 +4618,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(dprFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(417, Short.MAX_VALUE))
+                .addContainerGap(306, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4589,7 +4635,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addComponent(dprEnrich)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(dprKey)
-                .addContainerGap(744, Short.MAX_VALUE))
+                .addContainerGap(712, Short.MAX_VALUE))
         );
 
         capturePatternEditPanel3.add(jPanel7, java.awt.BorderLayout.CENTER);
@@ -4600,30 +4646,208 @@ public class SemGui extends javax.swing.JFrame {
 
         modelElements.addTab("Relazioni Data Provider", dataproviderRelationship);
 
+        formulaPanel.setLayout(new java.awt.BorderLayout());
+
+        formulaSplitPanel.setDividerLocation(160);
+        formulaSplitPanel.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        capturesPanel.setLayout(new java.awt.BorderLayout());
+
+        capturesToolbar.setRollover(true);
+
+        formulaAddCapture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/add.png"))); // NOI18N
+        formulaAddCapture.setToolTipText("Nuovo");
+        formulaAddCapture.setFocusable(false);
+        formulaAddCapture.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        formulaAddCapture.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        formulaAddCapture.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formulaAddCaptureActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(formulaAddCapture);
+
+        formulaDeleteCapture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bin_closed.png"))); // NOI18N
+        formulaDeleteCapture.setToolTipText("Cancella");
+        formulaDeleteCapture.setFocusable(false);
+        formulaDeleteCapture.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        formulaDeleteCapture.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        formulaDeleteCapture.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formulaDeleteCaptureActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(formulaDeleteCapture);
+        capturesToolbar.add(jSeparator50);
+
+        moveUpF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_up.gif"))); // NOI18N
+        moveUpF.setToolTipText("Muovi su");
+        moveUpF.setFocusable(false);
+        moveUpF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveUpF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveUpF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveUpFActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(moveUpF);
+
+        moveDownF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_fat_down.gif"))); // NOI18N
+        moveDownF.setToolTipText("Muovi Giu");
+        moveDownF.setFocusable(false);
+        moveDownF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveDownF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveDownF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveDownFActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(moveDownF);
+
+        moveTopF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_up.gif"))); // NOI18N
+        moveTopF.setToolTipText("Muovi Inizio");
+        moveTopF.setFocusable(false);
+        moveTopF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveTopF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveTopF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveTopFActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(moveTopF);
+
+        moveBottomF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons/arrow_dash_down.gif"))); // NOI18N
+        moveBottomF.setToolTipText("Muovi alla fine");
+        moveBottomF.setFocusable(false);
+        moveBottomF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moveBottomF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moveBottomF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveBottomFActionPerformed(evt);
+            }
+        });
+        capturesToolbar.add(moveBottomF);
+
+        capturesPanel.add(capturesToolbar, java.awt.BorderLayout.PAGE_START);
+
+        capturesTable.setAutoCreateRowSorter(true);
+        capturesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Cattura"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        capturesTable.getTableHeader().setReorderingAllowed(false);
+        capturesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                capturesTableMouseClicked(evt);
+            }
+        });
+        capturesScrollPanel.setViewportView(capturesTable);
+        if (capturesTable.getColumnModel().getColumnCount() > 0) {
+            capturesTable.getColumnModel().getColumn(0).setMinWidth(0);
+            capturesTable.getColumnModel().getColumn(0).setPreferredWidth(0);
+            capturesTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        }
+        segmentPatternsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (segmentPatternsTable.getSelectedRow() > -1) {
+                    // print first column value from selected row
+                    segmentPatternsTableAction();
+                }
+            }
+        });
+
+        capturesPanel.add(capturesScrollPanel, java.awt.BorderLayout.CENTER);
+        capturesPanel.add(segmentPatternStatus1, java.awt.BorderLayout.PAGE_END);
+
+        formulaSplitPanel.setBottomComponent(capturesPanel);
+
+        jLabel40.setText("Nome");
+
+        jLabel41.setText("Format");
+
+        formulaName.setText("Nome della formula");
+
+        formulaFormat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formulaFormatActionPerformed(evt);
+            }
+        });
+        formulaFormat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formulaFormatKeyReleased(evt);
+            }
+        });
+
+        actBeforeEnrichment.setText("Agisce prima dell'arricchimento da dataprovider");
+        actBeforeEnrichment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actBeforeEnrichmentActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout formulaConfigurationPanelLayout = new javax.swing.GroupLayout(formulaConfigurationPanel);
+        formulaConfigurationPanel.setLayout(formulaConfigurationPanelLayout);
+        formulaConfigurationPanelLayout.setHorizontalGroup(
+            formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(actBeforeEnrichment, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
+                        .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel41, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(formulaFormat)
+                            .addComponent(formulaName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        formulaConfigurationPanelLayout.setVerticalGroup(
+            formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel40)
+                    .addComponent(formulaName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel41)
+                    .addComponent(formulaFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(actBeforeEnrichment)
+                .addContainerGap(35, Short.MAX_VALUE))
+        );
+
+        formulaSplitPanel.setLeftComponent(formulaConfigurationPanel);
+
+        formulaPanel.add(formulaSplitPanel, java.awt.BorderLayout.CENTER);
+
+        modelElements.addTab("Forumula", formulaPanel);
+
         modelEditor.setRightComponent(modelElements);
 
         modelTreeSplitPanel.setLayout(new java.awt.BorderLayout());
-
-        treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modello");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Dizionario");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Catture");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Segmenti");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Tabelle");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Data providers");
-        treeNode1.add(treeNode2);
-        modelTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        modelTree.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                modelTreeMouseClicked(evt);
-            }
-        });
-        modelTreeScrollPanel.setViewportView(modelTree);
-
-        modelTreeSplitPanel.add(modelTreeScrollPanel, java.awt.BorderLayout.CENTER);
 
         jToolBar1.setRollover(true);
 
@@ -4697,6 +4921,40 @@ public class SemGui extends javax.swing.JFrame {
         jToolBar1.add(resetModel);
 
         modelTreeSplitPanel.add(jToolBar1, java.awt.BorderLayout.PAGE_START);
+
+        jPanel10.setLayout(new java.awt.BorderLayout());
+
+        treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Modello");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Dizionario");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Catture");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Segmenti");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Tabelle");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Data providers");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Formule");
+        treeNode1.add(treeNode2);
+        modelTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        modelTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                modelTreeMouseClicked(evt);
+            }
+        });
+        modelTreeScrollPanel.setViewportView(modelTree);
+
+        jPanel10.add(modelTreeScrollPanel, java.awt.BorderLayout.CENTER);
+
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
+            }
+        });
+        jPanel10.add(jTextField3, java.awt.BorderLayout.PAGE_START);
+
+        modelTreeSplitPanel.add(jPanel10, java.awt.BorderLayout.CENTER);
 
         modelEditor.setLeftComponent(modelTreeSplitPanel);
 
@@ -6304,10 +6562,12 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_importDpFieldsActionPerformed
 
     private void dprSegmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dprSegmentActionPerformed
-        DataProviderTreeRelationshipNode node = (DataProviderTreeRelationshipNode) me.getCurrentNode();
-        if (node != null) {
-            node.setSegmentName((String) dprSegment.getSelectedItem());
-            DataProvidersUtils.populateDataProviderRelationship(node, this);
+        if (me.getCurrentNode() instanceof DataProviderTreeRelationshipNode) {
+            DataProviderTreeRelationshipNode node = (DataProviderTreeRelationshipNode) me.getCurrentNode();
+            if (node != null) {
+                node.setSegmentName((String) dprSegment.getSelectedItem());
+                DataProvidersUtils.populateDataProviderRelationship(node, this);
+            }
         }
     }//GEN-LAST:event_dprSegmentActionPerformed
 
@@ -6471,6 +6731,112 @@ public class SemGui extends javax.swing.JFrame {
         FilesAndSegmentsUtils.removeDuplicates(this);
     }//GEN-LAST:event_removeDuplicatesActionPerformed
 
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+        String searched = jTextField3.getText();
+        if (searched.length() > 0) {
+            List<TreePath> paths = GuiUtils.find((DefaultMutableTreeNode) modelTree.getModel().getRoot(), searched, false);
+            GuiUtils.scrollToPath(modelTree, paths);
+        }
+
+    }//GEN-LAST:event_jTextField3ActionPerformed
+
+    private void capturesFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturesFilterActionPerformed
+        if (isClassify) {
+            return;
+        }
+        GuiUtils.filterTable(filesTable, null, 0);
+        List<String> cx = me.getSegmentsCaptures((DefaultMutableTreeNode) modelTree.getModel().getRoot(), null);
+        Object[] capturesList = cx.toArray();
+        String capture = GuiUtils.showChoiceDIalog("Selezionare la cattura per la quale\nsi vogliono filtrare i file in cui non è valorizzata", "Selezionare cattura", capturesList);
+        //Scorro tutti i file e vedo dove la cattura non è definita, andando a filtrare
+        StringBuffer filter = new StringBuffer();
+        final int size = filesTable.getRowCount();
+        for (int row = 0; row < size; row++) {
+            int pos = filesTable.convertRowIndexToModel(row);
+            Integer id = (Integer) filesTable.getValueAt(pos, 0);
+            SemDocument dto = tableData.get(id);
+            List<Object[]> captures = dto.getCapturesRows();
+            boolean found = false;
+            for (Object[] cRow : captures) {
+                String key = String.valueOf(cRow[1]);
+                if (key.equals(capture)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                filter.append((filter.length() == 0) ? id : ("|" + id));
+            }
+
+        }
+
+        if (filter.length() > 0) {
+            GuiUtils.filterTable(filesTable, filter.toString(), 0);
+        }
+    }//GEN-LAST:event_capturesFilterActionPerformed
+
+    private void formulaDeleteCaptureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formulaDeleteCaptureActionPerformed
+        CapturesUtils.deleteFormulaCapture(this);
+    }//GEN-LAST:event_formulaDeleteCaptureActionPerformed
+
+    private void moveUpFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpFActionPerformed
+        GuiUtils.moveUp(capturesTable);
+        ((FormulaTreeNode) me.getCurrentNode()).updateCapturesFromTable(capturesTable);
+    }//GEN-LAST:event_moveUpFActionPerformed
+
+    private void moveDownFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownFActionPerformed
+        GuiUtils.moveDown(capturesTable);
+        ((FormulaTreeNode) me.getCurrentNode()).updateCapturesFromTable(capturesTable);
+    }//GEN-LAST:event_moveDownFActionPerformed
+
+    private void moveTopFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveTopFActionPerformed
+        GuiUtils.moveTop(capturesTable);
+        ((FormulaTreeNode) me.getCurrentNode()).updateCapturesFromTable(capturesTable);
+    }//GEN-LAST:event_moveTopFActionPerformed
+
+    private void moveBottomFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveBottomFActionPerformed
+        GuiUtils.moveBottom(capturesTable);
+        ((FormulaTreeNode) me.getCurrentNode()).updateCapturesFromTable(capturesTable);
+    }//GEN-LAST:event_moveBottomFActionPerformed
+
+    private void capturesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturesTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_capturesTableMouseClicked
+
+    private void formulaAddCaptureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formulaAddCaptureActionPerformed
+        List<String> cx = me.getSegmentsCaptures((DefaultMutableTreeNode) modelTree.getModel().getRoot(), null, false);
+        Object[] capturesList = cx.toArray();
+        String capture = GuiUtils.showChoiceDIalog("Selezionare la cattura", "Selezionare cattura", capturesList);
+        if (capture != null) {
+            FormulaTreeNode node = (FormulaTreeNode) me.getCurrentNode();
+            if (node != null) {
+                node.addCapture(capture);
+                CapturesUtils.populateForumlaSplit(node, this);
+            }
+        }
+    }//GEN-LAST:event_formulaAddCaptureActionPerformed
+
+    private void formulaFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formulaFormatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formulaFormatActionPerformed
+
+    private void captureFormatKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_captureFormatKeyReleased
+        captureFormatActionPerformed(null);
+    }//GEN-LAST:event_captureFormatKeyReleased
+
+    private void formulaFormatKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formulaFormatKeyReleased
+        FormulaTreeNode node = (FormulaTreeNode) me.getCurrentNode();
+        if (node != null) {
+            node.setFormatPattern(formulaFormat.getText());
+        }
+    }//GEN-LAST:event_formulaFormatKeyReleased
+
+    private void actBeforeEnrichmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actBeforeEnrichmentActionPerformed
+        FormulaTreeNode node = (FormulaTreeNode) me.getCurrentNode();
+        if (node != null) {
+            node.setActBeforeEnrichment(actBeforeEnrichment.isSelected());
+        }
+    }//GEN-LAST:event_actBeforeEnrichmentActionPerformed
+
     /**
      * Metodo di start del software SemGUI
      *
@@ -6519,6 +6885,7 @@ public class SemGui extends javax.swing.JFrame {
     private final FinalBoolean stopSegmentAndClassify = new FinalBoolean(false);
     private final FinalBoolean stopTagCloud = new FinalBoolean(false);
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox actBeforeEnrichment;
     private javax.swing.JButton addCapturePattern;
     private javax.swing.JButton addDpField;
     private javax.swing.JButton addStopWord;
@@ -6563,6 +6930,11 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> captureTarget;
     private javax.swing.JComboBox<String> captureType;
     private javax.swing.JTable captureValues;
+    private javax.swing.JButton capturesFilter;
+    private javax.swing.JPanel capturesPanel;
+    private javax.swing.JScrollPane capturesScrollPanel;
+    private javax.swing.JTable capturesTable;
+    private javax.swing.JToolBar capturesToolbar;
     private javax.swing.JTextField catClass;
     private javax.swing.JTree categorieSegmentsPanel;
     private javax.swing.JTextField cercaCategoriaSegmentsPanel;
@@ -6693,6 +7065,13 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton firstLevelOnly;
     private javax.swing.JFileChooser folderChooser;
     private javax.swing.JFileChooser folderToLoadChooser;
+    private javax.swing.JButton formulaAddCapture;
+    private javax.swing.JPanel formulaConfigurationPanel;
+    private javax.swing.JButton formulaDeleteCapture;
+    private javax.swing.JTextField formulaFormat;
+    private javax.swing.JLabel formulaName;
+    private javax.swing.JPanel formulaPanel;
+    private javax.swing.JSplitPane formulaSplitPanel;
     private javax.swing.JCheckBox fromDataProvider;
     private javax.swing.JPanel gestioneIndice;
     private javax.swing.JTabbedPane gestioneIndiceTabbedPanel;
@@ -6758,6 +7137,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
@@ -6776,6 +7157,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
@@ -6860,7 +7242,10 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator45;
     private javax.swing.JToolBar.Separator jSeparator46;
     private javax.swing.JToolBar.Separator jSeparator47;
+    private javax.swing.JToolBar.Separator jSeparator48;
+    private javax.swing.JToolBar.Separator jSeparator49;
     private javax.swing.JToolBar.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator50;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
@@ -6882,6 +7267,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar10;
     private javax.swing.JToolBar jToolBar11;
@@ -6918,12 +7304,16 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JPanel modelTreeSplitPanel;
     private javax.swing.JButton moveBottom;
     private javax.swing.JButton moveBottom1;
+    private javax.swing.JButton moveBottomF;
     private javax.swing.JButton moveDown;
     private javax.swing.JButton moveDown1;
+    private javax.swing.JButton moveDownF;
     private javax.swing.JButton moveTop;
     private javax.swing.JButton moveTop1;
+    private javax.swing.JButton moveTopF;
     private javax.swing.JButton moveUp;
     private javax.swing.JButton moveUp1;
+    private javax.swing.JButton moveUpF;
     private javax.swing.JComboBox<String> multipleYN;
     private javax.swing.JButton newDefinition;
     private javax.swing.JButton notMarked;
@@ -6983,6 +7373,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JPanel segmentPatternPanel;
     private javax.swing.JScrollPane segmentPatternScrollPanelTestArea;
     private javax.swing.JLabel segmentPatternStatus;
+    private javax.swing.JLabel segmentPatternStatus1;
     private javax.swing.JTextArea segmentPatternTestArea;
     private javax.swing.JToolBar segmentPatternToolbar;
     private javax.swing.JPanel segmentPatternsPanel;
@@ -9534,5 +9925,39 @@ public class SemGui extends javax.swing.JFrame {
         }
         return 1;
     }
+
+    /**
+     *
+     * @return nome della formula
+     */
+    public JLabel getFormulaName() {
+        return formulaName;
+    }
+
+    /**
+     *
+     * @return pattern di normalizzazione della formula
+     */
+    public JTextField getFormulaPattern() {
+        return formulaFormat;
+    }
+
+    /**
+     *
+     * @return tabella con le catture
+     */
+    public JTable getFormulaCapturesTable() {
+        return capturesTable;
+    }
+
+    /**
+     *
+     * @return checkbox per identificare se la formula agisce prima o dopo l'enrich
+     */
+    public JCheckBox getActBeforeEnrichment() {
+        return actBeforeEnrichment;
+    }
+    
+    
 
 }

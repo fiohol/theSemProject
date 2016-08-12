@@ -2196,20 +2196,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tagCloudActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton5">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/arrow_undo.png"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Reset"/>
-                    <Property name="focusable" type="boolean" value="false"/>
-                    <Property name="horizontalAlignment" type="int" value="11"/>
-                    <Property name="horizontalTextPosition" type="int" value="4"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
                 </Component>
                 <Component class="javax.swing.JButton" name="jButton6">
@@ -2224,6 +2210,22 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton6ActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JToolBar$Separator" name="jSeparator49">
+                </Component>
+                <Component class="javax.swing.JButton" name="capturesFilter">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/nuclear.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Catture non definite"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalAlignment" type="int" value="4"/>
+                    <Property name="horizontalTextPosition" type="int" value="4"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturesFilterActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JToolBar$Separator" name="jSeparator9">
@@ -2247,6 +2249,22 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="filterFileActionPerformed"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="filterFileKeyReleased"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="filterFileKeyTyped"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JToolBar$Separator" name="jSeparator48">
+                </Component>
+                <Component class="javax.swing.JButton" name="jButton5">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/arrow_undo.png"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" value="Reset"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalAlignment" type="int" value="11"/>
+                    <Property name="horizontalTextPosition" type="int" value="4"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -3848,7 +3866,7 @@
                                           <Group type="102" attributes="0">
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="definitionPatternScrollPanel" pref="763" max="32767" attributes="0"/>
+                                                  <Component id="definitionPatternScrollPanel" pref="648" max="32767" attributes="0"/>
                                                   <Component id="definitionName" alignment="0" max="32767" attributes="0"/>
                                                   <Component id="definitionPatternTestScrollPanel" max="32767" attributes="0"/>
                                                   <Group type="102" attributes="0">
@@ -4152,7 +4170,7 @@
                                                   <Component id="segmentName" alignment="0" min="-2" pref="129" max="-2" attributes="0"/>
                                                   <Component id="classifyYN" alignment="0" min="-2" max="-2" attributes="0"/>
                                               </Group>
-                                              <EmptySpace pref="574" max="32767" attributes="0"/>
+                                              <EmptySpace pref="460" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -4383,7 +4401,7 @@
                                           <Group type="102" attributes="0">
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="segmentPatternScrollPanelTestArea" alignment="0" pref="763" max="32767" attributes="0"/>
+                                                  <Component id="segmentPatternScrollPanelTestArea" alignment="0" pref="648" max="32767" attributes="0"/>
                                                   <Component id="segmentPatternDefinitionScrollPanel" alignment="0" max="32767" attributes="0"/>
                                                   <Group type="102" attributes="0">
                                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -5061,6 +5079,7 @@
                                         <Component class="javax.swing.JTextField" name="captureFormat">
                                           <Events>
                                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="captureFormatActionPerformed"/>
+                                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="captureFormatKeyReleased"/>
                                           </Events>
                                         </Component>
                                         <Component class="javax.swing.JLabel" name="jLabel30">
@@ -5234,8 +5253,8 @@
                                           <Group type="102" attributes="0">
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="capturePatternContentScrollPanel" alignment="0" pref="763" max="32767" attributes="0"/>
-                                                  <Component id="jScrollPane35" alignment="0" pref="763" max="32767" attributes="0"/>
+                                                  <Component id="capturePatternContentScrollPanel" alignment="0" pref="648" max="32767" attributes="0"/>
+                                                  <Component id="jScrollPane35" alignment="0" pref="648" max="32767" attributes="0"/>
                                                   <Group type="102" attributes="0">
                                                       <Group type="103" groupAlignment="0" attributes="0">
                                                           <Component id="jLabel31" min="-2" pref="60" max="-2" attributes="0"/>
@@ -5865,7 +5884,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="jLabel51" alignment="0" max="32767" attributes="0"/>
                                                   <Component id="jLabel54" alignment="0" max="32767" attributes="0"/>
-                                                  <Component id="jLabel55" alignment="0" pref="318" max="32767" attributes="0"/>
+                                                  <Component id="jLabel55" alignment="0" pref="204" max="32767" attributes="0"/>
                                                   <Component id="jLabel57" alignment="0" max="32767" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
@@ -5902,7 +5921,7 @@
                                                   <Component id="dpFieldTableRelationship" alignment="3" min="-2" max="-2" attributes="0"/>
                                                   <Component id="jLabel57" alignment="3" min="-2" max="-2" attributes="0"/>
                                               </Group>
-                                              <EmptySpace pref="723" max="32767" attributes="0"/>
+                                              <EmptySpace pref="694" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -6118,7 +6137,7 @@
                                                       </Group>
                                                       <Component id="dprSegment" min="-2" pref="190" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <EmptySpace pref="207" max="32767" attributes="0"/>
+                                                  <EmptySpace pref="93" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                         </DimensionLayout>
@@ -6271,7 +6290,7 @@
                                                       <Component id="dprFieldName" min="-2" pref="250" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
-                                              <EmptySpace pref="417" max="32767" attributes="0"/>
+                                              <EmptySpace pref="306" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -6292,7 +6311,7 @@
                                               <Component id="dprEnrich" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                               <Component id="dprKey" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="744" max="32767" attributes="0"/>
+                                              <EmptySpace pref="712" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -6347,6 +6366,282 @@
                         </Container>
                       </SubComponents>
                     </Container>
+                    <Container class="javax.swing.JPanel" name="formulaPanel">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Forumula">
+                            <Property name="tabTitle" type="java.lang.String" value="Forumula"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JSplitPane" name="formulaSplitPanel">
+                          <Properties>
+                            <Property name="dividerLocation" type="int" value="160"/>
+                            <Property name="orientation" type="int" value="0"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+                          <SubComponents>
+                            <Container class="javax.swing.JPanel" name="capturesPanel">
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                  <JSplitPaneConstraints position="bottom"/>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                              <SubComponents>
+                                <Container class="javax.swing.JToolBar" name="capturesToolbar">
+                                  <Properties>
+                                    <Property name="rollover" type="boolean" value="true"/>
+                                  </Properties>
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                                      <BorderConstraints direction="First"/>
+                                    </Constraint>
+                                  </Constraints>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                  <SubComponents>
+                                    <Component class="javax.swing.JButton" name="formulaAddCapture">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/add.png"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Nuovo"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalAlignment" type="int" value="4"/>
+                                        <Property name="horizontalTextPosition" type="int" value="4"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="formulaAddCaptureActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                    <Component class="javax.swing.JButton" name="formulaDeleteCapture">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/bin_closed.png"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Cancella"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalAlignment" type="int" value="4"/>
+                                        <Property name="horizontalTextPosition" type="int" value="4"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="formulaDeleteCaptureActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator50">
+                                    </Component>
+                                    <Component class="javax.swing.JButton" name="moveUpF">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons/arrow_fat_up.gif"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Muovi su"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                                        <Property name="verticalTextPosition" type="int" value="3"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moveUpFActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                    <Component class="javax.swing.JButton" name="moveDownF">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons/arrow_fat_down.gif"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Muovi Giu"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                                        <Property name="verticalTextPosition" type="int" value="3"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moveDownFActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                    <Component class="javax.swing.JButton" name="moveTopF">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons/arrow_dash_up.gif"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Muovi Inizio"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                                        <Property name="verticalTextPosition" type="int" value="3"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moveTopFActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                    <Component class="javax.swing.JButton" name="moveBottomF">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons/arrow_dash_down.gif"/>
+                                        </Property>
+                                        <Property name="toolTipText" type="java.lang.String" value="Muovi alla fine"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                                        <Property name="verticalTextPosition" type="int" value="3"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moveBottomFActionPerformed"/>
+                                      </Events>
+                                    </Component>
+                                  </SubComponents>
+                                </Container>
+                                <Container class="javax.swing.JScrollPane" name="capturesScrollPanel">
+                                  <AuxValues>
+                                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                                  </AuxValues>
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                                      <BorderConstraints direction="Center"/>
+                                    </Constraint>
+                                  </Constraints>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                  <SubComponents>
+                                    <Component class="javax.swing.JTable" name="capturesTable">
+                                      <Properties>
+                                        <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                          <Table columnCount="2" rowCount="0">
+                                            <Column editable="false" title="ID" type="java.lang.String"/>
+                                            <Column editable="false" title="Cattura" type="java.lang.String"/>
+                                          </Table>
+                                        </Property>
+                                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                                          <TableColumnModel selectionModel="0">
+                                            <Column maxWidth="0" minWidth="0" prefWidth="0" resizable="true">
+                                              <Title/>
+                                              <Editor/>
+                                              <Renderer/>
+                                            </Column>
+                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                              <Title/>
+                                              <Editor/>
+                                              <Renderer/>
+                                            </Column>
+                                          </TableColumnModel>
+                                        </Property>
+                                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                          <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                                        </Property>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="capturesTableMouseClicked"/>
+                                      </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="segmentPatternsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {&#xa;    @Override&#xa;    public void valueChanged(ListSelectionEvent event) {&#xa;        if (segmentPatternsTable.getSelectedRow() &gt; -1) {&#xa;            // print first column value from selected row&#xa;             segmentPatternsTableAction();&#xa;        }&#xa;    }&#xa;});"/>
+                                      </AuxValues>
+                                    </Component>
+                                  </SubComponents>
+                                </Container>
+                                <Component class="javax.swing.JLabel" name="segmentPatternStatus1">
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                                      <BorderConstraints direction="Last"/>
+                                    </Constraint>
+                                  </Constraints>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                            <Container class="javax.swing.JPanel" name="formulaConfigurationPanel">
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                  <JSplitPaneConstraints position="left"/>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="actBeforeEnrichment" pref="648" max="32767" attributes="0"/>
+                                              <Group type="102" attributes="0">
+                                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                                      <Component id="jLabel40" alignment="0" max="32767" attributes="0"/>
+                                                      <Component id="jLabel41" alignment="0" pref="65" max="32767" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="formulaFormat" max="32767" attributes="0"/>
+                                                      <Component id="formulaName" max="32767" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="jLabel40" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="formulaName" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="jLabel41" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="formulaFormat" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="actBeforeEnrichment" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace pref="35" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Component class="javax.swing.JLabel" name="jLabel40">
+                                  <Properties>
+                                    <Property name="text" type="java.lang.String" value="Nome"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel41">
+                                  <Properties>
+                                    <Property name="text" type="java.lang.String" value="Format"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="formulaName">
+                                  <Properties>
+                                    <Property name="text" type="java.lang.String" value="Nome della formula"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JTextField" name="formulaFormat">
+                                  <Events>
+                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="formulaFormatActionPerformed"/>
+                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="formulaFormatKeyReleased"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JCheckBox" name="actBeforeEnrichment">
+                                  <Properties>
+                                    <Property name="text" type="java.lang.String" value="Agisce prima dell&apos;arricchimento da dataprovider"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="actBeforeEnrichmentActionPerformed"/>
+                                  </Events>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="modelTreeSplitPanel">
@@ -6358,30 +6653,6 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
                   <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="modelTreeScrollPanel">
-                      <AuxValues>
-                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                          <BorderConstraints direction="Center"/>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                      <SubComponents>
-                        <Component class="javax.swing.JTree" name="modelTree">
-                          <Properties>
-                            <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-                              <TreeModel code="Modello&#xa; Dizionario&#xa; Catture&#xa; Segmenti&#xa; Tabelle&#xa; Data providers&#xa;        "/>
-                            </Property>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modelTreeMouseClicked"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
                     <Container class="javax.swing.JToolBar" name="jToolBar1">
                       <Properties>
                         <Property name="rollover" type="boolean" value="true"/>
@@ -6476,6 +6747,51 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetModelActionPerformed"/>
                           </Events>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="jPanel10">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                          <BorderConstraints direction="Center"/>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="modelTreeScrollPanel">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTree" name="modelTree">
+                              <Properties>
+                                <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
+                                  <TreeModel code="Modello&#xa; Dizionario&#xa; Catture&#xa; Segmenti&#xa; Tabelle&#xa; Data providers&#xa; Formule&#xa;&#xa;        "/>
+                                </Property>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modelTreeMouseClicked"/>
+                              </Events>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Component class="javax.swing.JTextField" name="jTextField3">
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField3ActionPerformed"/>
+                          </Events>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="First"/>
+                            </Constraint>
+                          </Constraints>
                         </Component>
                       </SubComponents>
                     </Container>

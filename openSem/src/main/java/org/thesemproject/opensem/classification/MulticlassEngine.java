@@ -481,7 +481,7 @@ public class MulticlassEngine {
             String ret;
             try {
                 MyAnalyzer analyzer = getAnalyzer(language);
-                ret = Tokenizer.tokenize(text, analyzer);
+                ret = Tokenizer.tokenize(text, analyzer, tokens);
             } catch (Exception e) {
                 LogGui.printException(e);
                 ret = "";
@@ -545,7 +545,12 @@ public class MulticlassEngine {
             return null;
         }
         try {
-            return classifyOnRoot(tokenize(text, language), root, th, true, language).get(0);
+            List<ClassificationPath> path = classifyOnRoot(tokenize(text, language), root, th, true, language);
+            if (path.size() > 0) {
+                return path.get(0);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             LogGui.printException(e);
         }

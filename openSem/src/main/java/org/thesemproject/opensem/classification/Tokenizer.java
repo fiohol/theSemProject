@@ -16,13 +16,8 @@
 package org.thesemproject.opensem.classification;
 
 import static org.thesemproject.opensem.classification.IndexManager.BODY;
-import org.thesemproject.opensem.tagcloud.TagClass;
 import org.thesemproject.opensem.tagcloud.TagCloudResults;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;

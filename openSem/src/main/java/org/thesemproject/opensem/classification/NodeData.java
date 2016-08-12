@@ -63,6 +63,7 @@ public class NodeData {
     /**
      * Crea un nodo radice (ROOT)
      *
+     * @param startLevel livello di partenza
      * @param k soglia KNN
      * @param intern internizzatore di stringhe
      */
@@ -645,9 +646,9 @@ public class NodeData {
     /**
      * Ritrova il percorso di classificazione di un nodo a partire dalla root
      *
-     * @param cp
-     * @param node
-     * @param level
+     * @param cp classification path
+     * @param node nodo 
+     * @param level livello
      */
     public static void findPath(ClassificationPath cp, NodeData node, int level) {
         cp.addResult(node.parent.nodeName, 1, level - 1);

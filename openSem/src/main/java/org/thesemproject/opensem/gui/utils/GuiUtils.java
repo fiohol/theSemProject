@@ -297,6 +297,28 @@ public class GuiUtils {
     }
 
     /**
+     * Mostra un dialog di scelta con una lista di dropdown
+     *
+     * @since 1.3
+     *
+     * @param message messaggio
+     * @param title titolo
+     * @param choices lista delle scelte
+     * @return selezione dell'utente o null
+     */
+    public static String showChoiceDIalog(String message, String title, Object[] choices) {
+        if (choices == null) {
+            return null;
+        }
+        if (choices.length == 0) {
+            return null;
+        }
+        return (String) JOptionPane.showInputDialog(null,
+                message, title,
+                JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+    }
+
+    /**
      * gestisce i filtri su una tabella
      *
      * @param table tabella
@@ -426,7 +448,7 @@ public class GuiUtils {
             }
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
             for (String word : lines) {
-               // String value = new String(word.getBytes(), "UTF-8");
+                // String value = new String(word.getBytes(), "UTF-8");
                 out.write(word + "\r\n");
             }
             out.close();

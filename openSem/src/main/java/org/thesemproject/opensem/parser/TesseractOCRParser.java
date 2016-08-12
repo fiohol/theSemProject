@@ -136,6 +136,16 @@ public class TesseractOCRParser extends AbstractParser {
         }
     }
 
+    /**
+     * Parsa una immagine
+     * @param image immagine
+     * @param handler handler
+     * @param metadata metadata
+     * @param context contesto
+     * @throws IOException eccezione di scrittura
+     * @throws SAXException eccezione di sax
+     * @throws TikaException eccezione di tika
+     */
     public void parse(Image image, ContentHandler handler, Metadata metadata, ParseContext context) throws IOException,
             SAXException, TikaException {
 

@@ -35,6 +35,8 @@ public class SegmentConfiguration implements Serializable {
     List<CaptureConfiguration> captureConfigurations;
     List<CaptureConfiguration> sentenceCaptureConfigurations;
     List<DataProviderRelationship> relationships;
+    List<FormulaConfiguration> formulasBeforeEnrich;
+    List<FormulaConfiguration> formulasAfterEnrich;
     boolean isDefault;
     boolean classify;
 
@@ -94,6 +96,8 @@ public class SegmentConfiguration implements Serializable {
         this.isDefault = isDefault;
         this.classify = classify;
         this.relationships = new ArrayList<>();
+        this.formulasAfterEnrich = new ArrayList<>();
+        this.formulasBeforeEnrich = new ArrayList<>();
     }
 
     /**
@@ -267,6 +271,40 @@ public class SegmentConfiguration implements Serializable {
      */
     public List<DataProviderRelationship> getRelationships() {
         return this.relationships;
+    }
+
+    /**
+     * Aggiunge una configurazione di formula al segment
+     *
+     * @param formulaConfiguration configurazione di formula
+     */
+    public void addFormula(FormulaConfiguration formulaConfiguration) {
+        if (formulaConfiguration.isActBeforeEnrichment()) {
+            formulasBeforeEnrich.add(formulaConfiguration);
+        } else {
+            formulasAfterEnrich.add(formulaConfiguration);
+        }
+        this.captureConfigurations.add(formulaConfiguration.getCaptureConfigurations()); //Aggiunge nel sistema una cattura vuota per rappresentare la cosa a livello di motore.
+    }
+
+    /**
+     * Ritorna le formule da applicare prima dell'arricchimento
+     *
+     * @since 1.3
+     * @return lista formule
+     */
+    public List<FormulaConfiguration> getFormulasBeforeEnrich() {
+        return formulasBeforeEnrich;
+    }
+
+    /**
+     * Ritorna le formule da applicare dopo l'arricchimento
+     *
+     * @since 1.3
+     * @return lista formule
+     */
+    public List<FormulaConfiguration> getFormulasAfterEnrich() {
+        return formulasAfterEnrich;
     }
 
 }
