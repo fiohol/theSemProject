@@ -52,7 +52,8 @@ public class DateUtils {
         Pattern.compile("^([1-9])[- /.](0[1-9]|[12][0-9]|3[01])[- /.]\\d\\d$"),
         Pattern.compile("^([1-9])[- /.](0[1-9]|1[012])[- /.]\\d\\d$"),
         Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.](19|20)\\d\\d$")
+        Pattern.compile("^(0[1-9]|1[012])[- /.](19|20)\\d\\d$"),
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.]([1-9])[- /.](19|20)\\d\\d$")
 
     };
 
@@ -174,6 +175,8 @@ public class DateUtils {
                     str = stringDate.substring(7) + "/0" + stringDate.substring(5, 6) + '/' + stringDate.substring(0, 4);
                 } else if (PATTERNS[6].matcher(stringDate).matches()) {
                     str = '0' + stringDate.substring(8) + '/' + stringDate.substring(5, 7) + '/' + stringDate.substring(0, 4);
+                } else if (PATTERNS[16].matcher(stringDate).matches()) {
+                    str = stringDate.substring(0, 2) + "/0" + stringDate.substring(3, 4) + '/' + stringDate.substring(5);
                 }
                 break;
             case 8:
@@ -378,5 +381,9 @@ public class DateUtils {
         return retArray;
     }
     
+    public static void main (String args[]) {
     
+        System.out.println(DateUtils.parseString("29.6.1990"));
+        
+    }
 }
