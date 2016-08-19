@@ -41,10 +41,13 @@ import org.thesemproject.opensem.gui.modelEditor.TableTreeNode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.thesemproject.opensem.classification.Tokenizer;
 import org.thesemproject.opensem.gui.modelEditor.CapturesGroupTreeNode;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 import org.thesemproject.opensem.parser.DocumentParser;
@@ -75,6 +78,7 @@ public class SegmentEngine {
     private final Map<String, Pattern> dictionary;
     private final Map<String, Pattern> tables;
     private final Map<String, DataProviderConfiguration> providers;
+    private final Map<String, Set<String>> tablesValues;
 
     /**
      * Crea il segmentEngine vuoto. Il segmentEngine va poi inizializzato
@@ -92,6 +96,7 @@ public class SegmentEngine {
         globalCapturesTreeNode = new ModelTreeNode("Catture", ModelTreeNode.TYPE_CAPTURE);
         dataprovidersNode = new ModelTreeNode("Data Providers", ModelTreeNode.TYPE_DATA_PROVIDERS);
         visualStructure = new DefaultTreeModel(getCleansedModel());
+        tablesValues = new HashMap<>();
     }
 
     /**
@@ -223,7 +228,8 @@ public class SegmentEngine {
                     if (match) {
                         break;
                     } else //Provo a vedere se c'è un match con linea precedente + \n linea 
-                     if (lastLine.length() != 0) {
+                    {
+                        if (lastLine.length() != 0) {
                             String newLine = lastLine + "@" + line;
                             for (Pattern pattern : patterns) {
                                 if (pattern.matcher(newLine).find()) { //ha matchato la sezione
@@ -253,6 +259,7 @@ public class SegmentEngine {
                                 }
                             }
                         }
+                    }
                 }
                 if (previousLines.length() != 0) {
                     previousLines = previousLines + " " + line;
@@ -320,6 +327,7 @@ public class SegmentEngine {
         tables.clear();
         closeAllReaders();
         providers.clear();
+        tablesValues.clear();
         visualStructure = new DefaultTreeModel(getCleansedModel());
         List<CaptureConfiguration> globalLinesCaptureConfigurations = new ArrayList<>();
         List<CaptureConfiguration> globalSentenciesCaptureConfigurations = new ArrayList<>();
@@ -485,9 +493,15 @@ public class SegmentEngine {
                                     return s2.compareTo(s1);
                                 });
                                 LogGui.info("Create the big regex...");
+                                Set<String> tValues = new HashSet<String>();
                                 sortedRecord.stream().forEach((value) -> {
+                                    tValues.add(value.intern());
+                                    if (value.contains(" ")) {
+                                        value = value.replace(" ", "(\\s*)");
+                                    }
                                     tableModelTreeNode.addRecord(value);
                                     if (tablePattern.length() == 0) {
+                                        //Modifica per matchare anche in preseza di spazi
                                         tablePattern.append(value);
                                     } else {
                                         tablePattern.append("|").append(value);
@@ -497,6 +511,7 @@ public class SegmentEngine {
                                 try {
                                     Pattern pattern = Pattern.compile(tablePattern.toString());
                                     tables.put(name, pattern);
+                                    tablesValues.put(name, tValues);
                                 } catch (Exception e) {
                                     LogGui.info("Invalid table! " + name);
                                 }
@@ -1064,9 +1079,9 @@ public class SegmentEngine {
             //Formule post arricchimento
             if (!formulasAfter.isEmpty()) {
                 segmentResults.stream().forEach((sr) -> {
-                    for (FormulaConfiguration formula : formulasAfter) {
+                    formulasAfter.stream().forEach((formula) -> {
                         formula.applyFormula(sr, capturesIndex);
-                    }
+                    });
                 });
             }
         }
@@ -1103,7 +1118,11 @@ public class SegmentEngine {
                     Matcher match = p.matcher(text);
                     if (match.find()) {
                         try {
-                            String value = fv.isEmpty() ? match.group(pattern.getPosition()) : fv;
+                            boolean isTableNormalized = fv.startsWith("#");
+                            String value = (fv.isEmpty() || isTableNormalized) ? match.group(pattern.getPosition()) : fv;
+                            if (isTableNormalized) {
+                                value = searchSimilar(value, fv.substring(1));
+                            }
                             sr.addCaptureResult(captureConfiguration, value);
                             ClassificationPath cp = captureConfiguration.getClassificationPath();
                             if (cp != null) {
@@ -1171,6 +1190,39 @@ public class SegmentEngine {
         providers.values().stream().forEach((dpc) -> {
             dpc.closeIndex();
         });
+    }
+
+    private String searchSimilar(String value, String tableName) {
+        final AtomicInteger distance = new AtomicInteger(Integer.MAX_VALUE);
+        final FinalString ret = new FinalString(value);
+        Set<String> tableValues = tablesValues.get(tableName);
+        if (tableValues == null) return value;
+        tableValues.stream().forEach((tvalue) -> {
+            final int d2 = Tokenizer.distance(value, tvalue);
+            if (d2 < distance.get()) {
+                distance.set(d2);
+                ret.set(tvalue);
+            }
+        });
+
+        return ret.toString();
+    }
+
+    class FinalString {
+
+        private String s;
+
+        public FinalString(String s) {
+            this.s = s;
+        }
+
+        public void set(String s) {
+            this.s = s;
+        }
+
+        public String toString() {
+            return s;
+        }
     }
 
 }

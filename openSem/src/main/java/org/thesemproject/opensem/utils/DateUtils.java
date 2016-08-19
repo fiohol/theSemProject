@@ -65,7 +65,7 @@ public class DateUtils {
     /**
      * Modi di scrivere febbraio
      */
-    public static final String FEB = "febru(a|ár)|febb?raio|february|(feb|febbr|febb)(\\.)?";
+    public static final String FEB = "febb?raio|february|febru(a|ár)|(feb|febbr|febb)(\\.)?";
 
     /**
      * Modi di scrivere marzo
@@ -75,7 +75,7 @@ public class DateUtils {
     /**
      * Modi di scrivere aprile
      */
-    public static final String APR = "apri(\\.)?|aprile|april|apr(\\.)?";
+    public static final String APR = "apr(\\.)?|aprile|april|apri(\\.)?";
 
     /**
      * Modi di scrivere maggio
@@ -131,19 +131,25 @@ public class DateUtils {
             return null;
         }
         stringDate = stringDate.toLowerCase();
-        stringDate = stringDate.replaceAll(GEN, "01");
-        stringDate = stringDate.replaceAll(FEB, "02");
-        stringDate = stringDate.replaceAll(MAR, "03");
-        stringDate = stringDate.replaceAll(APR, "04");
-        stringDate = stringDate.replaceAll(MAG, "05");
-        stringDate = stringDate.replaceAll(GIU, "06");
-        stringDate = stringDate.replaceAll(LUG, "07");
-        stringDate = stringDate.replaceAll(AGO, "08");
-        stringDate = stringDate.replaceAll(SET, "09");
-        stringDate = stringDate.replaceAll(OTT, "10");
-        stringDate = stringDate.replaceAll(NOV, "11");
-        stringDate = stringDate.replaceAll(DIC, "12");
-
+        stringDate = stringDate.replace("à","a");
+        stringDate = stringDate.replace("è","e");
+        stringDate = stringDate.replace("é","e");
+        stringDate = stringDate.replace("ì","i");
+        stringDate = stringDate.replace("ò","o");
+        stringDate = stringDate.replace("ù","u");
+        stringDate = stringDate.replaceAll("\\b("+GEN+")\\b", "01");
+        stringDate = stringDate.replaceAll("\\b("+FEB+")\\b", "02");
+        stringDate = stringDate.replaceAll("\\b("+MAR+")\\b", "03");
+        stringDate = stringDate.replaceAll("\\b("+APR+")\\b", "04");
+        stringDate = stringDate.replaceAll("\\b("+MAG+")\\b", "05");
+        stringDate = stringDate.replaceAll("\\b("+GIU+")\\b", "06");
+        stringDate = stringDate.replaceAll("\\b("+LUG+")\\b", "07");
+        stringDate = stringDate.replaceAll("\\b("+AGO+")\\b", "08");
+        stringDate = stringDate.replaceAll("\\b("+SET+")\\b", "09");
+        stringDate = stringDate.replaceAll("\\b("+OTT+")\\b", "10");
+        stringDate = stringDate.replaceAll("\\b("+NOV+")\\b", "11");
+        stringDate = stringDate.replaceAll("\\b("+DIC+")\\b", "12");
+        stringDate = stringDate.replace(". ", ".").replace("/ ","/");
         String ret = STRING_FORMAT_CACHE.get(stringDate);
         if (ret != null) {
             return ret;
@@ -383,7 +389,7 @@ public class DateUtils {
     
     public static void main (String args[]) {
     
-        System.out.println(DateUtils.parseString("29.6.1990"));
+        System.out.println(DateUtils.parseString("april 1990"));
         
     }
 }

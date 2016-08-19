@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.segmentation;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +27,7 @@ import java.util.Set;
  *
  * @author The Sem Project
  */
-public class FormulaConfiguration {
+public class FormulaConfiguration implements Serializable {
 
     private final Set<String> captures;
     private String formatPattern;

@@ -21,6 +21,7 @@ import org.thesemproject.opensem.gui.LogGui;
 import org.thesemproject.opensem.utils.DateUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -106,7 +107,7 @@ public class DataProviderConfiguration implements Serializable{
     private final BiMap<String, String> fieldsPositions;
     private final BiMap<String, String> fieldsTable;
     private final Map<String, String> configurationValues;
-    private IndexReader reader;
+    private transient IndexReader reader;
 
     /**
      * Crea un data provider

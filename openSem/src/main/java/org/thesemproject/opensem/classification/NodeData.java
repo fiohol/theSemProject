@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.lucene.classification.KNearestNeighborClassifier;
+import org.apache.lucene.util.BytesRef;
 import org.jdom2.Document;
 import org.jdom2.*;
 import org.thesemproject.opensem.utils.interning.InternPool;
@@ -116,7 +117,7 @@ public class NodeData {
                 }
                 this.parent = parent;
                 parent.children.put((String) intern.intern(nodeName), this);
-                parent.reverseMap.put(nodeName.hashCode() + "", (String) intern.intern(nodeName));
+                parent.reverseMap.put(getNodeCodeForFilter(nodeName), (String) intern.intern(nodeName));
             } else {
                 throw new Exception("This node already exists");
             }
@@ -180,13 +181,17 @@ public class NodeData {
                     default:
                         break;
                 }
-            } else if (IndexManager.LEVEL_1.equalsIgnoreCase(level)) {
+            } else {
+                classifier.train(ar, IndexManager.BODY, getNodeCodeForFilter(), analyzer);
+                knn.train(ar, IndexManager.BODY, getNodeCodeForFilter(), analyzer);
+            }
+            
+            /*
+            else if (IndexManager.LEVEL_1.equalsIgnoreCase(level)) {
                 //Ci troviamo su una categoria figlia di root
                 //Dobbiamo istruire il suo classificatore con tutti i documenti che hanno in Level_1 il nome della categoria
                 //con i soli campi di Level_2
                 TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_1, getNodeCodeForFilter()));
-                //IndexSearcher indexSearcher = new IndexSearcher(ar);
-                //TopDocs td = indexSearcher.search(query,Integer.MAX_VALUE);
                 classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_2, analyzer, query);
                 knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_2, analyzer, query);
             } else if (IndexManager.LEVEL_2.equalsIgnoreCase(level)) {
@@ -217,7 +222,7 @@ public class NodeData {
                 TermQuery query = new TermQuery(new Term(IndexManager.LEVEL_5, getNodeCodeForFilter()));
                 classifier.train(ar, IndexManager.BODY, IndexManager.LEVEL_6, analyzer, query);
                 knn.train(ar, IndexManager.BODY, IndexManager.LEVEL_6, analyzer, query);
-            }
+            } */
             classifiers.put(language, classifier);
             knns.put(language, knn);
         } catch (Exception e) {
@@ -225,13 +230,24 @@ public class NodeData {
         }
     }
 
-    private String getNodeCodeForFilter() {
+    /**
+     * Ritorna il codice del nodo da associare nel motore di classificazione
+     *
+     * @since 1.3.2
+     *
+     * @param name nome da cui ricavare il codice univoco
+     * @return codice del nodo.
+     */
+    public static String getNodeCodeForFilter(String name) {
         //Dato che questo popola il filtro, se il nodo non è attivato per la clssificazione
         //La query potrà essere completamente libera.
-        //   if (isClassify)
-        return String.valueOf(nodeName.hashCode());
-        // else
-        //   return "*";
+        final StringBuffer sb = new StringBuffer();
+        sb.append("C");
+        byte[] b = name.getBytes();
+        for (byte b1 : b) {
+            sb.append(String.valueOf(b1));
+        }
+        return sb.toString();
     }
 
     /**
@@ -466,7 +482,7 @@ public class NodeData {
             if (child != null) {
                 if (path.length == level + 2) {
                     children.remove(child.nodeName);
-                    reverseMap.remove(child.nodeName.hashCode() + "");
+                    reverseMap.remove(getNodeCodeForFilter(child.nodeName) + "");
                 } else {
                     child.removeChild(path, level + 1);
                 }
@@ -647,7 +663,7 @@ public class NodeData {
      * Ritrova il percorso di classificazione di un nodo a partire dalla root
      *
      * @param cp classification path
-     * @param node nodo 
+     * @param node nodo
      * @param level livello
      */
     public static void findPath(ClassificationPath cp, NodeData node, int level) {
@@ -655,6 +671,10 @@ public class NodeData {
         if (level > 0) {
             findPath(cp, node.parent, level - 1);
         }
+    }
+
+    private String getNodeCodeForFilter() {
+        return NodeData.getNodeCodeForFilter(nodeName);
     }
 
 }

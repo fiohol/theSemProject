@@ -571,7 +571,8 @@ public class MulticlassEngine {
         if (cp.getTechnology().equals(ClassificationPath.BAYES)) {
             SimpleNaiveBayesClassifier snbc = nd.getClassifier(language);
             if (snbc != null) {
-                resultNdList = snbc.getClasses(text).get(0);
+                List<ClassificationResult<BytesRef>> list = snbc.getClasses(text);
+                resultNdList = list.get(0);
             }
 
         } else if (cp.getTechnology().equals(ClassificationPath.KNN)) {
@@ -611,9 +612,7 @@ public class MulticlassEngine {
                     } catch (Exception e) {
                         return results;
                     }
-
                     bChoice1.addResult(root.getNameFromId(resultNdList.get(0).getAssignedClass().utf8ToString()), resultNdList.get(0).getScore(), level);
-
                     NodeData child1 = root.getNode(bChoice1.getNodeName(level));
                     if (child1 != null) {
                         if (level != 0) { //Sto classificando a root ma con un level != 0 (cioè parto da un livello più basso nell'albero
@@ -631,7 +630,7 @@ public class MulticlassEngine {
                             NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
                                 if (level != 0) { //Sto classificando a root ma con un level != 0 (cioè parto da un livello più basso nell'albero
-                                    NodeData.findPath(bChoice1, child2, level);
+                                    NodeData.findPath(bChoice2, child2, level);
                                 }
                                 if (child2.hasChildren()) {
                                     bChoice2 = classifyOnSubNode(text, child2, level + 1, bChoice2, threshold, language);

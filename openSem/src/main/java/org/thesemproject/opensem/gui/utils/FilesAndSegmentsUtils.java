@@ -252,7 +252,7 @@ public class FilesAndSegmentsUtils {
      *
      * @param semGui frame
      */
-    public static void segmentsTableFilterOnFirstLevel(SemGui semGui) {
+    public static void segmentsTableFilterOnFirstLevel(SemGui semGui, int level) {
         TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) semGui.getSegmentsTable().getRowSorter();
         sorter.setRowFilter(new RowFilter() {
             @Override
@@ -263,7 +263,7 @@ public class FilesAndSegmentsUtils {
                 if (dto != null) {
                     List<ClassificationPath> cpl = dto.getClassPath(idSeg);
                     if (cpl.size() > 0) {
-                        if (cpl.get(0).getScore()[1] == 0) {
+                        if (cpl.get(0).getScore()[level] == 0) {
                             return true;
                         }
                     } else {
@@ -314,7 +314,7 @@ public class FilesAndSegmentsUtils {
      * @param semGui frame
      * @throws NumberFormatException eccezione sui valori numerici
      */
-    public static void segmentsTableUnderTreshold(SemGui semGui) throws NumberFormatException {
+    public static void segmentsTableUnderTreshold(SemGui semGui, int level) throws NumberFormatException {
         double sg = Double.parseDouble(semGui.getSoglia().getText());
         TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) semGui.getSegmentsTable().getRowSorter();
         sorter.setRowFilter(new RowFilter() {
@@ -326,7 +326,7 @@ public class FilesAndSegmentsUtils {
                 if (dto != null) {
                     List<ClassificationPath> cpl = dto.getClassPath(idSeg);
                     if (cpl.size() > 0) {
-                        if (cpl.get(0).getScore()[0] < sg) {
+                        if (cpl.get(0).getScore()[level-1] < sg) {
                             return true;
                         }
                     } else {

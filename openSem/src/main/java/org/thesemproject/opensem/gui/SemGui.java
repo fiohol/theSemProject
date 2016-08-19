@@ -3043,7 +3043,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(definitionDefinitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
                     .addComponent(definitionName)
                     .addComponent(definitionPatternTestScrollPanel)
                     .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
@@ -3256,7 +3256,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(defaultYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(segmentName, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(classifyYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(460, Short.MAX_VALUE))
+                .addContainerGap(444, Short.MAX_VALUE))
         );
         segmentConfigurationPanelLayout.setVerticalGroup(
             segmentConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3372,7 +3372,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
                     .addComponent(segmentPatternDefinitionScrollPanel)
                     .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3977,7 +3977,7 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
 
-        jLabel34.setText("Nomralizzata");
+        jLabel34.setText("Normalizzata");
 
         capturePatternFixedValue.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -3992,8 +3992,8 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
-                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
                     .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                         .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4390,7 +4390,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel51, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel54, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                     .addComponent(jLabel57, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4533,7 +4533,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(dprPriority))
                     .addComponent(dprSegment, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         captureConfigurationPanel5Layout.setVerticalGroup(
             captureConfigurationPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4618,7 +4618,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(dprFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(306, Short.MAX_VALUE))
+                .addContainerGap(290, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4812,7 +4812,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(actBeforeEnrichment, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(actBeforeEnrichment, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
                     .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -5809,7 +5809,7 @@ public class SemGui extends javax.swing.JFrame {
         if (isClassify) {
             return;
         }
-        FilesAndSegmentsUtils.segmentsTableFilterOnFirstLevel(this);
+        FilesAndSegmentsUtils.segmentsTableFilterOnFirstLevel(this, classStartLevel.getSelectedIndex() + 1);
     }//GEN-LAST:event_firstLevelOnlyActionPerformed
 
 
@@ -5817,7 +5817,7 @@ public class SemGui extends javax.swing.JFrame {
         if (isClassify) {
             return;
         }
-        FilesAndSegmentsUtils.segmentsTableUnderTreshold(this);
+        FilesAndSegmentsUtils.segmentsTableUnderTreshold(this, classStartLevel.getSelectedIndex() + 1);
     }//GEN-LAST:event_underTresholdActionPerformed
 
 
@@ -6117,9 +6117,6 @@ public class SemGui extends javax.swing.JFrame {
 
     private void learningFactorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_learningFactorActionPerformed
     }//GEN-LAST:event_learningFactorActionPerformed
-
-    private void fattoreKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fattoreKActionPerformed
-    }//GEN-LAST:event_fattoreKActionPerformed
 
     private void sogliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sogliaActionPerformed
     }//GEN-LAST:event_sogliaActionPerformed
@@ -6689,6 +6686,7 @@ public class SemGui extends javax.swing.JFrame {
     private void classStartLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classStartLevelActionPerformed
         ME.getRoot().setStartLevel(classStartLevel.getSelectedIndex() + 1);
         ME.storeXml(NodeData.getDocument(ME.getRoot()));
+        firstLevelOnly.setText("Livello " + (classStartLevel.getSelectedIndex() + 1));
         needUpdate = true;
     }//GEN-LAST:event_classStartLevelActionPerformed
 
@@ -6771,6 +6769,8 @@ public class SemGui extends javax.swing.JFrame {
 
         if (filter.length() > 0) {
             GuiUtils.filterTable(filesTable, filter.toString(), 0);
+        } else {
+            GuiUtils.showDialog("La cattura " + capture + " risulta sempre definita in tutti i documenti", "Cattura sempre definita");
         }
     }//GEN-LAST:event_capturesFilterActionPerformed
 
@@ -6836,6 +6836,10 @@ public class SemGui extends javax.swing.JFrame {
             node.setActBeforeEnrichment(actBeforeEnrichment.isSelected());
         }
     }//GEN-LAST:event_actBeforeEnrichmentActionPerformed
+
+    private void fattoreKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fattoreKActionPerformed
+
+    }//GEN-LAST:event_fattoreKActionPerformed
 
     /**
      * Metodo di start del software SemGUI
@@ -9460,6 +9464,7 @@ public class SemGui extends javax.swing.JFrame {
             needUpdate = false;
             classStartLevel.setModel(getClassTreeDepth());
             classStartLevel.setSelectedIndex(root.getStartLevel() - 1);
+            firstLevelOnly.setText("Livello " + root.getStartLevel());
 
         } catch (Exception e) {
             LogGui.printException(e);
@@ -9952,12 +9957,11 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return checkbox per identificare se la formula agisce prima o dopo l'enrich
+     * @return checkbox per identificare se la formula agisce prima o dopo
+     * l'enrich
      */
     public JCheckBox getActBeforeEnrichment() {
         return actBeforeEnrichment;
     }
-    
-    
 
 }

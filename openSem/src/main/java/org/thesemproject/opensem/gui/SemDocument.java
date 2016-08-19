@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jdom2.Element;
 
 /**
  * Gestisce l'oggetto documento costruito in memoria a partire da un file. Il
@@ -101,6 +102,35 @@ public class SemDocument implements Serializable {
     private String language;
     private String fileName;
     private String id;
+
+    /**
+     * Costruisce la rappresentazione XML di un document e di tutte le sue
+     * caratteristiche
+     *
+     * @since 1.3.2
+     *
+     * @return Elemento che rappresenta il document
+     */
+    public Element getXmlElement() {
+        Element doc = new Element("sd");
+        doc.addContent(getObjectArray(row));
+        Element sr = new Element("sr");
+        doc.addContent(sr);
+        for (Object[] segmentRow : segmentRows) {
+            sr.addContent(getObjectArray(segmentRow));
+
+        }
+        Element cr = new Element("cr");
+        doc.addContent(cr);
+        for (Object[] captureRow : capturesRows) {
+            sr.addContent(getObjectArray(captureRow));
+
+        }
+        doc.setAttribute("i", id);
+        doc.setAttribute("l", language);
+        doc.setAttribute("f", fileName);
+        return doc;
+    }
 
     /**
      * Imposta la lingua del documento
@@ -423,6 +453,7 @@ public class SemDocument implements Serializable {
 
     /**
      * Ritorna le statistiche di un documento (segmenti, catture etc)
+     *
      * @return mappa {indicatore, valore}
      */
     public Map<String, Integer> getStats() {
@@ -433,6 +464,17 @@ public class SemDocument implements Serializable {
             stats = SegmentationUtils.getFileStats(stats, identifiedSegments, "");
         }
         return stats;
+    }
+
+    private Element getObjectArray(Object[] row) {
+        Element objArray = new Element("oa");
+        objArray.setAttribute("s", String.valueOf(row.length));
+        for (int i = 0; i < row.length; i++) {
+            Element col = new Element("e");
+            col.addContent(String.valueOf(row[i]));
+            objArray.addContent(col);
+        }
+        return objArray;
     }
 
 }
