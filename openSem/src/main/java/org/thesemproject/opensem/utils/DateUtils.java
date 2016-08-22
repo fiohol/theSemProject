@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import org.thesemproject.opensem.gui.LogGui;
 
 /**
  * Utility per la gestione e il parsing delle date
@@ -53,7 +54,8 @@ public class DateUtils {
         Pattern.compile("^([1-9])[- /.](0[1-9]|1[012])[- /.]\\d\\d$"),
         Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\\d\\d$"),
         Pattern.compile("^(0[1-9]|1[012])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.]([1-9])[- /.](19|20)\\d\\d$")
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.]([1-9])[- /.](19|20)\\d\\d$"),
+        Pattern.compile("^([1-9])[- /.](19|20)\\d\\d$")
 
     };
 
@@ -75,7 +77,7 @@ public class DateUtils {
     /**
      * Modi di scrivere aprile
      */
-    public static final String APR = "apr(\\.)?|aprile|april|apri(\\.)?";
+    public static final String APR = "apr(\\.)?|aprile|apr(i|í)l|april|apri(\\.)?";
 
     /**
      * Modi di scrivere maggio
@@ -131,25 +133,25 @@ public class DateUtils {
             return null;
         }
         stringDate = stringDate.toLowerCase();
-        stringDate = stringDate.replace("à","a");
-        stringDate = stringDate.replace("è","e");
-        stringDate = stringDate.replace("é","e");
-        stringDate = stringDate.replace("ì","i");
-        stringDate = stringDate.replace("ò","o");
-        stringDate = stringDate.replace("ù","u");
-        stringDate = stringDate.replaceAll("\\b("+GEN+")\\b", "01");
-        stringDate = stringDate.replaceAll("\\b("+FEB+")\\b", "02");
-        stringDate = stringDate.replaceAll("\\b("+MAR+")\\b", "03");
-        stringDate = stringDate.replaceAll("\\b("+APR+")\\b", "04");
-        stringDate = stringDate.replaceAll("\\b("+MAG+")\\b", "05");
-        stringDate = stringDate.replaceAll("\\b("+GIU+")\\b", "06");
-        stringDate = stringDate.replaceAll("\\b("+LUG+")\\b", "07");
-        stringDate = stringDate.replaceAll("\\b("+AGO+")\\b", "08");
-        stringDate = stringDate.replaceAll("\\b("+SET+")\\b", "09");
-        stringDate = stringDate.replaceAll("\\b("+OTT+")\\b", "10");
-        stringDate = stringDate.replaceAll("\\b("+NOV+")\\b", "11");
-        stringDate = stringDate.replaceAll("\\b("+DIC+")\\b", "12");
-        stringDate = stringDate.replace(". ", ".").replace("/ ","/");
+        stringDate = stringDate.replace("à", "a");
+        stringDate = stringDate.replace("è", "e");
+        stringDate = stringDate.replace("é", "e");
+        stringDate = stringDate.replace("ì", "i");
+        stringDate = stringDate.replace("ò", "o");
+        stringDate = stringDate.replace("ù", "u");
+        stringDate = stringDate.replaceAll("\\b(" + GEN + ")\\b", "01");
+        stringDate = stringDate.replaceAll("\\b(" + FEB + ")\\b", "02");
+        stringDate = stringDate.replaceAll("\\b(" + MAR + ")\\b", "03");
+        stringDate = stringDate.replaceAll("\\b(" + APR + ")\\b", "04");
+        stringDate = stringDate.replaceAll("\\b(" + MAG + ")\\b", "05");
+        stringDate = stringDate.replaceAll("\\b(" + GIU + ")\\b", "06");
+        stringDate = stringDate.replaceAll("\\b(" + LUG + ")\\b", "07");
+        stringDate = stringDate.replaceAll("\\b(" + AGO + ")\\b", "08");
+        stringDate = stringDate.replaceAll("\\b(" + SET + ")\\b", "09");
+        stringDate = stringDate.replaceAll("\\b(" + OTT + ")\\b", "10");
+        stringDate = stringDate.replaceAll("\\b(" + NOV + ")\\b", "11");
+        stringDate = stringDate.replaceAll("\\b(" + DIC + ")\\b", "12");
+        stringDate = stringDate.replace(". ", ".").replace("/ ", "/");
         String ret = STRING_FORMAT_CACHE.get(stringDate);
         if (ret != null) {
             return ret;
@@ -214,8 +216,19 @@ public class DateUtils {
                     str = stringDate.substring(3, 5) + '/' + stringDate.substring(0, 2) + "/20" + stringDate.substring(4);
                 } else if (PATTERNS[14].matcher(stringDate).matches()) {
                     str = stringDate.substring(0, 2) + '/' + stringDate.substring(2, 4) + "/20" + stringDate.substring(4);
+                } else if (PATTERNS[17].matcher(stringDate).matches()) {
+                    str = "01/0" + stringDate.substring(0, 1) + '/' + stringDate.substring(2);
                 }
                 break;
+            case 4:
+                int year = -1;
+                try {
+                    year = Integer.parseInt(stringDate);
+                } catch (Exception e) {
+                }
+                if (year != -1) {
+                    str = "01/01/" + stringDate;
+                }
             default:
                 break;
         }
@@ -225,6 +238,7 @@ public class DateUtils {
         if (str == null) {
             return stringDate;
         }
+
         return str;
     }
 
@@ -239,7 +253,8 @@ public class DateUtils {
         if (str != null) {
             try {
                 return DATEFORMAT.parse(str);
-            } catch (ParseException ex) {
+            } catch (Exception ex) {
+                LogGui.info("Eccezione nel parsing della data " + stringDate + " " + ex.getMessage());
                 return null;
             }
         }
@@ -386,10 +401,10 @@ public class DateUtils {
         }
         return retArray;
     }
-    
-    public static void main (String args[]) {
-    
-        System.out.println(DateUtils.parseString("april 1990"));
-        
+
+    public static void main(String args[]) {
+
+        System.out.println(DateUtils.parseString("5/2015"));
+
     }
 }

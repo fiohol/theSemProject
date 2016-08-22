@@ -6768,7 +6768,7 @@ public class SemGui extends javax.swing.JFrame {
         }
 
         if (filter.length() > 0) {
-            GuiUtils.filterTable(filesTable, filter.toString(), 0);
+            GuiUtils.filterTable(filesTable, "\\b("+filter.toString()+")\\b", 0);
         } else {
             GuiUtils.showDialog("La cattura " + capture + " risulta sempre definita in tutti i documenti", "Cattura sempre definita");
         }
