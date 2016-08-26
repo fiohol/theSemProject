@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.gui.utils;
 
+import java.awt.BorderLayout;
 import org.thesemproject.opensem.utils.interning.InternPool;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.classification.IndexManager;
@@ -31,6 +32,7 @@ import org.thesemproject.opensem.segmentation.SegmentationResults;
 import org.thesemproject.opensem.segmentation.SegmentationUtils;
 import org.thesemproject.opensem.tagcloud.TagCloudResults;
 import java.awt.Font;
+import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,21 +51,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -71,11 +86,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.thesemproject.opensem.segmentation.SegmentEngine;
 
 /**
  *
@@ -271,6 +290,34 @@ public class GuiUtils {
     }
 
     /**
+     * Visualizza un dialog con una text area
+     *
+     * @since 1.3.3
+     *
+     * @param title titolo del dialog
+     * @param message messaggio da visualizzare
+     * @param text testo da mettere nella text area
+     * @return testo della textarea se confermato null altrimenti
+     */
+    public static String showTextAreaDialog(String title, String message, String text) {
+        JTextArea ta = new JTextArea(5, 60);
+        ta.setLineWrap(true);
+        ta.setText(text);
+        ta.setCaretPosition(0);
+        JPanel jp = new JPanel();
+        jp.setLayout(new BorderLayout());
+        JLabel jl = new JLabel(message);
+        jp.add(jl, BorderLayout.NORTH);
+        jp.add(new JScrollPane(ta), BorderLayout.CENTER);
+        switch (JOptionPane.showConfirmDialog(null, jp, title, JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE, null)) {
+            case JOptionPane.OK_OPTION:
+                return ta.getText();
+
+        }
+        return null;
+    }
+
+    /**
      * mostra un dialog di errore
      *
      * @param message messaggio
@@ -306,16 +353,71 @@ public class GuiUtils {
      * @param choices lista delle scelte
      * @return selezione dell'utente o null
      */
-    public static String showChoiceDIalog(String message, String title, Object[] choices) {
+    public static Object showChoiceDIalog(String message, String title, Object[] choices) {
         if (choices == null) {
             return null;
         }
         if (choices.length == 0) {
             return null;
         }
-        return (String) JOptionPane.showInputDialog(null,
-                message, title,
-                JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+        JPanel jp = new JPanel();
+        jp.setLayout(new BorderLayout());
+        JLabel jl = new JLabel(message);
+        jp.add(jl, BorderLayout.NORTH);
+
+        JPanel jp2 = new JPanel();
+        jp2.setLayout(new BorderLayout());
+        jp.add(jp2, BorderLayout.CENTER);
+
+        JTextField jt = new JTextField();
+        jp2.add(jt, BorderLayout.NORTH);
+        final JList jc = new JList(choices);
+        jc.setVisibleRowCount(10);
+        jp2.add(new JScrollPane(jc), BorderLayout.CENTER);
+
+        jt.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void warn() {
+                int distance = Integer.MAX_VALUE;
+                final String value = StringUtils.stripAccents(jt.getText().toLowerCase());
+                if (value.length() > 0) {
+                    for (int x = 0; x < choices.length; x++) {
+                        String tvalue = StringUtils.stripAccents(choices[x].toString().toLowerCase());
+                        if (tvalue.startsWith(value) || tvalue.endsWith(value) || tvalue.contains(value)) {
+                            jc.setSelectedIndex(x);
+                            jc.ensureIndexIsVisible(jc.getSelectedIndex());
+                            return;
+                        } else {
+                            final int d2 = Tokenizer.distance(tvalue, value);
+                            if (d2 < distance) {
+                                distance = d2;
+                                jc.setSelectedIndex(x);
+                                jc.ensureIndexIsVisible(jc.getSelectedIndex());
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+
+        switch (JOptionPane.showConfirmDialog(null, jp, title, JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE, null)) {
+            case JOptionPane.OK_OPTION:
+                return choices[jc.getSelectedIndex()];
+        }
+        return null;
+
     }
 
     /**

@@ -237,22 +237,27 @@ public class IndexManager {
                     }
                     if (i == 2) {
                         doc.add(new StringField(LEVEL_2, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
+                        doc.add(new StringField(NodeData.getNodeCodeForFilter(path[1].toString()) + "", NodeData.getNodeCodeForFilter(path[2].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL2_NAME, path[i].toString(), Field.Store.YES));
                     }
                     if (i == 3) {
                         doc.add(new StringField(LEVEL_3, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
+                        doc.add(new StringField(NodeData.getNodeCodeForFilter(path[2].toString()) + "", NodeData.getNodeCodeForFilter(path[3].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL3_NAME, path[i].toString(), Field.Store.YES));
                     }
                     if (i == 4) {
                         doc.add(new StringField(LEVEL_4, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
+                        doc.add(new StringField(NodeData.getNodeCodeForFilter(path[3].toString()) + "", NodeData.getNodeCodeForFilter(path[4].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL4_NAME, path[i].toString(), Field.Store.YES));
                     }
                     if (i == 5) {
                         doc.add(new StringField(LEVEL_5, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
+                        doc.add(new StringField(NodeData.getNodeCodeForFilter(path[4].toString()) + "", NodeData.getNodeCodeForFilter(path[5].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL5_NAME, path[i].toString(), Field.Store.YES));
                     }
                     if (i == 6) {
                         doc.add(new StringField(LEVEL_6, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
+                        doc.add(new StringField(NodeData.getNodeCodeForFilter(path[5].toString()) + "", NodeData.getNodeCodeForFilter(path[6].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL6_NAME, path[i].toString(), Field.Store.YES));
                     }
                 }

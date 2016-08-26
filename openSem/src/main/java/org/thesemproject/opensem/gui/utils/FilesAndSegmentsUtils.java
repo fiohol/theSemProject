@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.gui.utils;
 
+import java.awt.Color;
 import org.thesemproject.opensem.utils.ParallelProcessor;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.classification.MyAnalyzer;
@@ -45,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
@@ -53,6 +55,9 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+import org.thesemproject.opensem.tagcloud.TagClass;
 
 /**
  *
@@ -99,7 +104,7 @@ public class FilesAndSegmentsUtils {
         DefaultTableModel segModel = (DefaultTableModel) semGui.getSegmentsTable().getModel();
         int[] rows = semGui.getSegmentsTable().getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
-            int pos = semGui.getSegmentsTable().convertRowIndexToModel(rows[i]);
+            //int pos = semGui.getSegmentsTable().convertRowIndexToModel(rows[i]);
             semGui.getSegmentsTable().setValueAt("X", rows[i], 6);
             String seg = (String) semGui.getSegmentsTable().getValueAt(rows[i], 0);
             int id = Integer.parseInt(seg.substring(0, seg.indexOf(".")));
@@ -138,7 +143,9 @@ public class FilesAndSegmentsUtils {
             semGui.getFilesPanelHtmlFormatted1().setCaretPosition(0);
         }
         SemDocument dto = semGui.getTableData().get(id);
-        if (dto == null) return;
+        if (dto == null) {
+            return;
+        }
         if (dto != null && dto.getIdentifiedSegments() != null) {
             Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = dto.getIdentifiedSegments();
             String language = dto.getLanguage();
@@ -251,6 +258,7 @@ public class FilesAndSegmentsUtils {
      * livello
      *
      * @param semGui frame
+     * @param level livello
      */
     public static void segmentsTableFilterOnFirstLevel(SemGui semGui, int level) {
         TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) semGui.getSegmentsTable().getRowSorter();
@@ -312,6 +320,7 @@ public class FilesAndSegmentsUtils {
      * sottosoglia
      *
      * @param semGui frame
+     * @param level livello
      * @throws NumberFormatException eccezione sui valori numerici
      */
     public static void segmentsTableUnderTreshold(SemGui semGui, int level) throws NumberFormatException {
@@ -326,7 +335,7 @@ public class FilesAndSegmentsUtils {
                 if (dto != null) {
                     List<ClassificationPath> cpl = dto.getClassPath(idSeg);
                     if (cpl.size() > 0) {
-                        if (cpl.get(0).getScore()[level-1] < sg) {
+                        if (cpl.get(0).getScore()[level - 1] < sg) {
                             return true;
                         }
                     } else {
@@ -480,50 +489,7 @@ public class FilesAndSegmentsUtils {
                 @Override
                 public void run() {
                     if (!semGui.isIsClassify()) {
-                        semGui.getStopTagCloud().setValue(false);
-                        semGui.getInterrompi().setEnabled(true);
-                        semGui.setIsClassify(true);
-                        semGui.resetFilesFilters();
-                        ChangedUtils.prepareChanged(semGui);
-                        semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ") - Tag cloud in corso");
-                        int processors = semGui.getProcessori2().getSelectedIndex() + 1;
-                        ParallelProcessor tagClouding = new ParallelProcessor(processors, 6000); //100 ore
-                        AtomicInteger count = new AtomicInteger(0);
-                        LogGui.info("Start processing");
-                        final int size = semGui.getFilesTable().getRowCount();
-                        final TagCloudResults ret = new TagCloudResults();
-                        for (int j = 0; j < processors; j++) {
-                            tagClouding.add(() -> {
-                                //Legge il file... e agginge in coda
-                                while (true) {
-                                    if (semGui.getStopTagCloud().getValue()) {
-                                        break;
-                                    }
-                                    int row = count.getAndIncrement();
-                                    if (row >= size) {
-                                        break;
-                                    }
-                                    int pos = semGui.getFilesTable().convertRowIndexToModel(row);
-                                    Integer id = (Integer) semGui.getFilesTable().getValueAt(pos, 0);
-                                    SemDocument dto = semGui.getTableData().get(id);
-                                    String text = String.valueOf(dto.getRow()[8]);
-                                    if (text == null) {
-                                        text = "";
-                                    }
-                                    if (row % 3 == 0) {
-                                        semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ") - " + row + "/" + size);
-                                    }
-                                    try {
-                                        String language = dto.getLanguage();
-                                        MyAnalyzer analyzer = semGui.getME().getAnalyzer(language);
-                                        Tokenizer.getTagClasses(ret, text, "", analyzer);
-                                    } catch (Exception e) {
-                                        LogGui.printException(e);
-                                    }
-                                } //Quello che legge
-                            });
-                        }
-                        tagClouding.waitTermination();
+                        final TagCloudResults ret = getTagCloudResults(semGui);
                         semGui.openCloudFrame(ret, 200);
                         semGui.getFilesTab().setTitleAt(0, "Storage");
                         LogGui.info("Terminated...");
@@ -536,6 +502,121 @@ public class FilesAndSegmentsUtils {
             t.setDaemon(true);
             t.start();
         }
+    }
+
+    /**
+     * Estrae le frequenze dei termini a partire da un tagcloud
+     *
+     * @since 1.3.3
+     * @param semGui frame
+     */
+    public static void doExtractFrequencies(SemGui semGui) {
+        GuiUtils.clearTable(semGui.getFreqTable());
+        semGui.getFreqLabel().setText("Calcolo frequenze in corso...");
+        if (semGui.isIsClassify()) {
+            semGui.getStopTagCloud().setValue(true);
+            semGui.getInterrompi().setEnabled(false);
+        } else {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!semGui.isIsClassify()) {
+                        final TagCloudResults result = getTagCloudResults(semGui);
+                        DefaultTableModel model = (DefaultTableModel) semGui.getFreqTable().getModel();
+
+                        Cloud cloud = result.getCloud(10000);  //10000 termini credo siano sufficienti
+                        Map<Integer, SemDocument> map = semGui.getTableData();
+                        semGui.getWordFrequencies().setVisible(true);
+                        for (Tag tag : cloud.tags()) {
+                            TagClass tc = result.getTagClass(tag);
+                            Set<String> docIds = tc.getDocumentsId();
+                            String language = "it";
+                            try {
+                                if (docIds.size() > 0) {
+                                    for (String id : docIds) {
+                                        Integer iid = Integer.parseInt(id);
+                                        SemDocument d = map.get(iid);
+                                        if (d != null) {
+                                            language = d.getLanguage();
+                                            break;
+                                        }
+                                    }
+                                }
+                            } catch (Exception e) {
+
+                            }
+                            String words = tc.getWordsString();
+                            String[] wArray = words.split(" ");
+                            for (String w : wArray) {
+                                Object[] row = new Object[5];
+                                row[0] = tag.getName();
+                                row[1] = w;
+                                row[2] = tag.getWeight();
+                                row[3] = tag.getNormScore();
+                                row[4] = language;
+                                model.addRow(row);
+                            }
+                        }
+                        semGui.getFilesTab().setTitleAt(0, "Storage");
+                        semGui.getFreqLabel().setText("Frequenze calcolate. " + model.getRowCount() + " termini");
+                        LogGui.info("Terminated...");
+                        semGui.getFilesInfoLabel().setText("Fine");
+                        semGui.setIsClassify(false);
+                        semGui.getInterrompi().setEnabled(false);
+                    }
+                }
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+    }
+
+    private static TagCloudResults getTagCloudResults(SemGui semGui) {
+        semGui.getStopTagCloud().setValue(false);
+        semGui.getInterrompi().setEnabled(true);
+        semGui.setIsClassify(true);
+        semGui.resetFilesFilters();
+        ChangedUtils.prepareChanged(semGui);
+        semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ") - Tag cloud in corso");
+        int processors = semGui.getProcessori2().getSelectedIndex() + 1;
+        ParallelProcessor tagClouding = new ParallelProcessor(processors, 6000); //100 ore
+        AtomicInteger count = new AtomicInteger(0);
+        LogGui.info("Start processing");
+        final int size = semGui.getFilesTable().getRowCount();
+        final TagCloudResults ret = new TagCloudResults();
+        for (int j = 0; j < processors; j++) {
+            tagClouding.add(() -> {
+                //Legge il file... e agginge in coda
+                while (true) {
+                    if (semGui.getStopTagCloud().getValue()) {
+                        break;
+                    }
+                    int row = count.getAndIncrement();
+                    if (row >= size) {
+                        break;
+                    }
+                    int pos = semGui.getFilesTable().convertRowIndexToModel(row);
+                    Integer id = (Integer) semGui.getFilesTable().getValueAt(pos, 0);
+                    SemDocument dto = semGui.getTableData().get(id);
+                    String text = String.valueOf(dto.getRow()[8]);
+                    if (text == null) {
+                        text = "";
+                    }
+                    if (row % 3 == 0) {
+                        semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ") - " + row + "/" + size);
+                    }
+                    try {
+                        String language = dto.getLanguage();
+                        MyAnalyzer analyzer = semGui.getME().getAnalyzer(language);
+                        Tokenizer.getTagClasses(ret, text, dto.getId(), analyzer);
+                    } catch (Exception e) {
+                        LogGui.printException(e);
+                    }
+                } //Quello che legge
+            });
+        }
+        tagClouding.waitTermination();
+        return ret;
     }
 
     private static Object lockSync = new Object();
@@ -753,12 +834,14 @@ public class FilesAndSegmentsUtils {
                             int pos = filesTable.convertRowIndexToModel(i);
                             Integer id = (Integer) filesTable.getValueAt(pos, 0);
                             SemDocument dto = semGui.getTableData().get(id);
-                            if (dto == null) continue;
+                            if (dto == null) {
+                                continue;
+                            }
                             String text = String.valueOf(dto.getRow()[8]);
                             if (text == null) {
                                 text = "";
                             }
-                            text = semGui.getME().tokenize(text, String.valueOf(dto.getRow()[2]),-1);
+                            text = semGui.getME().tokenize(text, String.valueOf(dto.getRow()[2]), -1);
                             if (!texts.contains(text)) {
                                 texts.add(text);
                             } else {

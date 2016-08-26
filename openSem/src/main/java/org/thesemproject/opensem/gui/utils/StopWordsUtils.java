@@ -141,11 +141,17 @@ public class StopWordsUtils {
                     item.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/page_copy.png")));
                     item.setEnabled(ta.getSelectionStart() != ta.getSelectionEnd());
                     menu.add(item);
+
+
                     for (String language : MyAnalyzer.languages) {
                         JMenuItem item2;
                         String word = ta.getSelectedText().toLowerCase();
                         final String stopWord = word;
-                        item2 = new JMenuItem("Inserisci '" + stopWord + "' nelle stop words " + language);
+                        if (stopWord.length() > 20) {
+                            item2 = new JMenuItem("Inserisci quanto selezionato nelle stop words " + language);
+                        } else {
+                            item2 = new JMenuItem("Inserisci '" + stopWord + "' nelle stop words " + language);
+                        }
                         item2.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/" + language + ".png")));
                         item2.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent ae) {

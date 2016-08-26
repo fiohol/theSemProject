@@ -38,24 +38,24 @@ public class DateUtils {
     /**
      * Patterns che possono corrispondere ad un modo di scrivere una data
      */
-    public static final Pattern PATTERNS[] = {Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"),
-        Pattern.compile("^([1-9])[- /.](0[1-9]|1[012])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^([1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.](0[1-9])[- /.](0[1-9]|[12][0-9]|3[01])$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.]([1-9])$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.]\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.]\\d\\d$"),
+    public static final Pattern PATTERNS[] = {Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])$"),
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^([1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9])[- /.,](0[1-9]|[12][0-9]|3[01])$"),
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,]([1-9])$"),
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),
         Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])(19|20)\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.]([1-9])[- /.](19|20)\\d\\d$"),
+        Pattern.compile("^([1-9])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),
         Pattern.compile("^(19|20)\\d\\d(0[1-9]|1[012])([0-9])([0-9])$"),
-        Pattern.compile("^([1-9])[- /.](0[1-9]|[12][0-9]|3[01])[- /.]\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.](0[1-9]|1[012])[- /.]\\d\\d$"),
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),
         Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.]([1-9])[- /.](19|20)\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.](19|20)\\d\\d$")
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),
+        Pattern.compile("^([1-9])[- /.,](19|20)\\d\\d$")
 
     };
 
@@ -139,19 +139,19 @@ public class DateUtils {
         stringDate = stringDate.replace("ì", "i");
         stringDate = stringDate.replace("ò", "o");
         stringDate = stringDate.replace("ù", "u");
-        stringDate = stringDate.replaceAll("\\b(" + GEN + ")\\b", "01");
-        stringDate = stringDate.replaceAll("\\b(" + FEB + ")\\b", "02");
-        stringDate = stringDate.replaceAll("\\b(" + MAR + ")\\b", "03");
-        stringDate = stringDate.replaceAll("\\b(" + APR + ")\\b", "04");
-        stringDate = stringDate.replaceAll("\\b(" + MAG + ")\\b", "05");
-        stringDate = stringDate.replaceAll("\\b(" + GIU + ")\\b", "06");
-        stringDate = stringDate.replaceAll("\\b(" + LUG + ")\\b", "07");
-        stringDate = stringDate.replaceAll("\\b(" + AGO + ")\\b", "08");
-        stringDate = stringDate.replaceAll("\\b(" + SET + ")\\b", "09");
-        stringDate = stringDate.replaceAll("\\b(" + OTT + ")\\b", "10");
-        stringDate = stringDate.replaceAll("\\b(" + NOV + ")\\b", "11");
-        stringDate = stringDate.replaceAll("\\b(" + DIC + ")\\b", "12");
-        stringDate = stringDate.replace(". ", ".").replace("/ ", "/");
+        stringDate = stringDate.replaceAll("\\b(" + GEN + ")\\b", " 01 ");
+        stringDate = stringDate.replaceAll("\\b(" + FEB + ")\\b", " 02 ");
+        stringDate = stringDate.replaceAll("\\b(" + MAR + ")\\b", " 03 ");
+        stringDate = stringDate.replaceAll("\\b(" + APR + ")\\b", " 04 ");
+        stringDate = stringDate.replaceAll("\\b(" + MAG + ")\\b", " 05 ");
+        stringDate = stringDate.replaceAll("\\b(" + GIU + ")\\b", " 06 ");
+        stringDate = stringDate.replaceAll("\\b(" + LUG + ")\\b", " 07 ");
+        stringDate = stringDate.replaceAll("\\b(" + AGO + ")\\b", " 08 ");
+        stringDate = stringDate.replaceAll("\\b(" + SET + ")\\b", " 09 ");
+        stringDate = stringDate.replaceAll("\\b(" + OTT + ")\\b", " 10 ");
+        stringDate = stringDate.replaceAll("\\b(" + NOV + ")\\b", " 11 ");
+        stringDate = stringDate.replaceAll("\\b(" + DIC + ")\\b", " 12 ");
+        stringDate = stringDate.replaceAll("(\\s+)", " ").replace(". ", ".").replace("/ ", "/").replace(", ", ",").replace(" /", "/").replace(" .",".").replace(" ,",",");
         String ret = STRING_FORMAT_CACHE.get(stringDate);
         if (ret != null) {
             return ret;
@@ -236,6 +236,7 @@ public class DateUtils {
             STRING_FORMAT_CACHE.put(stringDate, str);
         }
         if (str == null) {
+            LogGui.info("Data non parsabile: "+stringDate);
             return stringDate;
         }
 
@@ -402,6 +403,10 @@ public class DateUtils {
         return retArray;
     }
 
+    /**
+     * Metodo di test
+     * @param args argomenti
+     */
     public static void main(String args[]) {
 
         System.out.println(DateUtils.parseString("5/2015"));

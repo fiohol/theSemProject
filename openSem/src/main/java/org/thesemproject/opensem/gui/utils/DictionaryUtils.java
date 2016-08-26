@@ -85,7 +85,7 @@ public class DictionaryUtils {
                     item2.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/book_open.png")));
                     item2.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
-                            String name = JOptionPane.showInputDialog(null, "Inserire il nome della definizione");
+                            String name = JOptionPane.showInputDialog(null, "Inserire il nome della definizione", selectedWord);
                             if (name == null) {
                                 return;
                             }
@@ -145,16 +145,13 @@ public class DictionaryUtils {
                         if (patternDefinition.startsWith(selectedWord + " ")) {
                             patternDefinition = "#" + definizione + " " + patternDefinition.substring(selectedWord.length());
                             stn.updatePattern(pattern[0], Integer.parseInt(pattern[2]), patternDefinition, pattern[3]);
-                        }
-                        if (patternDefinition.endsWith(" " + selectedWord)) {
+                        } else if (patternDefinition.endsWith(" " + selectedWord)) {
                             patternDefinition = patternDefinition.substring(0, patternDefinition.length() - selectedWord.length()) + "#" + definizione + " ";
                             stn.updatePattern(pattern[0], Integer.parseInt(pattern[2]), patternDefinition, pattern[3]);
-                        }
-                        if (patternDefinition.contains(selectedWord)) {
+                        } else if (patternDefinition.contains(selectedWord)) {
                             patternDefinition = patternDefinition.replace(selectedWord, "#" + definizione + " ");
                             stn.updatePattern(pattern[0], Integer.parseInt(pattern[2]), patternDefinition, pattern[3]);
-                        }
-                        if (patternDefinition.equals(selectedWord)) {
+                        } else if (patternDefinition.equals(selectedWord)) {
                             patternDefinition = "#" + definizione + " ";
                             stn.updatePattern(pattern[0], Integer.parseInt(pattern[2]), patternDefinition, pattern[3]);
                         }

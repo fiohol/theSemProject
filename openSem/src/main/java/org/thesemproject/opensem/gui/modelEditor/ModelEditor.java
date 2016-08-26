@@ -626,11 +626,61 @@ public class ModelEditor {
                             names.add(ctn.getNodeName());
                         }
                     }
+                } else if ((segmentName == null)) {
+                    if (!names.contains(ctn.getNodeName())) {
+                        names.add(ctn.getNodeName());
+                    }
                 }
             }
         }
         Collections.sort(names);
         return names;
+    }
+
+    /**
+     * Ritorna i nodi di cattura 
+     * @param root nodo root
+     * @param onlyClass se a true estrae le sole catture che classificano
+     * @return lista dei nodi catturati
+     */
+    public List<CaptureTreeNode> getSegmentsCapturesNodes(DefaultMutableTreeNode root, boolean onlyClass) {
+        List<CaptureTreeNode> captures = new ArrayList<>();
+        Enumeration<DefaultMutableTreeNode> e = root.depthFirstEnumeration();
+        while (e.hasMoreElements()) {
+            DefaultMutableTreeNode node = e.nextElement();
+            if (node instanceof SegmentTreeNode) {
+                SegmentTreeNode snode = ((SegmentTreeNode) node);
+                Enumeration<DefaultMutableTreeNode> ex = snode.depthFirstEnumeration();
+                while (ex.hasMoreElements()) {
+                    DefaultMutableTreeNode xnode = ex.nextElement();
+                    if (xnode instanceof CaptureTreeNode) {
+                        CaptureTreeNode ctn = (CaptureTreeNode) xnode;
+                        String cname = ctn.getNodeName();
+                        if (!captures.contains(ctn)) {
+                            if (onlyClass) {
+                                if (ctn.getClassificationPath() != null) {
+                                    captures.add(ctn);
+                                }
+                            } else {
+                                captures.add(ctn);
+                            }
+                        }
+                    }
+                }
+            } else if (node instanceof CaptureTreeNode) {
+                CaptureTreeNode ctn = (CaptureTreeNode) node;
+                if (!captures.contains(ctn)) {
+                    if (onlyClass) {
+                        if (ctn.getClassificationPath() != null) {
+                            captures.add(ctn);
+                        }
+                    } else {
+                        captures.add(ctn);
+                    }
+                }
+            }
+        }
+        return captures;
     }
 
     private CaptureTreeNode copyNode = null;

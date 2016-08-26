@@ -47,6 +47,7 @@ import org.thesemproject.opensem.segmentation.SegmentationResults;
 import org.thesemproject.opensem.tagcloud.TagCloudResults;
 import com.jtattoo.plaf.aero.AeroLookAndFeel;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import static java.awt.Event.DELETE;
 import java.awt.GraphicsEnvironment;
@@ -57,8 +58,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,6 +105,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.eclipse.jetty.util.URIUtil;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 import org.thesemproject.opensem.utils.FinalBoolean;
 
@@ -153,6 +157,7 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         StopWordsUtils.addStopWordsMenu(fileText, this);
+        StopWordsUtils.addStopWordsMenu(fileText1, this);
         StopWordsUtils.addStopWordsMenu(segmentText, this);
         StopWordsUtils.addStopWordsMenu(segmentTokens, this);
         StopWordsUtils.addStopWordsMenu(token, this);
@@ -308,6 +313,18 @@ public class SemGui extends javax.swing.JFrame {
         ocrFileChooser = new javax.swing.JFileChooser();
         selectExportExcelIndex = new javax.swing.JDialog();
         expotExcelIndexFileChooser = new javax.swing.JFileChooser();
+        wordFrequencies = new javax.swing.JDialog();
+        jToolBar13 = new javax.swing.JToolBar();
+        addToStopWords = new javax.swing.JButton();
+        jSeparator9 = new javax.swing.JToolBar.Separator();
+        exportTerms = new javax.swing.JButton();
+        jSeparator49 = new javax.swing.JToolBar.Separator();
+        wFreq1 = new javax.swing.JButton();
+        jScrollPane32 = new javax.swing.JScrollPane();
+        freqTable = new javax.swing.JTable();
+        freqLabel = new javax.swing.JLabel();
+        selectFrequecies = new javax.swing.JDialog();
+        frequenciesFileChooser = new javax.swing.JFileChooser();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
@@ -365,11 +382,10 @@ public class SemGui extends javax.swing.JFrame {
         removeDuplicates = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         tagCloud = new javax.swing.JButton();
+        wFreq = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jButton6 = new javax.swing.JButton();
-        jSeparator49 = new javax.swing.JToolBar.Separator();
         capturesFilter = new javax.swing.JButton();
-        jSeparator9 = new javax.swing.JToolBar.Separator();
         jLabel13 = new javax.swing.JLabel();
         filterFile = new javax.swing.JTextField();
         jSeparator48 = new javax.swing.JToolBar.Separator();
@@ -401,8 +417,15 @@ public class SemGui extends javax.swing.JFrame {
         jScrollPane18 = new javax.swing.JScrollPane();
         segmentClassificationResult = new javax.swing.JTree();
         jTabbedPane6 = new javax.swing.JTabbedPane();
+        jPanel13 = new javax.swing.JPanel();
         jScrollPane14 = new javax.swing.JScrollPane();
         segmentText = new javax.swing.JTextArea();
+        jToolBar12 = new javax.swing.JToolBar();
+        exPattern = new javax.swing.JButton();
+        jSeparator51 = new javax.swing.JToolBar.Separator();
+        exStopWords = new javax.swing.JButton();
+        jSeparator52 = new javax.swing.JToolBar.Separator();
+        jButton14 = new javax.swing.JButton();
         jScrollPane20 = new javax.swing.JScrollPane();
         segmentTokens = new javax.swing.JTextArea();
         changes = new javax.swing.JSplitPane();
@@ -1643,6 +1666,108 @@ public class SemGui extends javax.swing.JFrame {
             .addComponent(expotExcelIndexFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        wordFrequencies.setTitle("Distribuzione termini e frequenze");
+        wordFrequencies.setMinimumSize(new java.awt.Dimension(1000, 800));
+        wordFrequencies.setPreferredSize(new java.awt.Dimension(1000, 800));
+        wordFrequencies.setSize(new java.awt.Dimension(1000, 800));
+        wordFrequencies.setType(java.awt.Window.Type.UTILITY);
+
+        jToolBar13.setRollover(true);
+
+        addToStopWords.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/stop.png"))); // NOI18N
+        addToStopWords.setText("Stop Words");
+        addToStopWords.setFocusable(false);
+        addToStopWords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        addToStopWords.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        addToStopWords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addToStopWordsActionPerformed(evt);
+            }
+        });
+        jToolBar13.add(addToStopWords);
+        jToolBar13.add(jSeparator9);
+
+        exportTerms.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_out.png"))); // NOI18N
+        exportTerms.setText("Esporta");
+        exportTerms.setFocusable(false);
+        exportTerms.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        exportTerms.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        exportTerms.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportTermsActionPerformed(evt);
+            }
+        });
+        jToolBar13.add(exportTerms);
+        jToolBar13.add(jSeparator49);
+
+        wFreq1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
+        wFreq1.setText("Frequenze");
+        wFreq1.setFocusable(false);
+        wFreq1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        wFreq1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        wFreq1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wFreq1ActionPerformed(evt);
+            }
+        });
+        jToolBar13.add(wFreq1);
+
+        wordFrequencies.getContentPane().add(jToolBar13, java.awt.BorderLayout.PAGE_START);
+
+        freqTable.setAutoCreateRowSorter(true);
+        freqTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Gruppo", "Termine", "Frequenza", "Peso", "Lungua"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        freqTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane32.setViewportView(freqTable);
+
+        wordFrequencies.getContentPane().add(jScrollPane32, java.awt.BorderLayout.CENTER);
+
+        freqLabel.setText("...");
+        wordFrequencies.getContentPane().add(freqLabel, java.awt.BorderLayout.PAGE_END);
+
+        selectFrequecies.setMinimumSize(new java.awt.Dimension(590, 380));
+
+        frequenciesFileChooser.setApproveButtonText("Seleziona");
+        frequenciesFileChooser.setCurrentDirectory(new java.io.File("C:\\Program Files\\NetBeans 8.1"));
+        frequenciesFileChooser.setMaximumSize(new java.awt.Dimension(425, 245));
+        frequenciesFileChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                frequenciesFileChooserActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout selectFrequeciesLayout = new javax.swing.GroupLayout(selectFrequecies.getContentPane());
+        selectFrequecies.getContentPane().setLayout(selectFrequeciesLayout);
+        selectFrequeciesLayout.setHorizontalGroup(
+            selectFrequeciesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(frequenciesFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        selectFrequeciesLayout.setVerticalGroup(
+            selectFrequeciesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(frequenciesFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("SemGui");
         setLocation(new java.awt.Point(0, 0));
@@ -2049,9 +2174,23 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(tagCloud);
+
+        wFreq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
+        wFreq.setText("Frequenze");
+        wFreq.setEnabled(false);
+        wFreq.setFocusable(false);
+        wFreq.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        wFreq.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        wFreq.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wFreqActionPerformed(evt);
+            }
+        });
+        filesToolbar.add(wFreq);
         filesToolbar.add(jSeparator2);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
+        jButton6.setText("Rimuovi filtri");
         jButton6.setToolTipText("Rimuovi tutti i filtri");
         jButton6.setFocusable(false);
         jButton6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -2062,10 +2201,10 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(jButton6);
-        filesToolbar.add(jSeparator49);
 
         capturesFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/nuclear.png"))); // NOI18N
         capturesFilter.setText("Catture non definite");
+        capturesFilter.setEnabled(false);
         capturesFilter.setFocusable(false);
         capturesFilter.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         capturesFilter.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -2075,7 +2214,6 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(capturesFilter);
-        filesToolbar.add(jSeparator9);
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
         jLabel13.setText("Cerca nel testo: ");
@@ -2329,6 +2467,8 @@ public class SemGui extends javax.swing.JFrame {
 
         jSplitPane5.setLeftComponent(jScrollPane18);
 
+        jPanel13.setLayout(new java.awt.BorderLayout());
+
         segmentText.setEditable(false);
         segmentText.setColumns(20);
         segmentText.setLineWrap(true);
@@ -2336,7 +2476,51 @@ public class SemGui extends javax.swing.JFrame {
         segmentText.setWrapStyleWord(true);
         jScrollPane14.setViewportView(segmentText);
 
-        jTabbedPane6.addTab("Testo", jScrollPane14);
+        jPanel13.add(jScrollPane14, java.awt.BorderLayout.CENTER);
+
+        jToolBar12.setRollover(true);
+
+        exPattern.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/text_letter_omega.png"))); // NOI18N
+        exPattern.setText("Estrai pattern");
+        exPattern.setFocusable(false);
+        exPattern.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        exPattern.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        exPattern.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exPatternActionPerformed(evt);
+            }
+        });
+        jToolBar12.add(exPattern);
+        jToolBar12.add(jSeparator51);
+
+        exStopWords.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/stop.png"))); // NOI18N
+        exStopWords.setText("Estrai Stop Word");
+        exStopWords.setFocusable(false);
+        exStopWords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        exStopWords.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        exStopWords.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exStopWordsActionPerformed(evt);
+            }
+        });
+        jToolBar12.add(exStopWords);
+        jToolBar12.add(jSeparator52);
+
+        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/html.png"))); // NOI18N
+        jButton14.setText("Google Translator");
+        jButton14.setFocusable(false);
+        jButton14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton14.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+        jToolBar12.add(jButton14);
+
+        jPanel13.add(jToolBar12, java.awt.BorderLayout.PAGE_START);
+
+        jTabbedPane6.addTab("Testo", jPanel13);
 
         segmentTokens.setColumns(20);
         segmentTokens.setLineWrap(true);
@@ -3954,6 +4138,7 @@ public class SemGui extends javax.swing.JFrame {
         jLabel31.setText("Pattern");
 
         capturePatternDefinition.setColumns(20);
+        capturePatternDefinition.setLineWrap(true);
         capturePatternDefinition.setRows(5);
         capturePatternDefinition.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -6745,7 +6930,10 @@ public class SemGui extends javax.swing.JFrame {
         GuiUtils.filterTable(filesTable, null, 0);
         List<String> cx = me.getSegmentsCaptures((DefaultMutableTreeNode) modelTree.getModel().getRoot(), null);
         Object[] capturesList = cx.toArray();
-        String capture = GuiUtils.showChoiceDIalog("Selezionare la cattura per la quale\nsi vogliono filtrare i file in cui non è valorizzata", "Selezionare cattura", capturesList);
+        String capture = (String) GuiUtils.showChoiceDIalog("Selezionare la cattura per la quale\nsi vogliono filtrare i file in cui non è valorizzata", "Selezionare cattura", capturesList);
+        if (capture == null) {
+            return;
+        }
         //Scorro tutti i file e vedo dove la cattura non è definita, andando a filtrare
         StringBuffer filter = new StringBuffer();
         final int size = filesTable.getRowCount();
@@ -6768,7 +6956,7 @@ public class SemGui extends javax.swing.JFrame {
         }
 
         if (filter.length() > 0) {
-            GuiUtils.filterTable(filesTable, "\\b("+filter.toString()+")\\b", 0);
+            GuiUtils.filterTable(filesTable, "\\b(" + filter.toString() + ")\\b", 0);
         } else {
             GuiUtils.showDialog("La cattura " + capture + " risulta sempre definita in tutti i documenti", "Cattura sempre definita");
         }
@@ -6805,7 +6993,7 @@ public class SemGui extends javax.swing.JFrame {
     private void formulaAddCaptureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formulaAddCaptureActionPerformed
         List<String> cx = me.getSegmentsCaptures((DefaultMutableTreeNode) modelTree.getModel().getRoot(), null, false);
         Object[] capturesList = cx.toArray();
-        String capture = GuiUtils.showChoiceDIalog("Selezionare la cattura", "Selezionare cattura", capturesList);
+        String capture = (String) GuiUtils.showChoiceDIalog("Selezionare la cattura", "Selezionare cattura", capturesList);
         if (capture != null) {
             FormulaTreeNode node = (FormulaTreeNode) me.getCurrentNode();
             if (node != null) {
@@ -6840,6 +7028,182 @@ public class SemGui extends javax.swing.JFrame {
     private void fattoreKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fattoreKActionPerformed
 
     }//GEN-LAST:event_fattoreKActionPerformed
+
+    private void exPatternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exPatternActionPerformed
+        String text = segmentText.getSelectedText(); //Riprende il testo
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() == 0) {
+            text = segmentText.getText();
+        }
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() > 0) {
+            String language = (String) segmentsTable.getModel().getValueAt(segmentsTable.getSelectedRow(), 3);
+            String pattern = GuiUtils.showTextAreaDialog("Passo 1: Pattern Estratto", "Confermare o modificare il pattern estratto", ME.getPatterenFromText(text, language));
+            if (pattern != null) {
+                List<CaptureTreeNode> cx = me.getSegmentsCapturesNodes((DefaultMutableTreeNode) modelTree.getModel().getRoot(), true);
+                Object[] capturesList = cx.toArray();
+                CaptureTreeNode capture = (CaptureTreeNode) GuiUtils.showChoiceDIalog("Passo 2: Selezionare la cattura a cui aggiungere il pattern", "Selezionare cattura", capturesList);
+                if (capture != null) {
+                    capture.addPattern(0, pattern, "");
+                    GuiUtils.showDialog("Pattern aggiunto correttamente alla cattura " + capture.getNodeName(), "Pattern Aggiunto");
+                }
+            }
+        }
+    }//GEN-LAST:event_exPatternActionPerformed
+
+    private void exStopWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exStopWordsActionPerformed
+        String text = segmentText.getSelectedText(); //Riprende il testo
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() == 0) {
+            text = segmentText.getText();
+        }
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() > 0) {
+            String language = (String) segmentsTable.getModel().getValueAt(segmentsTable.getSelectedRow(), 3);
+            if (GuiUtils.showConfirmDialog("Confermi l'inserimento dei termini selezionati nel vocabolario delle stop words per la lingua " + language + "? ", "Conferma stop words")) {
+                String[] words = text.split(" ");
+                for (String word : words) {
+                    StopWordsUtils.addStopWord(word, language, this);
+                }
+            }
+        }
+    }//GEN-LAST:event_exStopWordsActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        JEditorPane jep = new JEditorPane();
+        jep.setEditable(false);
+        String text = segmentText.getSelectedText(); //Riprende il testo
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() == 0) {
+            text = segmentText.getText();
+        }
+        if (text == null) {
+            text = "";
+        }
+        if (text.length() > 0) {
+            String language = (String) segmentsTable.getModel().getValueAt(segmentsTable.getSelectedRow(), 3);
+            String url = "https://translate.google.it/#" + language + "/it/" + URIUtil.encodePath(text.replace("\n", " "));
+            try {
+                openWebpage(new URL(url));
+            } catch (Exception e) {
+                LogGui.printException(e);
+            }
+        }
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void wFreqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreqActionPerformed
+        FilesAndSegmentsUtils.doExtractFrequencies(this);
+    }//GEN-LAST:event_wFreqActionPerformed
+
+    private void addToStopWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToStopWordsActionPerformed
+        int[] rows = freqTable.getSelectedRows();
+        if (rows != null) {
+            DefaultTableModel model = (DefaultTableModel) freqTable.getModel();
+            for (int rId : rows) {
+                String termine = (String) freqTable.getValueAt(rId, 1);
+                String lingua = (String) freqTable.getValueAt(rId, 4);
+                StopWordsUtils.addStopWord(termine, lingua, this);
+
+            }
+            GuiUtils.showDialog("Termini inseriti nelle stopwords. Ripetere l'operazione di estrazione frequenze per aggiornare la tabella", "Operazione eseguita");
+
+        }
+    }//GEN-LAST:event_addToStopWordsActionPerformed
+
+    private void exportTermsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportTermsActionPerformed
+        setLastFolder(frequenciesFileChooser);
+        selectFrequecies.setVisible(true);
+    }//GEN-LAST:event_exportTermsActionPerformed
+
+    private void wFreq1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreq1ActionPerformed
+        FilesAndSegmentsUtils.doExtractFrequencies(this);
+    }//GEN-LAST:event_wFreq1ActionPerformed
+
+    private void frequenciesFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frequenciesFileChooserActionPerformed
+        selectFrequecies.setVisible(false);
+        String command = evt.getActionCommand();
+        if (command.equals(JFileChooser.APPROVE_SELECTION)) {
+            String fileName = frequenciesFileChooser.getSelectedFile().getAbsolutePath();
+            if (!fileName.endsWith(".csv")) {
+                fileName += ".csv";
+            }
+            updateLastSelectFolder(fileName);
+            try {
+                List<String> lines = new ArrayList<>();
+                DefaultTableModel model = (DefaultTableModel) freqTable.getModel();
+                lines.add("Gruppo\tTermine\tFrequenza\tPeso\tLingua");
+                for (int i = 0; i < freqTable.getRowCount(); i++) {
+                    StringBuilder row = new StringBuilder();
+                    row.append(freqTable.getValueAt(i, 0)).append("\t").append(freqTable.getValueAt(i, 1)).append("\t").append(freqTable.getValueAt(i, 2)).append("\t").append(freqTable.getValueAt(i, 3)).append("\t").append(freqTable.getValueAt(i, 4));
+                    lines.add(row.toString());
+                }
+                GuiUtils.writeCSV(fileName, lines);
+            } catch (Exception e) {
+                LogGui.printException(e);
+            }
+        }
+    }//GEN-LAST:event_frequenciesFileChooserActionPerformed
+
+    /**
+     *
+     * @return ritorna la label delle frequenze
+     */
+    public JLabel getFreqLabel() {
+        return freqLabel;
+    }
+
+    /**
+     *
+     * @return tabella delle frequenze dei termini
+     */
+    public JTable getFreqTable() {
+        return freqTable;
+    }
+
+    /**
+     *
+     * @return Ritorna il pulsante per aprire la finestra delle frequenze
+     */
+    public JButton getwFreq() {
+        return wFreq;
+    }
+
+    /**
+     *
+     * @return ritorna il dialog dove inserire le statistiche
+     */
+    public JDialog getWordFrequencies() {
+        return wordFrequencies;
+    }
+
+    private static void openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+            } catch (Exception e) {
+                LogGui.printException(e);
+            }
+        }
+    }
+
+    private static void openWebpage(URL url) {
+        try {
+            openWebpage(url.toURI());
+        } catch (URISyntaxException e) {
+            LogGui.printException(e);
+        }
+    }
 
     /**
      * Metodo di start del software SemGUI
@@ -6893,6 +7257,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton addCapturePattern;
     private javax.swing.JButton addDpField;
     private javax.swing.JButton addStopWord;
+    private javax.swing.JButton addToStopWords;
     private javax.swing.JButton alert;
     private javax.swing.JButton batch;
     private javax.swing.JButton burnToStorage;
@@ -7034,10 +7399,13 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTable dprTable;
     private javax.swing.JCheckBox endTimeInterval;
     private javax.swing.JLabel etichettaAlberoSegmenti;
+    private javax.swing.JButton exPattern;
+    private javax.swing.JButton exStopWords;
     private javax.swing.JFileChooser excelCorpusChooser;
     private javax.swing.JFileChooser excelFileChooser;
     private javax.swing.JFileChooser excelFileChooserClass;
     private javax.swing.JButton exportIndex;
+    private javax.swing.JButton exportTerms;
     private javax.swing.JButton exportToExcel;
     private javax.swing.JFileChooser exportTreeFileChooser;
     private javax.swing.JFileChooser expotExcelFileChooser;
@@ -7076,6 +7444,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel formulaName;
     private javax.swing.JPanel formulaPanel;
     private javax.swing.JSplitPane formulaSplitPanel;
+    private javax.swing.JLabel freqLabel;
+    private javax.swing.JTable freqTable;
+    private javax.swing.JFileChooser frequenciesFileChooser;
     private javax.swing.JCheckBox fromDataProvider;
     private javax.swing.JPanel gestioneIndice;
     private javax.swing.JTabbedPane gestioneIndiceTabbedPanel;
@@ -7099,6 +7470,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -7164,6 +7536,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -7197,6 +7570,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane30;
     private javax.swing.JScrollPane jScrollPane31;
+    private javax.swing.JScrollPane jScrollPane32;
     private javax.swing.JScrollPane jScrollPane35;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -7250,6 +7624,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator49;
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator50;
+    private javax.swing.JToolBar.Separator jSeparator51;
+    private javax.swing.JToolBar.Separator jSeparator52;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
@@ -7275,6 +7651,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar10;
     private javax.swing.JToolBar jToolBar11;
+    private javax.swing.JToolBar jToolBar12;
+    private javax.swing.JToolBar jToolBar13;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private javax.swing.JToolBar jToolBar4;
@@ -7413,6 +7791,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JDialog selectFileToSegment;
     private javax.swing.JDialog selectFolderToLoad;
     private javax.swing.JDialog selectFolderToProcess;
+    private javax.swing.JDialog selectFrequecies;
     private javax.swing.JDialog selectImportPatterns;
     private javax.swing.JDialog selectImportTable;
     private javax.swing.JDialog selectImportTree;
@@ -7460,6 +7839,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTextArea token;
     private javax.swing.JButton underTreshold;
     private javax.swing.JCheckBox usaCategorie;
+    private javax.swing.JButton wFreq;
+    private javax.swing.JButton wFreq1;
+    private javax.swing.JDialog wordFrequencies;
     // End of variables declaration//GEN-END:variables
 
     // Get variabili
@@ -9434,6 +9816,8 @@ public class SemGui extends javax.swing.JFrame {
                 nuvoletta.setEnabled(true);
                 segmentaEClassifica.setEnabled(true);
                 tagCloud.setEnabled(true);
+                wFreq.setEnabled(true);
+                capturesFilter.setEnabled(true);
                 filesPanelSegmenta.setEnabled(true);
                 segmentaFile.setEnabled(true);
                 segmentaCartella.setEnabled(true);

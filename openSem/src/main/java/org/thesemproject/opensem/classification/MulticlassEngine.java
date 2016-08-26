@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.classification.KNearestNeighborClassifier;
 import org.apache.lucene.classification.SimpleNaiveBayesClassifier;
@@ -873,6 +875,87 @@ public class MulticlassEngine {
      */
     public void storeXml(org.jdom2.Document document) {
         GuiUtils.storeXml(document, getStructurePath());
+    }
+
+    private static final String[] puctuation = {"\t", "\r", "\n", ".", ":", ";", "\\", "/", "-", "_", ",", "[", "]", "(", ")", "{", "}", "@", "+", "*", "^", "?", "=", "&", "%", "$", "£", "\"", "!"};
+
+    private static final String aRegex = "(à|á|â|ã|ä)";
+    private static final String eRegex = "(è|é|ê|ë)";
+    private static final String iRegex = "(ì|í|î|ï)";
+    private static final String oRegex = "(ò|ó|ô|õ|ö)";
+    private static final String uRegex = "(ù|ú|û|ü)";
+    private static final String yRegex = "(ý|ÿ)";
+    private static final String nRegex = "(ñ)";
+
+    /**
+     * Ritorna una regex dato un testo
+     * @param text testo
+     * @param language lingua
+     * @return regex
+     */
+    public String getPatterenFromText(String text, String language) {
+        if (!isInit) return "Sistema non inizializzato";
+        StringBuilder ret = new StringBuilder();
+        text = text.toLowerCase();
+        String toToken = text;
+        for (String s : puctuation) {
+            toToken = toToken.replace(s, " ");
+        }
+        String tokenized = tokenize(toToken, language, -1); //Tokenizza il testo
+        
+        String[] tokensSplit = tokenized.split(" ");
+        int consumed = 0;
+        StringTokenizer stText = new StringTokenizer(text, " "); //Spezza in parole il testo
+        while (stText.hasMoreTokens()) {
+            boolean found = false;
+            String token = stText.nextToken();
+            //Ho il primo token
+            for (int i = consumed; i < tokensSplit.length; i++) {
+                if (tokensSplit[i].length() == 0) continue;
+                if (token.equals(tokensSplit[i])) {
+                    found = true;
+                    if (ret.length() == 0) {
+                        ret.append(token);
+                    } else {
+                        if (!ret.toString().endsWith("(.*)") && !ret.toString().endsWith("(\\s+)")) {
+                            ret.append("(\\s+)");
+                        }
+                        ret.append(token);
+                    }
+                } else if (token.startsWith(tokensSplit[i])) {   //Ho trovato cosa è diventato
+                    found = true;
+                    if (ret.length() == 0) {
+                        ret.append(tokensSplit[i]).append("(.*)");
+                    } else {
+                        if (!ret.toString().endsWith("(.*)") && !ret.toString().endsWith("(\\s+)")) {
+                            ret.append("(\\s+)");
+                        }
+                                
+                        ret.append(tokensSplit[i]).append("(.*)");
+                    }
+                }
+                if (found) {
+                    consumed = i + 1;
+                    break;
+                }
+            }
+            if (!found) {
+                if (ret.length() > 0) {
+                    if (!ret.toString().endsWith("(.*)") && !ret.toString().endsWith("(\\s+)")) {
+                        ret.append("(.*)");
+                    }
+                }
+            }
+        }
+        String returnString = ret.toString();
+        returnString = returnString.replaceAll(aRegex, "(a|" + aRegex + ")");
+        returnString = returnString.replaceAll(eRegex, "(e|" + eRegex + ")");
+        returnString = returnString.replaceAll(iRegex, "(i|" + iRegex + ")");
+        returnString = returnString.replaceAll(oRegex, "(o|" + oRegex + ")");
+        returnString = returnString.replaceAll(uRegex, "(u|" + uRegex + ")");
+        returnString = returnString.replaceAll(yRegex, "(y|" + yRegex + ")");
+        returnString = returnString.replaceAll(nRegex, "(n|" + nRegex + ")");
+        return returnString;
     }
 
 }
