@@ -382,7 +382,6 @@ public class SemGui extends javax.swing.JFrame {
         removeDuplicates = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         tagCloud = new javax.swing.JButton();
-        wFreq = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jButton6 = new javax.swing.JButton();
         capturesFilter = new javax.swing.JButton();
@@ -402,6 +401,8 @@ public class SemGui extends javax.swing.JFrame {
         jScrollPane12 = new javax.swing.JScrollPane();
         segmentsTable = new javax.swing.JTable();
         jToolBar3 = new javax.swing.JToolBar();
+        wFreq = new javax.swing.JButton();
+        jSeparator53 = new javax.swing.JToolBar.Separator();
         firstLevelOnly = new javax.swing.JButton();
         underTreshold = new javax.swing.JButton();
         notMarked = new javax.swing.JButton();
@@ -1668,7 +1669,6 @@ public class SemGui extends javax.swing.JFrame {
 
         wordFrequencies.setTitle("Distribuzione termini e frequenze");
         wordFrequencies.setMinimumSize(new java.awt.Dimension(1000, 800));
-        wordFrequencies.setPreferredSize(new java.awt.Dimension(1000, 800));
         wordFrequencies.setSize(new java.awt.Dimension(1000, 800));
         wordFrequencies.setType(java.awt.Window.Type.UTILITY);
 
@@ -2174,19 +2174,6 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(tagCloud);
-
-        wFreq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
-        wFreq.setText("Frequenze");
-        wFreq.setEnabled(false);
-        wFreq.setFocusable(false);
-        wFreq.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        wFreq.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        wFreq.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wFreqActionPerformed(evt);
-            }
-        });
-        filesToolbar.add(wFreq);
         filesToolbar.add(jSeparator2);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
@@ -2349,6 +2336,20 @@ public class SemGui extends javax.swing.JFrame {
         jPanel4.add(jScrollPane12, java.awt.BorderLayout.CENTER);
 
         jToolBar3.setRollover(true);
+
+        wFreq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
+        wFreq.setText("Frequenze");
+        wFreq.setEnabled(false);
+        wFreq.setFocusable(false);
+        wFreq.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        wFreq.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        wFreq.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wFreqActionPerformed(evt);
+            }
+        });
+        jToolBar3.add(wFreq);
+        jToolBar3.add(jSeparator53);
 
         firstLevelOnly.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/ui_slider_2.png"))); // NOI18N
         firstLevelOnly.setText("Livello 1");
@@ -7626,6 +7627,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator50;
     private javax.swing.JToolBar.Separator jSeparator51;
     private javax.swing.JToolBar.Separator jSeparator52;
+    private javax.swing.JToolBar.Separator jSeparator53;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;

@@ -489,7 +489,7 @@ public class FilesAndSegmentsUtils {
                 @Override
                 public void run() {
                     if (!semGui.isIsClassify()) {
-                        final TagCloudResults ret = getTagCloudResults(semGui);
+                        final TagCloudResults ret = getTagCloudResults(semGui,true);
                         semGui.openCloudFrame(ret, 200);
                         semGui.getFilesTab().setTitleAt(0, "Storage");
                         LogGui.info("Terminated...");
@@ -521,7 +521,7 @@ public class FilesAndSegmentsUtils {
                 @Override
                 public void run() {
                     if (!semGui.isIsClassify()) {
-                        final TagCloudResults result = getTagCloudResults(semGui);
+                        final TagCloudResults result = getTagCloudResults(semGui, false);
                         DefaultTableModel model = (DefaultTableModel) semGui.getFreqTable().getModel();
 
                         Cloud cloud = result.getCloud(10000);  //10000 termini credo siano sufficienti
@@ -571,7 +571,7 @@ public class FilesAndSegmentsUtils {
         }
     }
 
-    private static TagCloudResults getTagCloudResults(SemGui semGui) {
+    private static TagCloudResults getTagCloudResults(SemGui semGui, boolean fullText) {
         semGui.getStopTagCloud().setValue(false);
         semGui.getInterrompi().setEnabled(true);
         semGui.setIsClassify(true);
@@ -599,6 +599,14 @@ public class FilesAndSegmentsUtils {
                     Integer id = (Integer) semGui.getFilesTable().getValueAt(pos, 0);
                     SemDocument dto = semGui.getTableData().get(id);
                     String text = String.valueOf(dto.getRow()[8]);
+                    if (!fullText) {
+                        StringBuilder sb = new StringBuilder();
+                        for (Object[] rowSeg:dto.getSegmentRows()) {
+                            sb.append(rowSeg[4]).append("\n");
+                        
+                        }
+                        text = sb.toString();
+                    }
                     if (text == null) {
                         text = "";
                     }
