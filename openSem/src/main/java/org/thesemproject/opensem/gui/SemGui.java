@@ -107,6 +107,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.eclipse.jetty.util.URIUtil;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
+import org.thesemproject.opensem.gui.utils.RankUtils;
+import org.thesemproject.opensem.segmentation.functions.rank.RankEvaluations;
 import org.thesemproject.opensem.utils.FinalBoolean;
 
 /**
@@ -126,6 +128,7 @@ public class SemGui extends javax.swing.JFrame {
      */
     public SemGui() {
         cc = new SemConfiguration();
+        evaluations = new RankEvaluations();
         initComponents();
         GuiUtils.prepareTables(this);
         GuiUtils.initSubMenus(this);
@@ -325,11 +328,36 @@ public class SemGui extends javax.swing.JFrame {
         freqLabel = new javax.swing.JLabel();
         selectFrequecies = new javax.swing.JDialog();
         frequenciesFileChooser = new javax.swing.JFileChooser();
+        rankDialog = new javax.swing.JDialog();
+        jSplitPane10 = new javax.swing.JSplitPane();
+        jPanel14 = new javax.swing.JPanel();
+        jToolBar14 = new javax.swing.JToolBar();
+        addRank = new javax.swing.JButton();
+        jSeparator54 = new javax.swing.JToolBar.Separator();
+        delRank = new javax.swing.JButton();
+        jScrollPane33 = new javax.swing.JScrollPane();
+        rankTable = new javax.swing.JTable();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        fieldRankName = new javax.swing.JComboBox<>();
+        fieldRankCondition = new javax.swing.JComboBox<>();
+        rankStartYear = new javax.swing.JTextField();
+        jLabel44 = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        rankDurationCondition = new javax.swing.JComboBox<>();
+        rankDurationValue = new javax.swing.JTextField();
+        jLabel46 = new javax.swing.JLabel();
+        rankEndYear = new javax.swing.JTextField();
+        rankScore = new javax.swing.JTextField();
+        okRank = new javax.swing.JButton();
+        fieldRankValue = new javax.swing.JComboBox<>();
+        rankStatus = new javax.swing.JLabel();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
         segmentaEClassifica = new javax.swing.JButton();
         segmentaEBasta = new javax.swing.JButton();
+        setupRank = new javax.swing.JButton();
         interrompi = new javax.swing.JButton();
         jSeparator26 = new javax.swing.JToolBar.Separator();
         jLabel7 = new javax.swing.JLabel();
@@ -1768,6 +1796,237 @@ public class SemGui extends javax.swing.JFrame {
             .addComponent(frequenciesFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        rankDialog.setTitle("Definizione criteri di match");
+        rankDialog.setMaximumSize(new java.awt.Dimension(1200, 800));
+        rankDialog.setMinimumSize(new java.awt.Dimension(1200, 800));
+        rankDialog.setPreferredSize(new java.awt.Dimension(1200, 800));
+        rankDialog.setSize(new java.awt.Dimension(1000, 800));
+
+        jSplitPane10.setDividerLocation(500);
+        jSplitPane10.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jPanel14.setLayout(new java.awt.BorderLayout());
+
+        jToolBar14.setRollover(true);
+
+        addRank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/add.png"))); // NOI18N
+        addRank.setText("Aggiungi");
+        addRank.setFocusable(false);
+        addRank.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        addRank.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        addRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addRankActionPerformed(evt);
+            }
+        });
+        jToolBar14.add(addRank);
+        jToolBar14.add(jSeparator54);
+
+        delRank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bin_closed.png"))); // NOI18N
+        delRank.setText("Cancella");
+        delRank.setFocusable(false);
+        delRank.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        delRank.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        delRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delRankActionPerformed(evt);
+            }
+        });
+        jToolBar14.add(delRank);
+
+        jPanel14.add(jToolBar14, java.awt.BorderLayout.PAGE_START);
+
+        rankTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Campo", "Condizione", "Valore", "Cond.Durata", "Durata", "Anno da", "Anno a", "Rank"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        rankTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rankTableMouseClicked(evt);
+            }
+        });
+        rankTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                rankTableKeyTyped(evt);
+            }
+        });
+        jScrollPane33.setViewportView(rankTable);
+        if (rankTable.getColumnModel().getColumnCount() > 0) {
+            rankTable.getColumnModel().getColumn(0).setMinWidth(0);
+            rankTable.getColumnModel().getColumn(0).setPreferredWidth(0);
+            rankTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        }
+
+        jPanel14.add(jScrollPane33, java.awt.BorderLayout.CENTER);
+
+        jSplitPane10.setTopComponent(jPanel14);
+
+        jLabel14.setText("Condizione");
+
+        fieldRankName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        fieldRankName.setEnabled(false);
+        fieldRankName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldRankNameActionPerformed(evt);
+            }
+        });
+
+        fieldRankCondition.setEnabled(false);
+        fieldRankCondition.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldRankConditionActionPerformed(evt);
+            }
+        });
+
+        rankStartYear.setEnabled(false);
+        rankStartYear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rankStartYearActionPerformed(evt);
+            }
+        });
+        rankStartYear.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rankStartYearKeyReleased(evt);
+            }
+        });
+
+        jLabel44.setText("Rank");
+
+        jLabel45.setText("Condizione durata");
+
+        rankDurationCondition.setEnabled(false);
+        rankDurationCondition.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rankDurationConditionActionPerformed(evt);
+            }
+        });
+
+        rankDurationValue.setEnabled(false);
+        rankDurationValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rankDurationValueActionPerformed(evt);
+            }
+        });
+
+        jLabel46.setText("Periodo");
+
+        rankEndYear.setEnabled(false);
+        rankEndYear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rankEndYearActionPerformed(evt);
+            }
+        });
+        rankEndYear.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                rankEndYearKeyTyped(evt);
+            }
+        });
+
+        rankScore.setEnabled(false);
+        rankScore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rankScoreActionPerformed(evt);
+            }
+        });
+
+        okRank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/eye.png"))); // NOI18N
+        okRank.setText("Conferma");
+        okRank.setEnabled(false);
+        okRank.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        okRank.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        okRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okRankActionPerformed(evt);
+            }
+        });
+
+        fieldRankValue.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel15Layout.createSequentialGroup()
+                        .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel46, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel45, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel44, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                                        .addComponent(rankStartYear, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(rankEndYear, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(rankDurationCondition, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rankDurationValue, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE))
+                            .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addComponent(rankScore, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(372, 372, 372))))
+                    .addGroup(jPanel15Layout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fieldRankValue, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(fieldRankCondition, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(fieldRankName, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(okRank)
+                .addGap(11, 11, 11))
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(fieldRankName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(fieldRankCondition, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(fieldRankValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel45)
+                    .addComponent(rankDurationCondition, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rankDurationValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel46)
+                    .addComponent(rankStartYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rankEndYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel44)
+                    .addComponent(rankScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(okRank))
+                .addContainerGap())
+        );
+
+        jSplitPane10.setBottomComponent(jPanel15);
+
+        rankDialog.getContentPane().add(jSplitPane10, java.awt.BorderLayout.CENTER);
+
+        rankStatus.setText("...");
+        rankDialog.getContentPane().add(rankStatus, java.awt.BorderLayout.PAGE_END);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("SemGui");
         setLocation(new java.awt.Point(0, 0));
@@ -1814,6 +2073,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         consolleToolbar.add(segmentaEBasta);
+
+        setupRank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/zone_money.png"))); // NOI18N
+        setupRank.setText("Rank");
+        setupRank.setEnabled(false);
+        setupRank.setFocusable(false);
+        setupRank.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        setupRank.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        setupRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setupRankActionPerformed(evt);
+            }
+        });
+        consolleToolbar.add(setupRank);
 
         interrompi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bomb.png"))); // NOI18N
         interrompi.setText("Interrompi");
@@ -2991,7 +3263,7 @@ public class SemGui extends javax.swing.JFrame {
         imagesPanel.setLayout(imagesPanelLayout);
         imagesPanelLayout.setHorizontalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1322, Short.MAX_VALUE)
+            .addGap(0, 1393, Short.MAX_VALUE)
         );
         imagesPanelLayout.setVerticalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3228,7 +3500,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(definitionDefinitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(definitionPatternScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addComponent(definitionName)
                     .addComponent(definitionPatternTestScrollPanel)
                     .addGroup(definitionDefinitionPanelLayout.createSequentialGroup()
@@ -3441,7 +3713,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(defaultYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(segmentName, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(classifyYN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(444, Short.MAX_VALUE))
+                .addContainerGap(460, Short.MAX_VALUE))
         );
         segmentConfigurationPanelLayout.setVerticalGroup(
             segmentConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3557,7 +3829,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(segmentPatternScrollPanelTestArea, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addComponent(segmentPatternDefinitionScrollPanel)
                     .addGroup(segmentPatternConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(segmentPatternConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4178,8 +4450,8 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
-                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(capturePatternContentScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                    .addComponent(jScrollPane35, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addGroup(capturePatternContentTableLayout.createSequentialGroup()
                         .addGroup(capturePatternContentTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4576,7 +4848,7 @@ public class SemGui extends javax.swing.JFrame {
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel51, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel54, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                    .addComponent(jLabel55, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                     .addComponent(jLabel57, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(capturePatternContentTable1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4719,7 +4991,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(dprPriority))
                     .addComponent(dprSegment, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
         captureConfigurationPanel5Layout.setVerticalGroup(
             captureConfigurationPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4804,7 +5076,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(dprFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(290, Short.MAX_VALUE))
+                .addContainerGap(306, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4998,7 +5270,7 @@ public class SemGui extends javax.swing.JFrame {
             .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(actBeforeEnrichment, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(actBeforeEnrichment, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addGroup(formulaConfigurationPanelLayout.createSequentialGroup()
                         .addGroup(formulaConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -5610,7 +5882,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(usaCategorie, javax.swing.GroupLayout.PREFERRED_SIZE, 744, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(891, Short.MAX_VALUE))
+                .addContainerGap(962, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -7155,6 +7427,173 @@ public class SemGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_frequenciesFileChooserActionPerformed
 
+    private void addRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRankActionPerformed
+        RankUtils.clearRank(this);
+        
+    }//GEN-LAST:event_addRankActionPerformed
+
+    private void setupRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupRankActionPerformed
+        rankDialog.setVisible(true);
+    }//GEN-LAST:event_setupRankActionPerformed
+
+    private void fieldRankNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldRankNameActionPerformed
+        RankUtils.manageRankName(this);
+    }//GEN-LAST:event_fieldRankNameActionPerformed
+
+
+    private void rankStartYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rankStartYearActionPerformed
+        if (rankStartYear.getText().length() > 0) {
+            rankDurationCondition.setSelectedIndex(-1);
+            rankDurationValue.setText("");
+        }
+
+    }//GEN-LAST:event_rankStartYearActionPerformed
+
+    private void rankEndYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rankEndYearActionPerformed
+        if (rankEndYear.getText().length() > 0) {
+            rankDurationCondition.setSelectedIndex(-1);
+            rankDurationValue.setText("");
+        }
+    }//GEN-LAST:event_rankEndYearActionPerformed
+
+    private void rankDurationValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rankDurationValueActionPerformed
+        if (rankDurationValue.getText().length() > 0) {
+            rankStartYear.setText("");
+            rankEndYear.setText("");
+        }
+    }//GEN-LAST:event_rankDurationValueActionPerformed
+
+    private void rankScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rankScoreActionPerformed
+
+    }//GEN-LAST:event_rankScoreActionPerformed
+
+    private void rankDurationConditionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rankDurationConditionActionPerformed
+        if (rankDurationCondition.getSelectedIndex() != -1) {
+            rankStartYear.setText("");
+            rankEndYear.setText("");
+        }
+    }//GEN-LAST:event_rankDurationConditionActionPerformed
+
+    private void rankStartYearKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rankStartYearKeyReleased
+        rankStartYearActionPerformed(null);
+    }//GEN-LAST:event_rankStartYearKeyReleased
+
+    private void rankEndYearKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rankEndYearKeyTyped
+        rankEndYearActionPerformed(null);
+    }//GEN-LAST:event_rankEndYearKeyTyped
+
+    private void okRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okRankActionPerformed
+        RankUtils.addModifyRank(this);
+    }//GEN-LAST:event_okRankActionPerformed
+
+   
+    private void fieldRankConditionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldRankConditionActionPerformed
+        RankUtils.manageRankCondition(this);
+    }//GEN-LAST:event_fieldRankConditionActionPerformed
+
+    
+
+    private void rankTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rankTableMouseClicked
+        RankUtils.manageRankTable(this);
+    }//GEN-LAST:event_rankTableMouseClicked
+
+    private void rankTableKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rankTableKeyTyped
+        RankUtils.manageRankTable(this);
+    }//GEN-LAST:event_rankTableKeyTyped
+
+    private void delRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delRankActionPerformed
+        RankUtils.deleteRankRule(this);
+    }//GEN-LAST:event_delRankActionPerformed
+
+    /**
+     *
+     * @return pulsante ok
+     */
+    public JButton getOkRank() {
+        return okRank;
+    }
+    
+    /**
+     *
+     * @return duration condition
+     */
+    public JComboBox<String> getRankDurationCondition() {
+        return rankDurationCondition;
+    }
+
+    /**
+     *
+     * @return duration value
+     */
+    public JTextField getRankDurationValue() {
+        return rankDurationValue;
+    }
+
+    /**
+     *
+     * @return rank end year
+     */
+    public JTextField getRankEndYear() {
+        return rankEndYear;
+    }
+
+    /**
+     *
+     * @return rank score
+     */
+    public JTextField getRankScore() {
+        return rankScore;
+    }
+
+    /**
+     *
+     * @return rank start year
+     */
+    public JTextField getRankStartYear() {
+        return rankStartYear;
+    }
+
+    /**
+     *
+     * @return rank status label
+     */
+    public JLabel getRankStatus() {
+        return rankStatus;
+    }
+
+    /**
+     *
+     * @return rank table
+     */
+    public JTable getRankTable() {
+        return rankTable;
+    }
+
+    /**
+     *
+     * @return condizione sul field
+     */
+    public JComboBox<String> getFieldRankCondition() {
+        return fieldRankCondition;
+    }
+
+    /**
+     *
+     * @return nome del filed
+     */
+    public JComboBox<String> getFieldRankName() {
+        return fieldRankName;
+    }
+
+    /**
+     *
+     * @return valore della condizione
+     */
+    public JComboBox<String> getFieldRankValue() {
+        return fieldRankValue;
+    }
+
+
     /**
      *
      * @return ritorna la label delle frequenze
@@ -7240,6 +7679,7 @@ public class SemGui extends javax.swing.JFrame {
     private static final MulticlassEngine ME = new MulticlassEngine();
     private static final SegmentEngine SE = new SegmentEngine();
     private static final DocumentParser DP = new DocumentParser();
+    private final RankEvaluations evaluations;
     private final SemConfiguration cc;
     private final ModelEditor me;
     private final AutoSuggestor segmentPatternSuggestor;
@@ -7257,6 +7697,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JCheckBox actBeforeEnrichment;
     private javax.swing.JButton addCapturePattern;
     private javax.swing.JButton addDpField;
+    private javax.swing.JButton addRank;
     private javax.swing.JButton addStopWord;
     private javax.swing.JButton addToStopWords;
     private javax.swing.JButton alert;
@@ -7357,6 +7798,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane definitionPatternTestScrollPanel;
     private javax.swing.JToolBar definitionPatternToolbar;
     private javax.swing.JLabel definitionStatus;
+    private javax.swing.JButton delRank;
     private javax.swing.JButton deleteCapturePattern;
     private javax.swing.JButton deleteDefinition;
     private javax.swing.JButton deleteDocument;
@@ -7414,6 +7856,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JFileChooser expotPatternsFileChooser;
     private javax.swing.JFileChooser expotTableFileChooser;
     private javax.swing.JTextField fattoreK;
+    private javax.swing.JComboBox<String> fieldRankCondition;
+    private javax.swing.JComboBox<String> fieldRankName;
+    private javax.swing.JComboBox<String> fieldRankValue;
     private javax.swing.JTextField fileExcel;
     private javax.swing.JTextArea fileText;
     private javax.swing.JTextArea fileText1;
@@ -7486,6 +7931,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
@@ -7516,6 +7962,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
+    private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
@@ -7538,6 +7987,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -7572,6 +8023,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane30;
     private javax.swing.JScrollPane jScrollPane31;
     private javax.swing.JScrollPane jScrollPane32;
+    private javax.swing.JScrollPane jScrollPane33;
     private javax.swing.JScrollPane jScrollPane35;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -7628,11 +8080,13 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator51;
     private javax.swing.JToolBar.Separator jSeparator52;
     private javax.swing.JToolBar.Separator jSeparator53;
+    private javax.swing.JToolBar.Separator jSeparator54;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
     private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane10;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JSplitPane jSplitPane4;
@@ -7655,6 +8109,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar11;
     private javax.swing.JToolBar jToolBar12;
     private javax.swing.JToolBar jToolBar13;
+    private javax.swing.JToolBar jToolBar14;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private javax.swing.JToolBar jToolBar4;
@@ -7703,6 +8158,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton notMarked;
     private javax.swing.JButton nuvoletta;
     private javax.swing.JFileChooser ocrFileChooser;
+    private javax.swing.JButton okRank;
     private javax.swing.JCheckBox onlySegment;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JButton openSegmentRelationshipPanel;
@@ -7721,6 +8177,14 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> processori;
     private javax.swing.JComboBox<String> processori1;
     private javax.swing.JComboBox<String> processori2;
+    private javax.swing.JDialog rankDialog;
+    private javax.swing.JComboBox<String> rankDurationCondition;
+    private javax.swing.JTextField rankDurationValue;
+    private javax.swing.JTextField rankEndYear;
+    private javax.swing.JTextField rankScore;
+    private javax.swing.JTextField rankStartYear;
+    private javax.swing.JLabel rankStatus;
+    private javax.swing.JTable rankTable;
     private javax.swing.JCheckBox rebuildIndex;
     private javax.swing.JButton removeDefinitionFilters;
     private javax.swing.JButton removeDocumentFilter;
@@ -7809,6 +8273,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton selezionaOCR;
     private javax.swing.JButton selezionaStop;
     private javax.swing.JTextField serachDocumentBody;
+    private javax.swing.JButton setupRank;
     private javax.swing.JTextField soglia;
     private javax.swing.JButton startBuildIndex;
     private javax.swing.JCheckBox startTimeInterval;
@@ -9824,6 +10289,7 @@ public class SemGui extends javax.swing.JFrame {
                 segmentaFile.setEnabled(true);
                 segmentaCartella.setEnabled(true);
                 segmentaEBasta.setEnabled(true);
+                setupRank.setEnabled(true);
                 resetSegmenta.setEnabled(true);
                 modelTree.setModel(SE.getVisualStructure());
                 saveModel.setEnabled(true);
@@ -9832,6 +10298,7 @@ public class SemGui extends javax.swing.JFrame {
                 for (String segment : segNames) {
                     dprSegment.addItem(segment);
                 }
+                
             }
             initLabel.setText("Build classification tree...");
             LogGui.info("Build classification tree...");
@@ -9856,6 +10323,7 @@ public class SemGui extends javax.swing.JFrame {
             LogGui.printException(e);
         }
         jButton2.setEnabled(true);
+        RankUtils.loadRank(this);
         LogGui.printMemorySummary();
     }
 
@@ -10349,5 +10817,15 @@ public class SemGui extends javax.swing.JFrame {
     public JCheckBox getActBeforeEnrichment() {
         return actBeforeEnrichment;
     }
+
+    /**
+     *
+     * @return insieme delle valutazioni per valutare un documento
+     */
+    public RankEvaluations getEvaluations() {
+        return evaluations;
+    }
+    
+    
 
 }

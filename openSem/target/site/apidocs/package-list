@@ -8,6 +8,7 @@ org.thesemproject.opensem.gui.utils
 org.thesemproject.opensem.parser
 org.thesemproject.opensem.segmentation
 org.thesemproject.opensem.segmentation.functions
+org.thesemproject.opensem.segmentation.functions.rank
 org.thesemproject.opensem.tagcloud
 org.thesemproject.opensem.utils
 org.thesemproject.opensem.utils.interning

@@ -188,8 +188,9 @@ public class GuiUtils {
     public static void clearTable(JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) table.getRowSorter();
-
-        sorter.setRowFilter(null);
+        if (sorter != null) {
+            sorter.setRowFilter(null);
+        }
         table.setRowSorter(sorter);
         int size = table.getRowCount();
         for (int i = size - 1; i >= 0; i--) {

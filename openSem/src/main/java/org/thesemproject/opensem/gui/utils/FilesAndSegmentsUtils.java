@@ -470,7 +470,7 @@ public class FilesAndSegmentsUtils {
      * @param kpi KPI
      * @param semGui frame
      */
-    public static void updateFilesTable(int row, int column, Integer kpi, SemGui semGui) {
+    public static void updateFilesTable(int row, int column, Number kpi, SemGui semGui) {
         row = semGui.getFilesTable().convertRowIndexToModel(row);
         semGui.getFilesTable().getModel().setValueAt(kpi != null ? kpi : 0, row, column);
     }
@@ -489,7 +489,7 @@ public class FilesAndSegmentsUtils {
                 @Override
                 public void run() {
                     if (!semGui.isIsClassify()) {
-                        final TagCloudResults ret = getTagCloudResults(semGui,true);
+                        final TagCloudResults ret = getTagCloudResults(semGui, true);
                         semGui.openCloudFrame(ret, 200);
                         semGui.getFilesTab().setTitleAt(0, "Storage");
                         LogGui.info("Terminated...");
@@ -601,9 +601,9 @@ public class FilesAndSegmentsUtils {
                     String text = String.valueOf(dto.getRow()[8]);
                     if (!fullText) {
                         StringBuilder sb = new StringBuilder();
-                        for (Object[] rowSeg:dto.getSegmentRows()) {
+                        for (Object[] rowSeg : dto.getSegmentRows()) {
                             sb.append(rowSeg[4]).append("\n");
-                        
+
                         }
                         text = sb.toString();
                     }
@@ -648,6 +648,12 @@ public class FilesAndSegmentsUtils {
             FilesAndSegmentsUtils.updateFilesTable(currentFilesPosition, 5, stats.get("Captures"), semGui);
             FilesAndSegmentsUtils.updateFilesTable(currentFilesPosition, 6, stats.get("Sentencies"), semGui);
             FilesAndSegmentsUtils.updateFilesTable(currentFilesPosition, 7, stats.get("Classifications"), semGui);
+
+            if (!semGui.getEvaluations().isEmpty()) {
+                double rank = semGui.getEvaluations().evaluate(identifiedSegments);
+                //dto.getRow()[10] = rank;
+                FilesAndSegmentsUtils.updateFilesTable(currentFilesPosition, 10, rank, semGui);
+            }
             ChangedUtils.updateChangedTable(dto, old, semGui);
             List<Object[]> rows = dto.getSegmentRows();
             synchronized (lockSync) {

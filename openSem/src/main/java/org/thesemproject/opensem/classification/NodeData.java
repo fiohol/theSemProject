@@ -18,6 +18,7 @@ package org.thesemproject.opensem.classification;
 import org.thesemproject.opensem.gui.LogGui;
 
 import com.beust.jcommander.internal.Lists;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.classification.SimpleNaiveBayesClassifier;
@@ -185,7 +186,7 @@ public class NodeData {
                 classifier.train(ar, IndexManager.BODY, getNodeCodeForFilter(), analyzer);
                 knn.train(ar, IndexManager.BODY, getNodeCodeForFilter(), analyzer);
             }
-            
+
             /*
             else if (IndexManager.LEVEL_1.equalsIgnoreCase(level)) {
                 //Ci troviamo su una categoria figlia di root
@@ -675,6 +676,28 @@ public class NodeData {
 
     private String getNodeCodeForFilter() {
         return NodeData.getNodeCodeForFilter(nodeName);
+    }
+
+    /**
+     * Ritorna la visita del sottoalbero a partire dal nodo corrente nel formato
+     * confrontabile con ClassificationPath.getCompactClassString();
+     *
+     * @since 1.3.4
+     * @param parentPath percorso per arrivare al nodo
+     * @return path del nodo e dei sottorami
+     */
+    public List<String> visitSubTree(String parentPath) {
+        List<String> ret = new ArrayList<>();
+        final String pp = (parentPath != null) ? (parentPath.length() == 0 ? nodeName : parentPath + ">" + nodeName) : "";
+        if (parentPath != null) {
+            ret.add(pp);
+        }
+        if (hasChildren()) {
+            children.values().stream().forEach((nd) -> {
+                ret.addAll(nd.visitSubTree(pp));
+            });
+        }
+        return ret;
     }
 
 }
