@@ -25,9 +25,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdom2.Document;
 
@@ -153,7 +155,60 @@ public class PatternsUtils {
     }
 
     /**
-     * Esoirta i pattern su file csv separato da tab
+     * Gestisce l'aggiunta di una cattura da bloccare
+     *
+     * @since 1.4
+     * 
+     * @param evt evento
+     * @param semGui gui
+     */
+    public static void addBlockCapture(ActionEvent evt, SemGui semGui) {
+        ModelTreeNode node = semGui.getModelEditor().getCurrentNode();
+        if (node != null) {
+            if (semGui.getModelEditor().isCaptureChild(node)) {
+                CaptureTreeNode ctn = (CaptureTreeNode) node;
+                DefaultTableModel model = (DefaultTableModel) semGui.getBlockedTable().getModel();
+                List<String> cx = semGui.getModelEditor().getSegmentsCaptures((DefaultMutableTreeNode) semGui.getModelTree().getModel().getRoot(), null);
+                cx.removeAll(ctn.getBlockedCaptures()); //Rimuove quelle già usate...
+                Object[] capturesList = cx.toArray();
+                String capture = (String) GuiUtils.showChoiceDIalog("Selezionare la cattura da bloccare", "Selezionare cattura", capturesList);
+                if (capture != null) {
+                    Object[] row = {capture};
+                    model.addRow(row);
+                    ctn.addBlockedCapture(capture);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gestice la rimozione di una cattura da bloccare
+     *
+     * @since 1.4
+     * 
+     * @param evt evento
+     * @param semGui gui
+     */
+    public static void removeBlockedCapture(ActionEvent evt, SemGui semGui) {
+        ModelTreeNode node = semGui.getModelEditor().getCurrentNode();
+        if (node != null) {
+            if (semGui.getModelEditor().isCaptureChild(node)) {
+                CaptureTreeNode ctn = (CaptureTreeNode) node;
+                int sel = semGui.getBlockedTable().getSelectedRow();
+                if (sel != -1) {
+                    String capture = (String) semGui.getBlockedTable().getValueAt(sel, 0);
+                    if (capture != null) {
+                        ctn.removeBlockedCapture(capture);
+                        DefaultTableModel model = (DefaultTableModel) semGui.getBlockedTable().getModel();
+                        model.removeRow(sel);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Esporta i pattern su file csv separato da tab
      *
      * @param evt evento
      * @param semGui frame

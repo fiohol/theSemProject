@@ -352,6 +352,13 @@ public class SemGui extends javax.swing.JFrame {
         okRank = new javax.swing.JButton();
         fieldRankValue = new javax.swing.JComboBox<>();
         rankStatus = new javax.swing.JLabel();
+        blockDialog = new javax.swing.JDialog();
+        jToolBar15 = new javax.swing.JToolBar();
+        addBlock = new javax.swing.JButton();
+        removeBlock = new javax.swing.JButton();
+        jLabel42 = new javax.swing.JLabel();
+        jScrollPane34 = new javax.swing.JScrollPane();
+        blockedTable = new javax.swing.JTable();
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
@@ -637,6 +644,8 @@ public class SemGui extends javax.swing.JFrame {
         captureConfigurationSuperPanel = new javax.swing.JPanel();
         jToolBar9 = new javax.swing.JToolBar();
         openSegmentRelationshipPanel = new javax.swing.JButton();
+        jSeparator55 = new javax.swing.JToolBar.Separator();
+        blockButton = new javax.swing.JButton();
         jSeparator34 = new javax.swing.JToolBar.Separator();
         classifyPattern = new javax.swing.JButton();
         captureConfigurationPanel = new javax.swing.JPanel();
@@ -651,6 +660,7 @@ public class SemGui extends javax.swing.JFrame {
         tempCapture = new javax.swing.JCheckBox();
         endTimeInterval = new javax.swing.JCheckBox();
         startTimeInterval = new javax.swing.JCheckBox();
+        notSubscribe = new javax.swing.JCheckBox();
         capturePatternPanel = new javax.swing.JPanel();
         capturePatternToolbar = new javax.swing.JToolBar();
         addCapturePattern = new javax.swing.JButton();
@@ -1339,10 +1349,12 @@ public class SemGui extends javax.swing.JFrame {
 
         captureClassificationRelationship.setTitle("Selezione categoria in cui classificare");
         captureClassificationRelationship.setAlwaysOnTop(true);
-        captureClassificationRelationship.setMinimumSize(new java.awt.Dimension(450, 550));
+        captureClassificationRelationship.setMinimumSize(new java.awt.Dimension(900, 500));
         captureClassificationRelationship.setModal(true);
         captureClassificationRelationship.setName("Relazione"); // NOI18N
+        captureClassificationRelationship.setPreferredSize(new java.awt.Dimension(900, 500));
         captureClassificationRelationship.setResizable(false);
+        captureClassificationRelationship.setSize(new java.awt.Dimension(900, 500));
 
         jToolBar8.setRollover(true);
 
@@ -1797,9 +1809,7 @@ public class SemGui extends javax.swing.JFrame {
         );
 
         rankDialog.setTitle("Definizione criteri di match");
-        rankDialog.setMaximumSize(new java.awt.Dimension(1200, 800));
         rankDialog.setMinimumSize(new java.awt.Dimension(1200, 800));
-        rankDialog.setPreferredSize(new java.awt.Dimension(1200, 800));
         rankDialog.setSize(new java.awt.Dimension(1000, 800));
 
         jSplitPane10.setDividerLocation(500);
@@ -2026,6 +2036,62 @@ public class SemGui extends javax.swing.JFrame {
 
         rankStatus.setText("...");
         rankDialog.getContentPane().add(rankStatus, java.awt.BorderLayout.PAGE_END);
+
+        blockDialog.setTitle("Gestione blocchi incrociati");
+        blockDialog.setMinimumSize(new java.awt.Dimension(900, 800));
+        blockDialog.setPreferredSize(new java.awt.Dimension(900, 800));
+        blockDialog.setSize(new java.awt.Dimension(900, 800));
+
+        jToolBar15.setRollover(true);
+
+        addBlock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/add.png"))); // NOI18N
+        addBlock.setText("Aggiungi");
+        addBlock.setFocusable(false);
+        addBlock.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        addBlock.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        addBlock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBlockActionPerformed(evt);
+            }
+        });
+        jToolBar15.add(addBlock);
+
+        removeBlock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bin_closed.png"))); // NOI18N
+        removeBlock.setText("Rimuovi");
+        removeBlock.setFocusable(false);
+        removeBlock.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        removeBlock.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        removeBlock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeBlockActionPerformed(evt);
+            }
+        });
+        jToolBar15.add(removeBlock);
+
+        blockDialog.getContentPane().add(jToolBar15, java.awt.BorderLayout.PAGE_START);
+
+        jLabel42.setText("Attenzione: Utilizzare con cautela evitando riferimenti circolari");
+        blockDialog.getContentPane().add(jLabel42, java.awt.BorderLayout.PAGE_END);
+
+        blockedTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Catture bloccate"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane34.setViewportView(blockedTable);
+
+        blockDialog.getContentPane().add(jScrollPane34, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("SemGui");
@@ -4211,6 +4277,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar9.add(openSegmentRelationshipPanel);
+        jToolBar9.add(jSeparator55);
+
+        blockButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross_shield.png"))); // NOI18N
+        blockButton.setText("Blocchi");
+        blockButton.setFocusable(false);
+        blockButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        blockButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        blockButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                blockButtonActionPerformed(evt);
+            }
+        });
+        jToolBar9.add(blockButton);
         jToolBar9.add(jSeparator34);
 
         classifyPattern.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/sitemap.png"))); // NOI18N
@@ -4285,6 +4364,13 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
 
+        notSubscribe.setText("Non sovrascrive");
+        notSubscribe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notSubscribeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout captureConfigurationPanelLayout = new javax.swing.GroupLayout(captureConfigurationPanel);
         captureConfigurationPanel.setLayout(captureConfigurationPanelLayout);
         captureConfigurationPanelLayout.setHorizontalGroup(
@@ -4298,7 +4384,10 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(jLabel29, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(captureConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(captureType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(captureConfigurationPanelLayout.createSequentialGroup()
+                        .addComponent(captureType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(notSubscribe))
                     .addComponent(captureFormat)
                     .addGroup(captureConfigurationPanelLayout.createSequentialGroup()
                         .addComponent(captureName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -4311,7 +4400,7 @@ public class SemGui extends javax.swing.JFrame {
                         .addComponent(startTimeInterval)
                         .addGap(18, 18, 18)
                         .addComponent(endTimeInterval)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         captureConfigurationPanelLayout.setVerticalGroup(
             captureConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4323,7 +4412,8 @@ public class SemGui extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addGroup(captureConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(captureType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(captureType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(notSubscribe))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(captureConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel29)
@@ -7505,6 +7595,25 @@ public class SemGui extends javax.swing.JFrame {
         RankUtils.deleteRankRule(this);
     }//GEN-LAST:event_delRankActionPerformed
 
+    private void blockButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blockButtonActionPerformed
+        blockDialog.setVisible(true);
+    }//GEN-LAST:event_blockButtonActionPerformed
+
+    private void addBlockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBlockActionPerformed
+        PatternsUtils.addBlockCapture(evt, this);
+    }//GEN-LAST:event_addBlockActionPerformed
+
+    private void removeBlockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBlockActionPerformed
+        PatternsUtils.removeBlockedCapture(evt, this);
+    }//GEN-LAST:event_removeBlockActionPerformed
+
+    private void notSubscribeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notSubscribeActionPerformed
+        CaptureTreeNode node = (CaptureTreeNode) me.getCurrentNode();
+        if (node != null) {
+            node.setNotSubscribe(notSubscribe.isSelected());
+        }
+    }//GEN-LAST:event_notSubscribeActionPerformed
+
     /**
      *
      * @return pulsante ok
@@ -7695,6 +7804,7 @@ public class SemGui extends javax.swing.JFrame {
     private final FinalBoolean stopTagCloud = new FinalBoolean(false);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox actBeforeEnrichment;
+    private javax.swing.JButton addBlock;
     private javax.swing.JButton addCapturePattern;
     private javax.swing.JButton addDpField;
     private javax.swing.JButton addRank;
@@ -7702,6 +7812,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton addToStopWords;
     private javax.swing.JButton alert;
     private javax.swing.JButton batch;
+    private javax.swing.JButton blockButton;
+    private javax.swing.JDialog blockDialog;
+    private javax.swing.JTable blockedTable;
     private javax.swing.JButton burnToStorage;
     private javax.swing.JDialog captureClassificationRelationship;
     private javax.swing.JPanel captureConfigurationPanel;
@@ -7962,6 +8075,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
@@ -8024,6 +8138,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane31;
     private javax.swing.JScrollPane jScrollPane32;
     private javax.swing.JScrollPane jScrollPane33;
+    private javax.swing.JScrollPane jScrollPane34;
     private javax.swing.JScrollPane jScrollPane35;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -8081,6 +8196,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator52;
     private javax.swing.JToolBar.Separator jSeparator53;
     private javax.swing.JToolBar.Separator jSeparator54;
+    private javax.swing.JToolBar.Separator jSeparator55;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
@@ -8110,6 +8226,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar12;
     private javax.swing.JToolBar jToolBar13;
     private javax.swing.JToolBar jToolBar14;
+    private javax.swing.JToolBar jToolBar15;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private javax.swing.JToolBar jToolBar4;
@@ -8156,6 +8273,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> multipleYN;
     private javax.swing.JButton newDefinition;
     private javax.swing.JButton notMarked;
+    private javax.swing.JCheckBox notSubscribe;
     private javax.swing.JButton nuvoletta;
     private javax.swing.JFileChooser ocrFileChooser;
     private javax.swing.JButton okRank;
@@ -8186,6 +8304,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel rankStatus;
     private javax.swing.JTable rankTable;
     private javax.swing.JCheckBox rebuildIndex;
+    private javax.swing.JButton removeBlock;
     private javax.swing.JButton removeDefinitionFilters;
     private javax.swing.JButton removeDocumentFilter;
     private javax.swing.JButton removeDuplicates;
@@ -10825,6 +10944,39 @@ public class SemGui extends javax.swing.JFrame {
     public RankEvaluations getEvaluations() {
         return evaluations;
     }
+
+    /**
+     *
+     * @return pulsante per aprire il dialog di blocco
+     */
+    public JButton getBlockButton() {
+        return blockButton;
+    }
+
+    /**
+     *
+     * @return dialog di blocc cattura
+     */
+    public JDialog getBlockDialog() {
+        return blockDialog;
+    }
+
+    /**
+     *
+     * @return tabella delle catture bloccate
+     */
+    public JTable getBlockedTable() {
+        return blockedTable;
+    }
+
+    /**
+     * 
+     * @return ritorna il flag di non sovrascrittura
+     */
+    public JCheckBox getNotSubscribe() {
+        return notSubscribe;
+    }
+    
     
     
 

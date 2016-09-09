@@ -41,7 +41,6 @@ import org.thesemproject.opensem.gui.modelEditor.TableTreeNode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -50,7 +49,6 @@ import javax.swing.tree.DefaultTreeModel;
 import org.thesemproject.opensem.classification.Tokenizer;
 import org.thesemproject.opensem.gui.modelEditor.CapturesGroupTreeNode;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
-import org.thesemproject.opensem.parser.DocumentParser;
 
 /**
  * Motore di segmentazione. Applicando la configurazione del patternMatrix ad un
@@ -228,8 +226,7 @@ public class SegmentEngine {
                     if (match) {
                         break;
                     } else //Provo a vedere se c'è un match con linea precedente + \n linea 
-                    {
-                        if (lastLine.length() != 0) {
+                     if (lastLine.length() != 0) {
                             String newLine = lastLine + "@" + line;
                             for (Pattern pattern : patterns) {
                                 if (pattern.matcher(newLine).find()) { //ha matchato la sezione
@@ -259,7 +256,6 @@ public class SegmentEngine {
                                 }
                             }
                         }
-                    }
                 }
                 if (previousLines.length() != 0) {
                     previousLines = previousLines + " " + line;
@@ -366,7 +362,7 @@ public class SegmentEngine {
                 Element dataProviders = rootNode.getChild("DPS");
                 if (dataProviders != null) {
                     List<Element> providers = dataProviders.getChildren("dp");
-                    for (Element provider : providers) {
+                    providers.stream().map((provider) -> {
                         String name = provider.getAttributeValue("n");
                         String type = provider.getAttributeValue("t");
                         Map<String, String> fields = new HashMap<>();
@@ -376,7 +372,7 @@ public class SegmentEngine {
                         Element fieldsElement = provider.getChild("fs");
                         if (fieldsElement != null) {
                             List<Element> fieldsElements = fieldsElement.getChildren("f");
-                            for (Element field : fieldsElements) {
+                            fieldsElements.stream().forEach((field) -> {
                                 String fieldName = field.getAttributeValue("n");
                                 String fieldType = field.getAttributeValue("t");
                                 String fieldTable = field.getAttributeValue("tbl");
@@ -392,7 +388,7 @@ public class SegmentEngine {
                                         fieldsTable.put(fieldName, fieldTable);
                                     }
                                 }
-                            }
+                            });
                         }
                         Element configurationFields = provider.getChild("c");
                         if (configurationFields != null) {
@@ -429,7 +425,7 @@ public class SegmentEngine {
                                     dRel.setMapping(field, capture, key, toInsert);
                                     if (toInsert) {
                                         if (capture == null || capture.length() == 0) {
-                                            CaptureConfiguration cc = new CaptureConfiguration(field, dpc.getFields().get(field), "", false, false, false);
+                                            CaptureConfiguration cc = new CaptureConfiguration(field, dpc.getFields().get(field), "", false, false, false, false);
                                             cc.addEnabledSegment(sName);
                                             globalLinesCaptureConfigurations.add(cc); //E' una cattura virtuale che non fa nulla ma appare nei report 
                                         }
@@ -444,8 +440,10 @@ public class SegmentEngine {
                                 enrichment.put(sName, lRel);
                             }
                         }
+                        return dptn;
+                    }).forEach((dptn) -> {
                         dataprovidersNode.add(dptn);
-                    }
+                    });
                 }
 
                 LogGui.info("Read tables");
@@ -493,7 +491,7 @@ public class SegmentEngine {
                                     return s2.compareTo(s1);
                                 });
                                 LogGui.info("Create the big regex...");
-                                Set<String> tValues = new HashSet<String>();
+                                Set<String> tValues = new HashSet<>();
                                 sortedRecord.stream().forEach((value) -> {
                                     tValues.add(value.intern());
                                     if (value.contains(" ")) {
@@ -654,9 +652,9 @@ public class SegmentEngine {
                         List<Element> gchildren = child.getChildren("c");
                         CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(child.getAttributeValue("n"));
                         capturesTreeNode.add(groupNode);
-                        for (Element gChild : gchildren) {
+                        gchildren.stream().forEach((gChild) -> {
                             processCapture(sb, groupNode, gChild);
-                        }
+                        });
                         break;
                     case "f":
                         processFormulas(sb, formulasTreeNode, child);
@@ -736,7 +734,7 @@ public class SegmentEngine {
     }
 
     private Pattern getPattern(Map<String, Pattern> dictionary, Map<String, Pattern> tables, String value) {
-        Pattern pattern = null;
+        Pattern pattern;
         if (value.contains("#")) {
             if (value.startsWith("#") && (value.indexOf("#", 1) == -1)) {
                 String definitionName = value.substring(1);
@@ -827,7 +825,12 @@ public class SegmentEngine {
             end = "false";
         }
 
-        CaptureConfiguration cc = new CaptureConfiguration(captureName, captureType, captureFormat, "true".equals(temp), "true".equals(start), "true".equals(end));
+        String sub = child.getAttributeValue("sub");
+        if (sub == null) {
+            sub = "false";
+        }
+
+        CaptureConfiguration cc = new CaptureConfiguration(captureName, captureType, captureFormat, "true".equals(temp), "true".equals(start), "true".equals(end), "true".equals(sub));
         captureTreeNode.setConfiguration(cc);
         List<Element> patterns = child.getChildren();
         patterns.stream().forEach((captureChildren) -> {
@@ -888,6 +891,10 @@ public class SegmentEngine {
                 String segName = captureChildren.getValue();
                 captureTreeNode.addEnabledSegment(segName);
                 cc.addEnabledSegment(segName);
+            } else if ("bl".equalsIgnoreCase(captureChildren.getName())) {
+                String blocked = captureChildren.getValue();
+                captureTreeNode.addBlockedCapture(blocked);
+                cc.addBlockedCapture(blocked);
             } else if ("classification".equalsIgnoreCase(captureChildren.getName()) || "cl".equalsIgnoreCase(captureChildren.getName())) {
                 String path = captureChildren.getValue();
                 ClassificationPath cp = GuiUtils.getClassificationPath(path);
@@ -1062,17 +1069,17 @@ public class SegmentEngine {
             //Formule pre arricchimento
             if (!formulasBefore.isEmpty()) {
                 segmentResults.stream().forEach((sr) -> {
-                    for (FormulaConfiguration formula : formulasBefore) {
+                    formulasBefore.stream().forEach((formula) -> {
                         formula.applyFormula(sr, capturesIndex);
-                    }
+                    });
                 });
 
             }
             if (!relationships.isEmpty()) {
                 segmentResults.stream().forEach((sr) -> {
-                    for (DataProviderRelationship dpr : relationships) {
+                    relationships.stream().forEach((dpr) -> {
                         dpr.enrich(sr, capturesIndex);
-                    }
+                    });
                 });
             }
 
@@ -1100,8 +1107,12 @@ public class SegmentEngine {
     }
 
     private void extractCaptures(List<CaptureConfiguration> captureConfigurations, SegmentationResults sr, List<String> srLines) {
+        Set<String> toRemove = new HashSet<>();
         for (CaptureConfiguration captureConfiguration : captureConfigurations) {
-
+            if (captureConfiguration.isNotSubscribe()) {
+                if (sr.getCaptureResults().get(captureConfiguration.getName()) != null)
+                    continue;
+            }
             List<CapturePattern> patterns = captureConfiguration.getPatterns();
             String capturedValue = null;
             for (CapturePattern pattern : patterns) {
@@ -1133,6 +1144,7 @@ public class SegmentEngine {
                             }
                             continueWithNext = false;
                             capturedValue = value;
+                            toRemove.addAll(captureConfiguration.getBlockedCaptures());
                             break;
                         } catch (Exception e) {
                             LogGui.info("Exception during capture: " + captureConfiguration.getName() + " " + captureConfiguration.getType());
@@ -1157,6 +1169,9 @@ public class SegmentEngine {
                     }
                 }
             }
+        }
+        for (String block : toRemove) {
+            sr.removeCaptureConfigurationResults(block);
         }
     }
 
@@ -1196,7 +1211,9 @@ public class SegmentEngine {
         final AtomicInteger distance = new AtomicInteger(Integer.MAX_VALUE);
         final FinalString ret = new FinalString(value);
         Set<String> tableValues = tablesValues.get(tableName);
-        if (tableValues == null) return value;
+        if (tableValues == null) {
+            return value;
+        }
         tableValues.stream().forEach((tvalue) -> {
             final int d2 = Tokenizer.distance(value, tvalue);
             if (d2 < distance.get()) {

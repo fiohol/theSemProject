@@ -135,7 +135,7 @@ public class FormulaConfiguration implements Serializable {
      * @return Configurazione di cattura
      */
     public CaptureConfiguration getCaptureConfigurations() {
-        return new CaptureConfiguration(name, "text", "", false, false, false);
+        return new CaptureConfiguration(name, "text", "", false, false, false, false);
     }
 
 }

@@ -147,6 +147,13 @@ public class CapturesUtils {
         node.getPatterns().stream().forEach((String[] row) -> {
             model.addRow(row);
         });
+        GuiUtils.clearTable(semGui.getBlockedTable());
+        DefaultTableModel modelBlocked = (DefaultTableModel) semGui.getBlockedTable().getModel();
+        node.getBlockedCaptures().stream().forEach((String capture) -> {
+            String[] row = {capture};
+            modelBlocked.addRow(row);
+        });
+        semGui.getNotSubscribe().setSelected(node.isNotSubscribe());
     }
 
     /**
@@ -244,9 +251,11 @@ public class CapturesUtils {
                         node.addPattern(position, value, semGui.getCapturePatternFixedValue().getText());
                     }
                 } else //Modifica
-                 if (PatternsUtils.testPattern(value, false, semGui)) {
+                {
+                    if (PatternsUtils.testPattern(value, false, semGui)) {
                         node.updatePattern(id, position, value, semGui.getCapturePatternFixedValue().getText());
                     }
+                }
                 CapturesUtils.populateCaptureSplit(node, semGui);
             }
             List<TreePath> path = new ArrayList<>();

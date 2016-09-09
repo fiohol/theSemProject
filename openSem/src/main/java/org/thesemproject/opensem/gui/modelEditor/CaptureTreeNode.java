@@ -44,6 +44,8 @@ public class CaptureTreeNode extends ModelTreeNode {
     private boolean temporary;
     private boolean startPeriod;
     private boolean endPeriod;
+    private boolean notSubscribe;
+    private Set<String> blockedCaptures;
 
     /**
      * Istanzia il nodo
@@ -57,10 +59,12 @@ public class CaptureTreeNode extends ModelTreeNode {
         scope = "local";
         patterns = new LinkedHashMap<>();
         enabledSegments = new HashSet<>();
+        blockedCaptures = new HashSet<>();
         classificationPath = null;
         temporary = false;
         startPeriod = false;
         endPeriod = false;
+        notSubscribe = false;
     }
 
     /**
@@ -77,9 +81,11 @@ public class CaptureTreeNode extends ModelTreeNode {
         patterns = cloned.patterns;
         enabledSegments = cloned.enabledSegments;
         temporary = cloned.temporary;
+        notSubscribe = cloned.notSubscribe;
         startPeriod = cloned.startPeriod;
         endPeriod = cloned.endPeriod;
         classificationPath = cloned.classificationPath;
+        blockedCaptures = cloned.blockedCaptures;
     }
 
     /**
@@ -91,9 +97,9 @@ public class CaptureTreeNode extends ModelTreeNode {
         captureType = (String) intern.intern(cc.getType());
         captureFormat = (String) intern.intern(cc.getFormat());
         temporary = cc.isTemporary();
+        notSubscribe = cc.isNotSubscribe();
         startPeriod = cc.isStartPeriod();
         endPeriod = cc.isEndPeriod();
-
     }
 
     /**
@@ -219,6 +225,7 @@ public class CaptureTreeNode extends ModelTreeNode {
         capture.setAttribute("n", nodeName);
         capture.setAttribute("t", captureType);
         capture.setAttribute("tmp", String.valueOf(temporary));
+        capture.setAttribute("sub", String.valueOf(notSubscribe));
         capture.setAttribute("s", String.valueOf(startPeriod));
         capture.setAttribute("e", String.valueOf(endPeriod));
         if (captureFormat.trim().length() > 0) {
@@ -249,12 +256,53 @@ public class CaptureTreeNode extends ModelTreeNode {
                 });
             }
         }
+        if (blockedCaptures != null) {
+            if (blockedCaptures.size() > 0) {
+                blockedCaptures.stream().map((s) -> {
+                    Element block = new Element("bl");
+                    block.addContent(s);
+                    return block;
+                }).forEach((blocked) -> {
+                    capture.addContent(blocked);
+                });
+            }
+        }
         if (classificationPath != null) {
             Element classfication = new Element("cl");
             classfication.addContent(classificationPath.toSmallClassString());
             capture.addContent(classfication);
         }
         return capture;
+    }
+
+    /**
+     * Ritorna l'elenco delle catture bloccate
+     *
+     * @since 1.4
+     * @return elenco catture bloccate
+     */
+    public Set<String> getBlockedCaptures() {
+        return blockedCaptures;
+    }
+
+    /**
+     * Imposta le catture da bloccare
+     *
+     * @since 1.4
+     * @param blockedCaptures catture da bloccare
+     */
+    public void setBlockedCaptures(Set<String> blockedCaptures) {
+        this.blockedCaptures = blockedCaptures;
+    }
+
+    /**
+     * Aggiunge il nome di una cattura da bloccare
+     *
+     * @since 1.4
+     * @param capture cattura da bloccare
+     */
+    public void addBlockedCapture(String capture) {
+        this.blockedCaptures.add(capture);
     }
 
     /**
@@ -314,12 +362,32 @@ public class CaptureTreeNode extends ModelTreeNode {
     }
 
     /**
+     * Verifica se la cattura può sovrascrivere valori presenti
+     *
+     * @since 1.4
+     * @return true se non deve sovrascrivere
+     */
+    public boolean isNotSubscribe() {
+        return notSubscribe;
+    }
+
+    /**
      * Imposta se la cattura è temporanea
      *
      * @param temporary true se la cattura è temporanea
      */
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
+    }
+
+    /**
+     * Imposta se la cattura non deve sovrascrivere
+     *
+     * @since 1.4
+     * @param notSubscribe true se non deve sovrascrivere
+     */
+    public void setNotSubscribe(boolean notSubscribe) {
+        this.notSubscribe = notSubscribe;
     }
 
     /**
@@ -397,6 +465,16 @@ public class CaptureTreeNode extends ModelTreeNode {
             patterns.put(id, tmp.get(id));
         }
 
+    }
+
+    /**
+     * Rimuove una cattura da bloccare
+     *
+     * @since 1.4
+     * @param capture cattura da rimuovere
+     */
+    public void removeBlockedCapture(String capture) {
+        blockedCaptures.remove(capture);
     }
 
 }

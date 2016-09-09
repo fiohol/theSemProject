@@ -32,10 +32,12 @@ public class CaptureConfiguration implements Serializable {
     String type;
     String format;
     boolean temporary;
+    boolean notSubscribe;
     boolean startPeriod;
     boolean endPeriod;
     List<CaptureConfiguration> subCaptures;
     Set<String> enabledSegments;
+    Set<String> blockedCaptures;
     private ClassificationPath classificationPath;
 
     /**
@@ -48,8 +50,9 @@ public class CaptureConfiguration implements Serializable {
      * @param startPeriod true se la cattura rappresenta una data di inizio
      * periodo
      * @param endPeriod true se la cattura rappresenta una data di fine periodo
+     * @param notSubsctibe true se non deve sovrascrivere;
      */
-    public CaptureConfiguration(String name, String type, String format, boolean temporary, boolean startPeriod, boolean endPeriod) {
+    public CaptureConfiguration(String name, String type, String format, boolean temporary, boolean startPeriod, boolean endPeriod, boolean notSubsctibe) {
         this.name = name;
         this.type = type;
         this.format = format;
@@ -63,12 +66,24 @@ public class CaptureConfiguration implements Serializable {
         this.temporary = temporary;
         this.startPeriod = startPeriod;
         this.endPeriod = endPeriod;
+        this.blockedCaptures = new HashSet<>();
+        this.notSubscribe = notSubsctibe;
+    }
+
+    /**
+     * Ritorna l'elenco delle catture bloccate
+     *
+     * @since 1.4
+     * @return elenco catture bloccate
+     */
+    public Set<String> getBlockedCaptures() {
+        return blockedCaptures;
     }
 
     /**
      * Ritorna la formattazione di una cattura. Informazione disponibili
-     * all'indirizzo
-     * https://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html. Il
+     * all'indirizzoq
+     * https://docs.oqracle.com/javase/7/docs/api/java/util/Formatter.html. Il
      * format può essere anche un valore assoluto se si vuole normalizzre una
      * cattura
      *
@@ -268,4 +283,33 @@ public class CaptureConfiguration implements Serializable {
     public void setEndPeriod(boolean endPeriod) {
         this.endPeriod = endPeriod;
     }
+
+    /**
+     * Aggiunge una cattura da bloccare
+     *
+     * @since 1.4
+     * @param blocked cattura da bloccare
+     */
+    public void addBlockedCapture(String blocked) {
+        this.blockedCaptures.add(blocked);
+    }
+
+    /**
+     * Verifica se la cattura non deve sovrascrivere
+     *@since 1.4
+     * @return true se non deve sovrascrivere
+     */
+    public boolean isNotSubscribe() {
+        return this.notSubscribe;
+    }
+
+    /**
+     * Imposta se la cattura non deve sovrascrivere
+     * @param notSubscribe true se non deve sovrascrivere
+     */
+    public void setNotSubscribe(boolean notSubscribe) {
+        this.notSubscribe = notSubscribe;
+    }
+    
+    
 }

@@ -218,7 +218,7 @@ public class SegmentationResults implements Serializable {
         } else if ("number".equalsIgnoreCase(type)) {
             //Devo validare che sia un numero
             try {
-                double real = Double.parseDouble(value.replace(",",".").replace(" ",""));
+                double real = Double.parseDouble(value.replace(",", ".").replace(" ", ""));
                 if (toFormat) {
                     DecimalFormat myFormatter = DECIMAL_FORMAT_CACHE.get(format);
                     if (myFormatter == null) {
@@ -302,12 +302,45 @@ public class SegmentationResults implements Serializable {
         return isClassifiedByCapture;
     }
 
-    void removeCaptureConfigurationResults(CaptureConfiguration captureConfiguration) {
+    /**
+     * Rimuove la configuraizone di una cattura. Usata per le catture temporanee
+     *
+     * @param captureConfiguration configurazione di una cattura
+     */
+    public void removeCaptureConfigurationResults(CaptureConfiguration captureConfiguration) {
         if (captureConfiguration == null) {
             return;
         }
         captureConfigurationResults.remove(captureConfiguration);
         captureResults.remove(captureConfiguration.getName());
+    }
+
+    /**
+     * Rimuove una cattura e tutti i suoi effetti
+     *
+     * @since 1.4
+     * @param captureName cattura da rimuovere
+     */
+    public void removeCaptureConfigurationResults(String captureName) {
+        if (captureName == null) {
+            return;
+        }
+        captureResults.remove(captureName);
+        Set<CaptureConfiguration> toRemove = new HashSet<>();
+        for (CaptureConfiguration cc : captureConfigurationResults.keySet()) {
+            if (cc.getName().equals(captureName)) {
+                toRemove.add(cc);
+            }
+        }
+        for (CaptureConfiguration cc : toRemove) {
+            if (cc.getClassificationPath() != null) {
+                classificationPaths.remove(cc.getClassificationPath());
+                if (classificationPaths.isEmpty()) {
+                    isClassifiedByCapture = false;
+                }
+            }
+            captureConfigurationResults.remove(cc);
+        }
     }
 
     /**
