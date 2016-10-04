@@ -323,6 +323,10 @@ public class SemGui extends javax.swing.JFrame {
         exportTerms = new javax.swing.JButton();
         jSeparator49 = new javax.swing.JToolBar.Separator();
         wFreq1 = new javax.swing.JButton();
+        jSeparator57 = new javax.swing.JToolBar.Separator();
+        jButton15 = new javax.swing.JButton();
+        jLabel43 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
         jScrollPane32 = new javax.swing.JScrollPane();
         freqTable = new javax.swing.JTable();
         freqLabel = new javax.swing.JLabel();
@@ -362,6 +366,8 @@ public class SemGui extends javax.swing.JFrame {
         consolleToolbar = new javax.swing.JToolBar();
         configuration = new javax.swing.JButton();
         jSeparator25 = new javax.swing.JToolBar.Separator();
+        salvaStorage = new javax.swing.JButton();
+        jSeparator56 = new javax.swing.JToolBar.Separator();
         segmentaEClassifica = new javax.swing.JButton();
         segmentaEBasta = new javax.swing.JButton();
         setupRank = new javax.swing.JButton();
@@ -412,11 +418,11 @@ public class SemGui extends javax.swing.JFrame {
         filesToolbar = new javax.swing.JToolBar();
         menuCarica = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
-        salvaStorage = new javax.swing.JButton();
         exportToExcel = new javax.swing.JButton();
         removeDuplicates = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         tagCloud = new javax.swing.JButton();
+        wFreq2 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jButton6 = new javax.swing.JButton();
         capturesFilter = new javax.swing.JButton();
@@ -1352,7 +1358,6 @@ public class SemGui extends javax.swing.JFrame {
         captureClassificationRelationship.setMinimumSize(new java.awt.Dimension(900, 500));
         captureClassificationRelationship.setModal(true);
         captureClassificationRelationship.setName("Relazione"); // NOI18N
-        captureClassificationRelationship.setPreferredSize(new java.awt.Dimension(900, 500));
         captureClassificationRelationship.setResizable(false);
         captureClassificationRelationship.setSize(new java.awt.Dimension(900, 500));
 
@@ -1751,6 +1756,33 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar13.add(wFreq1);
+        jToolBar13.add(jSeparator57);
+
+        jButton15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
+        jButton15.setToolTipText("Rimuovi tutti i filtri");
+        jButton15.setFocusable(false);
+        jButton15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton15.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
+        jToolBar13.add(jButton15);
+
+        jLabel43.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
+        jLabel43.setText("Cerca ");
+        jToolBar13.add(jLabel43);
+
+        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField4KeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField4KeyTyped(evt);
+            }
+        });
+        jToolBar13.add(jTextField4);
 
         wordFrequencies.getContentPane().add(jToolBar13, java.awt.BorderLayout.PAGE_START);
 
@@ -1779,6 +1811,14 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         freqTable.getTableHeader().setReorderingAllowed(false);
+        freqTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                freqTableKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                freqTableKeyTyped(evt);
+            }
+        });
         jScrollPane32.setViewportView(freqTable);
 
         wordFrequencies.getContentPane().add(jScrollPane32, java.awt.BorderLayout.CENTER);
@@ -2038,8 +2078,8 @@ public class SemGui extends javax.swing.JFrame {
         rankDialog.getContentPane().add(rankStatus, java.awt.BorderLayout.PAGE_END);
 
         blockDialog.setTitle("Gestione blocchi incrociati");
+        blockDialog.setAlwaysOnTop(true);
         blockDialog.setMinimumSize(new java.awt.Dimension(900, 800));
-        blockDialog.setPreferredSize(new java.awt.Dimension(900, 800));
         blockDialog.setSize(new java.awt.Dimension(900, 800));
 
         jToolBar15.setRollover(true);
@@ -2112,6 +2152,20 @@ public class SemGui extends javax.swing.JFrame {
         });
         consolleToolbar.add(configuration);
         consolleToolbar.add(jSeparator25);
+
+        salvaStorage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/disk.png"))); // NOI18N
+        salvaStorage.setText("Salva storage");
+        salvaStorage.setToolTipText("Salva storage");
+        salvaStorage.setFocusable(false);
+        salvaStorage.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        salvaStorage.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        salvaStorage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvaStorageActionPerformed(evt);
+            }
+        });
+        consolleToolbar.add(salvaStorage);
+        consolleToolbar.add(jSeparator56);
 
         segmentaEClassifica.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/doc_resize.png"))); // NOI18N
         segmentaEClassifica.setText("Segmenta e classifica");
@@ -2462,19 +2516,6 @@ public class SemGui extends javax.swing.JFrame {
         filesToolbar.add(menuCarica);
         filesToolbar.add(jSeparator4);
 
-        salvaStorage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/disk.png"))); // NOI18N
-        salvaStorage.setText("Salva storage");
-        salvaStorage.setToolTipText("Salva storage");
-        salvaStorage.setFocusable(false);
-        salvaStorage.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        salvaStorage.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        salvaStorage.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                salvaStorageActionPerformed(evt);
-            }
-        });
-        filesToolbar.add(salvaStorage);
-
         exportToExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/page_excel.png"))); // NOI18N
         exportToExcel.setText("Esporta Excel");
         exportToExcel.setFocusable(false);
@@ -2512,6 +2553,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         filesToolbar.add(tagCloud);
+
+        wFreq2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
+        wFreq2.setText("Frequenze");
+        wFreq2.setEnabled(false);
+        wFreq2.setFocusable(false);
+        wFreq2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        wFreq2.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        wFreq2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wFreq2ActionPerformed(evt);
+            }
+        });
+        filesToolbar.add(wFreq2);
         filesToolbar.add(jSeparator2);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
@@ -3329,7 +3383,7 @@ public class SemGui extends javax.swing.JFrame {
         imagesPanel.setLayout(imagesPanelLayout);
         imagesPanelLayout.setHorizontalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1393, Short.MAX_VALUE)
+            .addGap(0, 1521, Short.MAX_VALUE)
         );
         imagesPanelLayout.setVerticalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -5972,7 +6026,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(usaCategorie, javax.swing.GroupLayout.PREFERRED_SIZE, 744, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(962, Short.MAX_VALUE))
+                .addContainerGap(1092, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -6097,6 +6151,7 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_excelFileChooserActionPerformed
 
     private void startBuildIndexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startBuildIndexActionPerformed
+        ME.resetAnalyzers();
         LuceneIndexUtils.buildIndex(this);
     }//GEN-LAST:event_startBuildIndexActionPerformed
 
@@ -7409,10 +7464,28 @@ public class SemGui extends javax.swing.JFrame {
             if (pattern != null) {
                 List<CaptureTreeNode> cx = me.getSegmentsCapturesNodes((DefaultMutableTreeNode) modelTree.getModel().getRoot(), true);
                 Object[] capturesList = cx.toArray();
-                CaptureTreeNode capture = (CaptureTreeNode) GuiUtils.showChoiceDIalog("Passo 2: Selezionare la cattura a cui aggiungere il pattern", "Selezionare cattura", capturesList);
+                String suggestion = "";
+                if (categorieSegmentsPanel.getSelectionRows().length > 0) {
+                    final DefaultMutableTreeNode node = (DefaultMutableTreeNode) categorieSegmentsPanel.getLastSelectedPathComponent();
+                    suggestion = node.toString();
+                }
+                CaptureTreeNode capture = (CaptureTreeNode) GuiUtils.showChoiceDIalog("Passo 2: Selezionare la cattura a cui aggiungere il pattern", "Selezionare cattura", capturesList, suggestion);
                 if (capture != null) {
                     capture.addPattern(0, pattern, "");
+                    final SemGui semGui = this;
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GuiUtils.modelActionPerformed(true, semGui);
+                        }
+
+                    });
+                    t.setDaemon(true);
+                    t.start();
+
                     GuiUtils.showDialog("Pattern aggiunto correttamente alla cattura " + capture.getNodeName(), "Pattern Aggiunto");
+                    needUpdate = true;
+
                 }
             }
         }
@@ -7465,7 +7538,8 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void wFreqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreqActionPerformed
-        FilesAndSegmentsUtils.doExtractFrequencies(this);
+        freqOverTotal = false;
+        FilesAndSegmentsUtils.doExtractFrequencies(this, freqOverTotal);
     }//GEN-LAST:event_wFreqActionPerformed
 
     private void addToStopWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToStopWordsActionPerformed
@@ -7479,7 +7553,11 @@ public class SemGui extends javax.swing.JFrame {
 
             }
             GuiUtils.showDialog("Termini inseriti nelle stopwords. Ripetere l'operazione di estrazione frequenze per aggiornare la tabella", "Operazione eseguita");
-
+            for (int i = 0; i < rows.length; i++) {
+                int pos = freqTable.convertRowIndexToModel(rows[i] - i);
+                model.removeRow(pos);
+            }
+            freqTable.setRowSelectionInterval(rows[rows.length - 1], rows[rows.length - 1]);
         }
     }//GEN-LAST:event_addToStopWordsActionPerformed
 
@@ -7489,7 +7567,8 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_exportTermsActionPerformed
 
     private void wFreq1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreq1ActionPerformed
-        FilesAndSegmentsUtils.doExtractFrequencies(this);
+
+        FilesAndSegmentsUtils.doExtractFrequencies(this, freqOverTotal);
     }//GEN-LAST:event_wFreq1ActionPerformed
 
     private void frequenciesFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frequenciesFileChooserActionPerformed
@@ -7519,7 +7598,7 @@ public class SemGui extends javax.swing.JFrame {
 
     private void addRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRankActionPerformed
         RankUtils.clearRank(this);
-        
+
     }//GEN-LAST:event_addRankActionPerformed
 
     private void setupRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupRankActionPerformed
@@ -7576,12 +7655,11 @@ public class SemGui extends javax.swing.JFrame {
         RankUtils.addModifyRank(this);
     }//GEN-LAST:event_okRankActionPerformed
 
-   
+
     private void fieldRankConditionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldRankConditionActionPerformed
         RankUtils.manageRankCondition(this);
     }//GEN-LAST:event_fieldRankConditionActionPerformed
 
-    
 
     private void rankTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rankTableMouseClicked
         RankUtils.manageRankTable(this);
@@ -7614,6 +7692,40 @@ public class SemGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_notSubscribeActionPerformed
 
+    private static boolean freqOverTotal = false;
+
+    private void wFreq2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreq2ActionPerformed
+        freqOverTotal = true;
+        FilesAndSegmentsUtils.doExtractFrequencies(this, freqOverTotal);
+    }//GEN-LAST:event_wFreq2ActionPerformed
+
+    private void freqTableKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_freqTableKeyTyped
+
+
+    }//GEN-LAST:event_freqTableKeyTyped
+
+    private void freqTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_freqTableKeyPressed
+        int code = evt.getKeyCode();
+        if (code == KeyEvent.VK_DELETE) {
+            evt.consume();
+            addToStopWordsActionPerformed(null);
+        }
+    }//GEN-LAST:event_freqTableKeyPressed
+
+    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
+
+    }//GEN-LAST:event_jTextField4KeyTyped
+
+    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+        GuiUtils.filterTable(freqTable, null, 1);
+        freqLabel.setText("Totale elementi filtrati: " + freqTable.getRowCount());
+    }//GEN-LAST:event_jButton15ActionPerformed
+
+    private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
+        GuiUtils.filterTable(freqTable, jTextField4.getText(), 1);
+        freqLabel.setText("Totale elementi filtrati: " + freqTable.getRowCount());
+    }//GEN-LAST:event_jTextField4KeyReleased
+
     /**
      *
      * @return pulsante ok
@@ -7621,7 +7733,7 @@ public class SemGui extends javax.swing.JFrame {
     public JButton getOkRank() {
         return okRank;
     }
-    
+
     /**
      *
      * @return duration condition
@@ -7701,7 +7813,6 @@ public class SemGui extends javax.swing.JFrame {
     public JComboBox<String> getFieldRankValue() {
         return fieldRankValue;
     }
-
 
     /**
      *
@@ -8030,6 +8141,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -8076,6 +8188,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
@@ -8197,6 +8310,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator53;
     private javax.swing.JToolBar.Separator jSeparator54;
     private javax.swing.JToolBar.Separator jSeparator55;
+    private javax.swing.JToolBar.Separator jSeparator56;
+    private javax.swing.JToolBar.Separator jSeparator57;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
@@ -8220,6 +8335,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar10;
     private javax.swing.JToolBar jToolBar11;
@@ -8427,6 +8543,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JCheckBox usaCategorie;
     private javax.swing.JButton wFreq;
     private javax.swing.JButton wFreq1;
+    private javax.swing.JButton wFreq2;
     private javax.swing.JDialog wordFrequencies;
     // End of variables declaration//GEN-END:variables
 
@@ -10403,6 +10520,7 @@ public class SemGui extends javax.swing.JFrame {
                 segmentaEClassifica.setEnabled(true);
                 tagCloud.setEnabled(true);
                 wFreq.setEnabled(true);
+                wFreq2.setEnabled(true);
                 capturesFilter.setEnabled(true);
                 filesPanelSegmenta.setEnabled(true);
                 segmentaFile.setEnabled(true);
@@ -10417,7 +10535,7 @@ public class SemGui extends javax.swing.JFrame {
                 for (String segment : segNames) {
                     dprSegment.addItem(segment);
                 }
-                
+
             }
             initLabel.setText("Build classification tree...");
             LogGui.info("Build classification tree...");
@@ -10689,7 +10807,7 @@ public class SemGui extends javax.swing.JFrame {
                             bayes.stream().forEach((cp) -> {
                                 javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(cp.getTechnology());
                                 javax.swing.tree.DefaultMutableTreeNode currentNode = treeNode1;
-                                for (int i = 0; i < 4; i++) {
+                                for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                     String node = cp.getPath()[i];
                                     if (node != null) {
                                         String label = node + "(" + ClassificationPath.df.format(cp.getScore()[i]) + ")";
@@ -10703,7 +10821,7 @@ public class SemGui extends javax.swing.JFrame {
                             if (knn != null) {
                                 javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(knn.getTechnology());
                                 javax.swing.tree.DefaultMutableTreeNode currentNode = treeNode1;
-                                for (int i = 0; i < 4; i++) {
+                                for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                     String node = knn.getPath()[i];
                                     if (node != null) {
                                         String label = node + "(" + ClassificationPath.df.format(knn.getScore()[i]) + ")";
@@ -10970,14 +11088,11 @@ public class SemGui extends javax.swing.JFrame {
     }
 
     /**
-     * 
+     *
      * @return ritorna il flag di non sovrascrittura
      */
     public JCheckBox getNotSubscribe() {
         return notSubscribe;
     }
-    
-    
-    
 
 }

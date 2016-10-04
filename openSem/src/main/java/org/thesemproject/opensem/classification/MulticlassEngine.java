@@ -501,8 +501,31 @@ public class MulticlassEngine {
      * @throws IOException Eccezione di input/output
      */
     public MyAnalyzer getAnalyzer(String language) throws IOException {
+        return getAnalyzer(language, false);
+    }
+
+    /**
+     * Ripulisce gli analizzatori sintattici
+     * @since 1.4.1
+     
+     */
+    public void resetAnalyzers()  {
+        analyzers.clear();
+    }
+
+    /**
+     * Ritorna l'analizzatore sintattico per una lingua
+     *
+     * @since 1.4.1
+     *
+     * @param language lingua dell'analizzatore
+     * @param forceRefresh true se si vuole forzare il refresh
+     * @return Analizzatore Sintattico
+     * @throws IOException Eccezione di input/output
+     */
+    public MyAnalyzer getAnalyzer(String language, boolean forceRefresh) throws IOException {
         MyAnalyzer analyzer = analyzers.get(language);
-        if (analyzer == null) {
+        if (analyzer == null || forceRefresh) {
             String stopWords = getStopWordPath(language);
             analyzer = IndexManager.getAnalyzer(new File(stopWords), language);
             analyzers.put(language, analyzer);
@@ -889,12 +912,15 @@ public class MulticlassEngine {
 
     /**
      * Ritorna una regex dato un testo
+     *
      * @param text testo
      * @param language lingua
      * @return regex
      */
     public String getPatterenFromText(String text, String language) {
-        if (!isInit) return "Sistema non inizializzato";
+        if (!isInit) {
+            return "Sistema non inizializzato";
+        }
         StringBuilder ret = new StringBuilder();
         text = text.toLowerCase();
         String toToken = text;
@@ -902,7 +928,7 @@ public class MulticlassEngine {
             toToken = toToken.replace(s, " ");
         }
         String tokenized = tokenize(toToken, language, -1); //Tokenizza il testo
-        
+
         String[] tokensSplit = tokenized.split(" ");
         int consumed = 0;
         StringTokenizer stText = new StringTokenizer(text, " "); //Spezza in parole il testo
@@ -911,7 +937,9 @@ public class MulticlassEngine {
             String token = stText.nextToken();
             //Ho il primo token
             for (int i = consumed; i < tokensSplit.length; i++) {
-                if (tokensSplit[i].length() == 0) continue;
+                if (tokensSplit[i].length() == 0) {
+                    continue;
+                }
                 if (token.equals(tokensSplit[i])) {
                     found = true;
                     if (ret.length() == 0) {
@@ -930,7 +958,7 @@ public class MulticlassEngine {
                         if (!ret.toString().endsWith("(.*)") && !ret.toString().endsWith("(\\s+)")) {
                             ret.append("(\\s+)");
                         }
-                                
+
                         ret.append(tokensSplit[i]).append("(.*)");
                     }
                 }
@@ -955,7 +983,7 @@ public class MulticlassEngine {
         returnString = returnString.replaceAll(uRegex, "(u|" + uRegex + ")");
         returnString = returnString.replaceAll(yRegex, "(y|" + yRegex + ")");
         returnString = returnString.replaceAll(nRegex, "(n|" + nRegex + ")");
-        return returnString;
+        return "\\b(" + returnString + ")\\b";
     }
 
 }

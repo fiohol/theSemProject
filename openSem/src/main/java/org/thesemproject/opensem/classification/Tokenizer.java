@@ -60,11 +60,15 @@ public class Tokenizer {
 
             @Override
             public void applyTo(String term) {
-                body.append(term).append(" ");
+                if (term != null) {
+                    if (term.trim().length() > 0) {
+                        body.append(term).append(" ");
+                    }
+                }
             }
 
             public String toString() {
-                return body.toString();
+                return body.toString().trim();
             }
         };
         tokenize(text, analyzer, tokens, tf);
@@ -92,8 +96,12 @@ public class Tokenizer {
     public static void getTagClasses(final TagCloudResults ret, String text, String id, Analyzer analyzer) throws Exception {
         TokenizerFilter tf = (String term) -> {
             try {
-                String newTerm = tokenize(term, analyzer);
+                String newTerm = tokenize(term.trim(), analyzer, -1);
                 if (newTerm.length() > 0) {
+                    if (term.equals("access")) {
+                //        System.out.println("CIAO");
+                        newTerm = tokenize(term.trim(), analyzer, -1);
+                    }
                     ret.add(newTerm, term, id);
                 }
             } catch (Exception exception) {

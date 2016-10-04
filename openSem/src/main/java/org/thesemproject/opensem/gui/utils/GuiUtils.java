@@ -355,6 +355,21 @@ public class GuiUtils {
      * @return selezione dell'utente o null
      */
     public static Object showChoiceDIalog(String message, String title, Object[] choices) {
+        return showChoiceDIalog(message, title, choices, "");
+    }
+
+    /**
+     * Mostra un dialog di scelta con una lista di dropdown
+     *
+     * @since 1.4.1
+     *
+     * @param message messaggio
+     * @param title titolo
+     * @param choices lista delle scelte
+     * @param suggestion suggerimento
+     * @return selezione dell'utente o null
+     */
+    public static Object showChoiceDIalog(String message, String title, Object[] choices, String suggestion) {
         if (choices == null) {
             return null;
         }
@@ -412,7 +427,9 @@ public class GuiUtils {
 
             }
         });
-
+        jt.setText(suggestion);
+        jt.requestFocus();
+        jt.selectAll();
         switch (JOptionPane.showConfirmDialog(null, jp, title, JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE, null)) {
             case JOptionPane.OK_OPTION:
                 return choices[jc.getSelectedIndex()];

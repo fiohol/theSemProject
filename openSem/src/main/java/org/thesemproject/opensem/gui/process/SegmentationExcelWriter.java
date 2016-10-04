@@ -62,7 +62,9 @@ public class SegmentationExcelWriter {
         fCell.setCellValue("Language");
         fCell = headerResults.createCell(2);
         fCell.setCellValue("Original Text");
-        int idxCell = 3;
+        fCell = headerResults.createCell(3);
+        fCell.setCellValue("KPI");
+        int idxCell = 4;
         for (SegmentConfiguration sc : se.getPatternMatrix()) {
             idxCell = createExcelHeader(wb, headerResults, sheetCellIndex, idxCell, "", sc, sheetResults);
         }
@@ -76,10 +78,11 @@ public class SegmentationExcelWriter {
      * @param fileName nome del file
      * @param language lingua
      * @param text testo
+     * @param kpi valore del kpi
      * @param identifiedSegments risultato tagging
      * @throws IOException Eccezione di input/output
      */
-    public void addDocument(int resultsRow, String fileName, String language, String text, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) throws IOException {
+    public void addDocument(int resultsRow, String fileName, String language, String text, String kpi, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments) throws IOException {
         SXSSFRow row = sheetResults.createRow(resultsRow);
         row.createCell(0).setCellValue(fileName);
         row.createCell(1).setCellValue(language);
@@ -88,6 +91,7 @@ public class SegmentationExcelWriter {
                 text = text.substring(0, 32766);
             }
             row.createCell(2).setCellValue(text);
+            row.createCell(3).setCellValue(kpi);
         }
         writeSegments(fileName, row, wb, sheetCellIndex, identifiedSegments, "");
     }
@@ -242,8 +246,8 @@ public class SegmentationExcelWriter {
                                     String node = bayesPath2[i];
                                     if (node != null) {
                                         double score = score2[i];
-                                        rx.createCell((2 * i) + 10).setCellValue(node);
-                                        rx.createCell((2 * i) + 11).setCellValue(score);
+                                        rx.createCell((2 * i) + 14).setCellValue(node);
+                                        rx.createCell((2 * i) + 15).setCellValue(score);
                                     }
                                 }
                             }

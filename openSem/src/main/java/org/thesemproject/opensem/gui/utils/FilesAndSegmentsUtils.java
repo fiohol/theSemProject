@@ -237,7 +237,7 @@ public class FilesAndSegmentsUtils {
             bayes.stream().forEach((ClassificationPath cp) -> {
                 DefaultMutableTreeNode treeNode1 = new DefaultMutableTreeNode(cp.getTechnology());
                 DefaultMutableTreeNode currentNode = treeNode1;
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                     String node = cp.getPath()[i];
                     if (node != null) {
                         String label = node + "(" + ClassificationPath.df.format(cp.getScore()[i]) + ")";
@@ -374,7 +374,7 @@ public class FilesAndSegmentsUtils {
                         SegmentationExcelWriter sew = new SegmentationExcelWriter(semGui.getSE());
                         int id = 1;
                         for (SemDocument dto : semGui.getTableData().values()) {
-                            sew.addDocument(id++, dto.getFileName(), dto.getLanguage(), (String) dto.getRow()[8], dto.getIdentifiedSegments());
+                            sew.addDocument(id++, dto.getFileName(), dto.getLanguage(), (String) dto.getRow()[8], String.valueOf(dto.getRow()[9]), dto.getIdentifiedSegments());
                             if (id % 7 == 0) {
                                 semGui.getFilesInfoLabel().setText("Esportazione " + id + "/" + semGui.getTableData().size());
                             }
@@ -509,8 +509,9 @@ public class FilesAndSegmentsUtils {
      *
      * @since 1.3.3
      * @param semGui frame
+     * @param fullText  true se deve essere fatta sull'intero testo
      */
-    public static void doExtractFrequencies(SemGui semGui) {
+    public static void doExtractFrequencies(SemGui semGui, boolean fullText) {
         GuiUtils.clearTable(semGui.getFreqTable());
         semGui.getFreqLabel().setText("Calcolo frequenze in corso...");
         if (semGui.isIsClassify()) {
@@ -521,7 +522,7 @@ public class FilesAndSegmentsUtils {
                 @Override
                 public void run() {
                     if (!semGui.isIsClassify()) {
-                        final TagCloudResults result = getTagCloudResults(semGui, false);
+                        final TagCloudResults result = getTagCloudResults(semGui, fullText);
                         DefaultTableModel model = (DefaultTableModel) semGui.getFreqTable().getModel();
 
                         Cloud cloud = result.getCloud(10000);  //10000 termini credo siano sufficienti
@@ -581,6 +582,7 @@ public class FilesAndSegmentsUtils {
         int processors = semGui.getProcessori2().getSelectedIndex() + 1;
         ParallelProcessor tagClouding = new ParallelProcessor(processors, 6000); //100 ore
         AtomicInteger count = new AtomicInteger(0);
+        semGui.getME().resetAnalyzers(); //Resetta gli analyzers
         LogGui.info("Start processing");
         final int size = semGui.getFilesTable().getRowCount();
         final TagCloudResults ret = new TagCloudResults();
@@ -736,6 +738,7 @@ public class FilesAndSegmentsUtils {
                         semGui.setIsClassify(false);
                         semGui.captureCoverageUpdate();
                         semGui.getInterrompi().setEnabled(false);
+                        GuiUtils.filterOnStatus("C", null, semGui);
                     }
                 }
             });

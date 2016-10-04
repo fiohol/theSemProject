@@ -44,6 +44,7 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
+import org.thesemproject.opensem.utils.Log;
 
 /**
  * Classe per la gestione di tutti gli accessi (in scrittura e non solo)
@@ -63,7 +64,7 @@ public class IndexManager {
      * indicizzare
      */
     public static final String BODY = "body";
-    
+
     /**
      * Testo originale...
      */
@@ -358,31 +359,47 @@ public class IndexManager {
      * @throws FileNotFoundException file non trovato
      */
     public static void buildIndex(String structurePath, File trainingExcel, File fStop, String language, boolean useCategoryName) throws Exception, FileNotFoundException {
+        LogGui.info("Build path...");
         File fPath = new File(structurePath);
         if (!fPath.exists()) {
             fPath.mkdirs();
         }
         if (fPath.exists() && fPath.isDirectory()) {
             String indexDir = getIndexFolder(fPath, language);
+            LogGui.info("Index folder: " + indexDir);
             String fileStop = getStopWordPath(fPath, language);
+            LogGui.info("File stop: " + fileStop);
             File fIndex = new File(indexDir);
             if (!fIndex.exists()) {
                 fIndex.mkdirs();
             }
+            LogGui.info("Start read stopwords...");
             Set<String> stopWords = new HashSet<>();
             File fFileStop = new File(fileStop);
             if (!fFileStop.exists()) {
+                LogGui.info("Stopwords not exists...");
                 fFileStop.createNewFile();
             } else {
-                readStopWords(fFileStop, stopWords);
+                LogGui.info("Read old stopwords...");
+                try {
+                    readStopWords(fFileStop, stopWords);
+                } catch (Exception e) {
+                    Log.printStackTrace(e);
+                }
 
             }
-            readStopWords(fStop, stopWords);
+            LogGui.info("Read new stopwords...");
+            try {
+                readStopWords(fStop, stopWords);
+            } catch (Exception e) {
+                Log.printStackTrace(e);
+            }
             if (stopWords.size() > 0) {
                 fFileStop.delete();
                 storeStopWords(fPath, language, new ArrayList(stopWords));
             }
             Path iDir = Paths.get(fIndex.getAbsolutePath());
+            LogGui.info("Call build index");
             buildIndex(iDir, trainingExcel, fFileStop, language, useCategoryName);
         }
     }
@@ -431,6 +448,7 @@ public class IndexManager {
         FileInputStream fis;
         try {
             fis = new FileInputStream(trainingExcel);
+            LogGui.info("Open Excel...");
             Workbook workbook = new XSSFWorkbook(fis);
             int numberOfSheets = workbook.getNumberOfSheets();
             FieldType ft = getNotTokenizedFieldType();
@@ -590,7 +608,7 @@ public class IndexManager {
             dCat.add(new StringField(l1, l2, Field.Store.YES));
             dCat.add(new StringField(l2, l3, Field.Store.YES));
             dCat.add(new StringField(l3, l4, Field.Store.YES));
-            
+
             dCat.add(new TextField(BODY, l4n, Field.Store.YES));
             dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
             dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));

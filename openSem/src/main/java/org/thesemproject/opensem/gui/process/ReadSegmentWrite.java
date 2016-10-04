@@ -187,7 +187,7 @@ public class ReadSegmentWrite {
                         int resultsRow = rr.incrementAndGet();
                         String fileName = document.getString(BSonUtils.SOURCE);
                         String language = document.getString("Language");
-                        sew.addDocument(resultsRow, fileName, document.getString(BSonUtils.TEXT), language, identifiedSegments);
+                        sew.addDocument(resultsRow, fileName, document.getString(BSonUtils.TEXT), "", language, identifiedSegments);
                     }
                 }
                 sew.write(fos);

@@ -206,7 +206,7 @@ public class SegmentationUtils {
                         bayes.stream().forEach((cp) -> {
                             javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode(cp.getTechnology());
                             javax.swing.tree.DefaultMutableTreeNode currentNode = treeNode1;
-                            for (int i = 0; i < 4; i++) {
+                            for (int i = 0; i < ClassificationPath.MAX_DEEP; i++) {
                                 String node = cp.getPath()[i];
                                 if (node != null) {
                                     String label = node + "(" + ClassificationPath.df.format(cp.getScore()[i]) + ")";
