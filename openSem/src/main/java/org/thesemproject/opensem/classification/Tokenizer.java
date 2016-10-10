@@ -18,6 +18,8 @@ package org.thesemproject.opensem.classification;
 import static org.thesemproject.opensem.classification.IndexManager.BODY;
 import org.thesemproject.opensem.tagcloud.TagCloudResults;
 import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
@@ -39,7 +41,7 @@ public class Tokenizer {
      * @throws Exception Eccezione
      */
     public static String tokenize(String text, Analyzer analyzer) throws Exception {
-        return tokenize(text, analyzer, 12);
+        return tokenize(text, analyzer, 20);
     }
 
     /**
@@ -98,10 +100,7 @@ public class Tokenizer {
             try {
                 String newTerm = tokenize(term.trim(), analyzer, -1);
                 if (newTerm.length() > 0) {
-                    if (term.equals("access")) {
-                //        System.out.println("CIAO");
-                        newTerm = tokenize(term.trim(), analyzer, -1);
-                    }
+                    
                     ret.add(newTerm, term, id);
                 }
             } catch (Exception exception) {
@@ -110,6 +109,8 @@ public class Tokenizer {
         };
         tokenize(text, new SimpleAnalyzer(), -1, tf);
     }
+
+    private static Pattern preplace = Pattern.compile("\\P{L}"); //[^a-zA-Z]
 
     /**
      * Tokenizza un testo utilizzando il filtro passato come parametro
@@ -131,7 +132,13 @@ public class Tokenizer {
             return;
         }
         text = text.toLowerCase();
-        TokenStream tokenStream = analyzer.tokenStream(BODY, new StringReader(text));
+        Matcher m = preplace.matcher(text);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, " ");
+        }
+        m.appendTail(sb);
+        TokenStream tokenStream = analyzer.tokenStream(BODY, new StringReader(sb.toString()));
         OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
         CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
         tokenStream.reset();

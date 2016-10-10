@@ -94,7 +94,7 @@ public class Example {
         double threshold = 0.5; //Soglia minima di percentuale di classificazione
         //Dato che posso avere più di una classificazione il risultato è una lista
         //List<ClassificationPath> cps = me.bayesClassify(text, threshold);
-        List<ClassificationPath> cps = me.bayesClassify(text, threshold, dp.getLanguageFromText(text));
+        List<ClassificationPath> cps = me.bayesClassify(text, dp.getLanguageFromText(text));
         for (ClassificationPath cp : cps) {
             System.out.println(cp.toSmallClassString()); //Versione compatta
             System.out.println(cp.toSmallString()); //Versione compatta ma con %
@@ -116,7 +116,7 @@ public class Example {
         //Se vogio segmentare un testo (senza classificare) mi basta fare:
         Map<SegmentConfiguration, List<SegmentationResults>> results = se.getSegments(text, dp.getLanguageFromText(text));
         //Se vogio segmentare e classificare i segmenti marcati come classificabili:
-        Map<SegmentConfiguration, List<SegmentationResults>> results2 = se.getSegments(text, me, threshold, dp.getLanguageFromText(text));
+        Map<SegmentConfiguration, List<SegmentationResults>> results2 = se.getSegments(text, me, dp.getLanguageFromText(text));
         //Passare i risultati non è immediato. Ma ci sono delle utilities per farlo
         //Per avere il tagging in HTML
         String html = SegmentationUtils.getHtml(results, language);

@@ -87,11 +87,10 @@ public class ReadSegmentWrite {
      * @param dp document parser
      * @param se segmentEngine
      * @param me multiclass engine
-     * @param th soglia bayes
      * @param writeHtml true se nel processo deve generare anche i files HTML
      * @param ocrInstallPath percorso OCR
      */
-    public void process(final String inputDir, final DocumentParser dp, final SegmentEngine se, final MulticlassEngine me, final double th, boolean writeHtml, String ocrInstallPath) {
+    public void process(final String inputDir, final DocumentParser dp, final SegmentEngine se, final MulticlassEngine me, boolean writeHtml, String ocrInstallPath) {
         //Costruisce 2+n processi: uno per leggere, n per classificare, uno per scrivere
         isReading.setValue(true); //dice che sta leggendo
         segmentThread.set(processors); //dice che sta classificando
@@ -117,7 +116,7 @@ public class ReadSegmentWrite {
                         String language = document.getString("Language");
                         try {
                             //Lo aggiunge in coda toWrite
-                            Map<SegmentConfiguration, List<SegmentationResults>> result = se.getSegments(text, me, th, language);
+                            Map<SegmentConfiguration, List<SegmentationResults>> result = se.getSegments(text, me, language);
                             document.put("SegmentResult", result);
                             toWriteList.offer(SegmentationUtils.getDocument(document, result));
                         } catch (Exception e) {

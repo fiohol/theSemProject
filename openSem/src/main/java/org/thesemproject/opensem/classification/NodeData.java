@@ -155,7 +155,7 @@ public class NodeData {
             if (knn == null) {
                 knn = new KNearestNeighborClassifier(k);
             }
-            LogGui.info("Istrisco il nodo: " + nodeName);
+            LogGui.info("Istruisco il nodo: " + nodeName);
             if (level == null) { //root
                 //Dobbiamo istruire il nodo con tutti i documenti usando il field level1
                 switch (startLevel) {

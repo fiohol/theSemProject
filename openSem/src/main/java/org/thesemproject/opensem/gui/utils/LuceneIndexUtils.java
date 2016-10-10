@@ -23,17 +23,20 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import javax.swing.SwingUtilities;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.TreePath;
-import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.thesemproject.opensem.classification.MulticlassEngine;
-import org.thesemproject.opensem.gui.SemDocument;
-import org.thesemproject.opensem.gui.process.SegmentationExcelWriter;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
+import org.thesemproject.opensem.classification.MyAnalyzer;
+import org.thesemproject.opensem.classification.Tokenizer;
+import org.thesemproject.opensem.tagcloud.TagClass;
+import org.thesemproject.opensem.tagcloud.TagCloudResults;
+import org.thesemproject.opensem.utils.ParallelProcessor;
 
 /**
  *
@@ -56,6 +59,100 @@ public class LuceneIndexUtils {
             model.addRow(row);
         });
         semGui.getManageDocumentsStatus().setText("Lingua corrente: " + language + " - Totale documenti: " + docs.size());
+    }
+
+    /**
+     * Estrae le frequenze dei termini a partire da un tagcloud
+     *
+     * @since 1.5
+     * @param semGui frame
+     *
+     */
+    public static void doExtractFrequencies(SemGui semGui) {
+        GuiUtils.clearTable(semGui.getFreqTable());
+        semGui.getFreqLabel().setText("Calcolo frequenze in corso...");
+        if (semGui.isIsClassify()) {
+            semGui.getStopTagCloud().setValue(true);
+            semGui.getInterrompi().setEnabled(false);
+        } else {
+            Thread t = new Thread(() -> {
+                if (!semGui.isIsClassify()) {
+                    String language = String.valueOf(semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem());
+                    final TagCloudResults result = getTagCloudResults(semGui);
+                    DefaultTableModel model = (DefaultTableModel) semGui.getFreqTable().getModel();
+                    Cloud cloud = result.getCloud(10000);  //10000 termini credo siano sufficienti
+                    semGui.getWordFrequencies().setVisible(true);
+                    for (Tag tag : cloud.tags()) {
+                        TagClass tc = result.getTagClass(tag);
+                        String words = tc.getWordsString();
+                        String[] wArray = words.split(" ");
+                        for (String w : wArray) {
+                            Object[] row = new Object[5];
+                            row[0] = tag.getName();
+                            row[1] = w;
+                            row[2] = tag.getWeight();
+                            row[3] = tag.getNormScore();
+                            row[4] = language;
+                            model.addRow(row);
+                        }
+                    }
+                    semGui.getFilesTab().setTitleAt(7, "Gestione Indice");
+                    semGui.getFreqLabel().setText("Frequenze calcolate. " + model.getRowCount() + " termini");
+                    LogGui.info("Terminated...");
+                    semGui.getFilesInfoLabel().setText("Fine");
+                    semGui.setIsClassify(false);
+                    semGui.getInterrompi().setEnabled(false);
+                }
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+    }
+
+    private static TagCloudResults getTagCloudResults(SemGui semGui) {
+        String language = String.valueOf(semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem());
+        semGui.getStopTagCloud().setValue(false);
+        semGui.getInterrompi().setEnabled(true);
+        semGui.setIsClassify(true);
+        semGui.resetFilesFilters();
+        ChangedUtils.prepareChanged(semGui);
+        semGui.getFilesTab().setTitleAt(7, "Gestione Indice (" + semGui.getFilesTable().getRowCount() + ") - Tag cloud in corso");
+        int processors = semGui.getProcessori2().getSelectedIndex() + 1;
+        ParallelProcessor tagClouding = new ParallelProcessor(processors, 6000); //100 ore
+        AtomicInteger count = new AtomicInteger(0);
+        semGui.getME().resetAnalyzers(); //Resetta gli analyzers
+        LogGui.info("Start processing");
+        final int size = semGui.getDocumentsTable().getSelectedRows().length;
+        final TagCloudResults ret = new TagCloudResults();
+        for (int j = 0; j < processors; j++) {
+            tagClouding.add(() -> {
+                while (true) {
+                    if (semGui.getStopTagCloud().getValue()) {
+                        break;
+                    }
+                    int row = count.getAndIncrement();
+                    if (row >= size) {
+                        break;
+                    }
+                    int pos = semGui.getDocumentsTable().convertRowIndexToModel(row);
+                    String text = String.valueOf(semGui.getDocumentsTable().getValueAt(pos, 2));
+                    if (text == null) {
+                        text = "";
+                    }
+                    if (row % 3 == 0) {
+                        semGui.getFilesTab().setTitleAt(7, "Gestione Indice (" + semGui.getDocumentsTable().getRowCount() + ") - " + row + "/" + size);
+                    }
+                    try {
+                        MyAnalyzer analyzer = semGui.getME().getAnalyzer(language);
+                        Tokenizer.getTagClasses(ret, text, "", analyzer);
+                    } catch (Exception e) {
+                        LogGui.printException(e);
+                    }
+                } //Quello che legge
+            });
+        }
+        tagClouding.waitTermination();
+        return ret;
     }
 
     /**
@@ -88,41 +185,7 @@ public class LuceneIndexUtils {
      * @param semGui frame
      */
     public static void manageClassificationTree(MouseEvent evt, SemGui semGui) {
-        GuiUtils.treeActionPerformed(semGui.getManageClassificationTree(), null, semGui.getToken().getText(), evt, true, semGui);
-        if (SwingUtilities.isLeftMouseButton(evt)) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), null, 1);
-            TreePath selPath = semGui.getManageClassificationTree().getPathForLocation(evt.getX(), evt.getY());
-            if (selPath != null) {
-                semGui.getManageClassificationTree().setSelectionPath(selPath);
-                Object[] path = selPath.getPath();
-                switch (path.length) {
-                    case 1:
-                        GuiUtils.filterTable(semGui.getDocumentsTable(), null, 1);
-                        break;
-                    case 2:
-                        semGui.getSerachDocumentBody().setText("Level1:" + path[1].toString());
-                        break;
-                    case 3:
-                        semGui.getSerachDocumentBody().setText("Level2:" + path[2].toString());
-                        break;
-                    case 4:
-                        semGui.getSerachDocumentBody().setText("Level3:" + path[3].toString());
-                        break;
-                    case 5:
-                        semGui.getSerachDocumentBody().setText("Level4:" + path[4].toString());
-                        break;
-                    case 6:
-                        semGui.getSerachDocumentBody().setText("Level5:" + path[5].toString());
-                        break;
-                    case 7:
-                        semGui.getSerachDocumentBody().setText("Level6:" + path[6].toString());
-                        break;
-                    default:
-                        break;
-                }
-            }
-            semGui.serachDocumentBodyKeyReleased();
-        }
+        GuiUtils.treeActionPerformed(semGui.getManageClassificationTree(), semGui.getDocText(), semGui.getDocTokens().getText(), evt, false, semGui, semGui.getDocumentsTable(), 2);
         semGui.getCategorieSegmentsPanel().setModel(semGui.getManageClassificationTree().getModel());
         semGui.getClassificationTree1().setModel(semGui.getManageClassificationTree().getModel());
         semGui.getCategorieSegmentsPanel().setModel(semGui.getManageClassificationTree().getModel());
@@ -134,22 +197,24 @@ public class LuceneIndexUtils {
      * @param semGui frame
      */
     public static void searchDocumentBody(SemGui semGui) {
-        int[] idxs = {1, 2, 3, 4, 5};
+        int[] idxs = {1, 2, 3, 4, 5, 6};
         String text = semGui.getSerachDocumentBody().getText();
         if (text.toLowerCase().startsWith("level1:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 2);
-        } else if (text.toLowerCase().startsWith("level2:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 3);
-        } else if (text.toLowerCase().startsWith("level3:") && text.length() > 7) {
+        } else if (text.toLowerCase().startsWith("level2:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 4);
-        } else if (text.toLowerCase().startsWith("level4:") && text.length() > 7) {
+        } else if (text.toLowerCase().startsWith("level3:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 5);
-        } else if (text.toLowerCase().startsWith("level5:") && text.length() > 7) {
+        } else if (text.toLowerCase().startsWith("level4:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 6);
-        } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
+        } else if (text.toLowerCase().startsWith("level5:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 7);
+        } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
+            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 8);
         } else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(6).trim(), 1);
+        } else if (text.toLowerCase().startsWith("origine:") && text.length() > 8) {
+            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(8).trim(), 2);
         } else {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text, idxs);
         }
@@ -161,20 +226,25 @@ public class LuceneIndexUtils {
      * @param semGui frame
      */
     public static void deleteDocument(SemGui semGui) {
-        if (GuiUtils.showConfirmDialog("Confermi l'eliminazione delle righe selezionate?", "Conferma")) {
-            DefaultTableModel model = (DefaultTableModel) semGui.getDocumentsTable().getModel();
-            int[] rows = semGui.getDocumentsTable().getSelectedRows();
-            String language = String.valueOf(semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem());
-            List<String> toRemove = new ArrayList();
-            for (int i = 0; i < rows.length; i++) {
-                int pos = semGui.getDocumentsTable().convertRowIndexToModel(rows[i] - i);
-                String record = (String) model.getValueAt(pos, 0);
-                toRemove.add(record);
-                model.removeRow(pos);
+        int[] rows = semGui.getDocumentsTable().getSelectedRows();
+        if (rows.length > 0) {
+            if (GuiUtils.showConfirmDialog("Confermi l'eliminazione delle righe selezionate?", "Conferma")) {
+                DefaultTableModel model = (DefaultTableModel) semGui.getDocumentsTable().getModel();
+                String language = String.valueOf(semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem());
+                List<String> toRemove = new ArrayList();
+                for (int i = 0; i < rows.length; i++) {
+                    int pos = semGui.getDocumentsTable().convertRowIndexToModel(rows[i] - i);
+                    String record = (String) model.getValueAt(pos, 0);
+                    String text = (String) model.getValueAt(pos, 2);
+                    LogGui.info("Remove " + record + " " + text);
+                    toRemove.add(record);
+                    model.removeRow(pos);
+                }
+                semGui.getME().removeDocuments(toRemove, language);
+                semGui.getManageDocumentsStatus().setText("Lingua corrente: " + language + " - Totale documenti: " + model.getRowCount());
+                semGui.serachDocumentBodyKeyReleased();
+                semGui.setNeedUpdate(true);
             }
-            semGui.getME().removeDocuments(toRemove, language);
-            semGui.getManageDocumentsStatus().setText("Lingua corrente: " + language + " - Totale documenti: " + model.getRowCount());
-            semGui.setNeedUpdate(true);
         }
     }
 

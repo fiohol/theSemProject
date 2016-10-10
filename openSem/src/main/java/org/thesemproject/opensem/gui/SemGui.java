@@ -61,6 +61,7 @@ import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -72,6 +73,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -105,11 +107,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.apache.lucene.document.Document;
 import org.eclipse.jetty.util.URIUtil;
+import org.thesemproject.opensem.classification.IndexManager;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
 import org.thesemproject.opensem.gui.utils.RankUtils;
 import org.thesemproject.opensem.segmentation.functions.rank.RankEvaluations;
 import org.thesemproject.opensem.utils.FinalBoolean;
+import org.thesemproject.opensem.utils.ParallelProcessor;
 
 /**
  *
@@ -166,6 +171,8 @@ public class SemGui extends javax.swing.JFrame {
         StopWordsUtils.addStopWordsMenu(token, this);
         StopWordsUtils.addStopWordsMenu(testo, this);
         StopWordsUtils.addStopWordsMenu(testoDaSegmentare, this);
+        StopWordsUtils.addStopWordsMenuIndex(docText, this);
+        StopWordsUtils.addStopWordsMenuIndex(docTokens, this);
         DictionaryUtils.addCreateDefinitionMenu(segmentPatternDefinition, this);
         DictionaryUtils.addCreateDefinitionMenu(capturePatternDefinition, this);
         LogGui.info("System started...");
@@ -373,9 +380,6 @@ public class SemGui extends javax.swing.JFrame {
         setupRank = new javax.swing.JButton();
         interrompi = new javax.swing.JButton();
         jSeparator26 = new javax.swing.JToolBar.Separator();
-        jLabel7 = new javax.swing.JLabel();
-        soglia = new javax.swing.JTextField();
-        jSeparator22 = new javax.swing.JToolBar.Separator();
         jLabel12 = new javax.swing.JLabel();
         classStartLevel = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -445,7 +449,6 @@ public class SemGui extends javax.swing.JFrame {
         wFreq = new javax.swing.JButton();
         jSeparator53 = new javax.swing.JToolBar.Separator();
         firstLevelOnly = new javax.swing.JButton();
-        underTreshold = new javax.swing.JButton();
         notMarked = new javax.swing.JButton();
         changed = new javax.swing.JButton();
         alert = new javax.swing.JButton();
@@ -832,20 +835,36 @@ public class SemGui extends javax.swing.JFrame {
         jToolBar10 = new javax.swing.JToolBar();
         jButton9 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
         jSeparator27 = new javax.swing.JToolBar.Separator();
         jLabel5 = new javax.swing.JLabel();
         searchManageClassification = new javax.swing.JTextField();
+        jSplitPane11 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         documentsTableScrollPanel = new javax.swing.JScrollPane();
         documentsTable = new javax.swing.JTable();
         tableToolbar2 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         exportIndex = new javax.swing.JButton();
+        jSeparator59 = new javax.swing.JToolBar.Separator();
+        wFreq3 = new javax.swing.JButton();
+        jSeparator58 = new javax.swing.JToolBar.Separator();
+        classificaTesto1 = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
+        jButton18 = new javax.swing.JButton();
         deleteDocument = new javax.swing.JButton();
-        jSeparator39 = new javax.swing.JToolBar.Separator();
+        jSeparator60 = new javax.swing.JToolBar.Separator();
         removeDocumentFilter = new javax.swing.JButton();
         jLabel38 = new javax.swing.JLabel();
         serachDocumentBody = new javax.swing.JTextField();
+        jTabbedPane7 = new javax.swing.JTabbedPane();
+        jPanel16 = new javax.swing.JPanel();
+        jToolBar16 = new javax.swing.JToolBar();
+        exStopWords1 = new javax.swing.JButton();
+        jScrollPane36 = new javax.swing.JScrollPane();
+        docText = new javax.swing.JTextArea();
+        jScrollPane37 = new javax.swing.JScrollPane();
+        docTokens = new javax.swing.JTextArea();
         createIndexPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         logIstruzione = new javax.swing.JTextArea();
@@ -1559,7 +1578,7 @@ public class SemGui extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(onlySegment)
                     .addComponent(rebuildIndex))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         configurationDialog.getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -2221,22 +2240,6 @@ public class SemGui extends javax.swing.JFrame {
         consolleToolbar.add(interrompi);
         consolleToolbar.add(jSeparator26);
 
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_side_tree.png"))); // NOI18N
-        jLabel7.setText("Soglia Bayes ");
-        consolleToolbar.add(jLabel7);
-
-        soglia.setText(cc.getThreshold());
-        soglia.setToolTipText("Valore della soglia per accettare una classificazione");
-        soglia.setMaximumSize(new java.awt.Dimension(72, 20));
-        soglia.setMinimumSize(new java.awt.Dimension(72, 20));
-        soglia.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sogliaActionPerformed(evt);
-            }
-        });
-        consolleToolbar.add(soglia);
-        consolleToolbar.add(jSeparator22);
-
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/ruler_crop.png"))); // NOI18N
         jLabel12.setText("Livello di classificazione");
         consolleToolbar.add(jLabel12);
@@ -2755,19 +2758,6 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar3.add(firstLevelOnly);
-
-        underTreshold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/smiley_confuse.png"))); // NOI18N
-        underTreshold.setText("Non a soglia");
-        underTreshold.setToolTipText("Non a soglia");
-        underTreshold.setFocusable(false);
-        underTreshold.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        underTreshold.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        underTreshold.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                underTresholdActionPerformed(evt);
-            }
-        });
-        jToolBar3.add(underTreshold);
 
         notMarked.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_add.png"))); // NOI18N
         notMarked.setText("Non marcati");
@@ -5756,7 +5746,6 @@ public class SemGui extends javax.swing.JFrame {
         jToolBar10.setRollover(true);
 
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_in.png"))); // NOI18N
-        jButton9.setText("Importa");
         jButton9.setFocusable(false);
         jButton9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jButton9.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -5768,7 +5757,6 @@ public class SemGui extends javax.swing.JFrame {
         jToolBar10.add(jButton9);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_out.png"))); // NOI18N
-        jButton4.setText("Esporta");
         jButton4.setFocusable(false);
         jButton4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -5778,6 +5766,18 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar10.add(jButton4);
+
+        jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/doc_page.png"))); // NOI18N
+        jButton17.setText("Documenti");
+        jButton17.setFocusable(false);
+        jButton17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton17.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
+        jToolBar10.add(jButton17);
         jToolBar10.add(jSeparator27);
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
@@ -5795,6 +5795,9 @@ public class SemGui extends javax.swing.JFrame {
 
         jSplitPane8.setLeftComponent(manageClassificationTreePanel);
 
+        jSplitPane11.setDividerLocation(800);
+        jSplitPane11.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         documentsTable.setAutoCreateRowSorter(true);
@@ -5803,14 +5806,14 @@ public class SemGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Testo", "Level1", "Level2", "Level3", "Level4", "Level5", "Level6"
+                "ID", "Testo", "Originale", "Level1", "Level2", "Level3", "Level4", "Level5", "Level6", "KPI"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false, false, false
+                false, true, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -5822,7 +5825,18 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         documentsTable.getTableHeader().setReorderingAllowed(false);
+        documentsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                documentsTableMouseClicked(evt);
+            }
+        });
         documentsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                documentsTableKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                documentsTableKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 documentsTableKeyTyped(evt);
             }
@@ -5834,6 +5848,8 @@ public class SemGui extends javax.swing.JFrame {
             documentsTable.getColumnModel().getColumn(0).setMaxWidth(0);
             documentsTable.getColumnModel().getColumn(1).setResizable(false);
             documentsTable.getColumnModel().getColumn(1).setPreferredWidth(400);
+            documentsTable.getColumnModel().getColumn(2).setPreferredWidth(0);
+            documentsTable.getColumnModel().getColumn(9).setPreferredWidth(200);
         }
         Action actionDocumentsTable = new AbstractAction()
         {
@@ -5877,6 +5893,58 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         tableToolbar2.add(exportIndex);
+        tableToolbar2.add(jSeparator59);
+
+        wFreq3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/microphone.png"))); // NOI18N
+        wFreq3.setText("Frequenze selezionati");
+        wFreq3.setEnabled(false);
+        wFreq3.setFocusable(false);
+        wFreq3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        wFreq3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        wFreq3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wFreq3ActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(wFreq3);
+        tableToolbar2.add(jSeparator58);
+
+        classificaTesto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_view_columns.png"))); // NOI18N
+        classificaTesto1.setText("Classifica selezionati");
+        classificaTesto1.setToolTipText("Classifica");
+        classificaTesto1.setFocusable(false);
+        classificaTesto1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        classificaTesto1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        classificaTesto1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                classificaTesto1ActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(classificaTesto1);
+
+        jButton16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/spellcheck.png"))); // NOI18N
+        jButton16.setText("Conferma cambiati selezionati");
+        jButton16.setFocusable(false);
+        jButton16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton16.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(jButton16);
+
+        jButton18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/link_break.png"))); // NOI18N
+        jButton18.setText("Non confermare cambiati");
+        jButton18.setFocusable(false);
+        jButton18.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton18.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton18ActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(jButton18);
 
         deleteDocument.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bin_closed.png"))); // NOI18N
         deleteDocument.setText("Cancella selezionati");
@@ -5890,7 +5958,7 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         tableToolbar2.add(deleteDocument);
-        tableToolbar2.add(jSeparator39);
+        tableToolbar2.add(jSeparator60);
 
         removeDocumentFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/cross.png"))); // NOI18N
         removeDocumentFilter.setToolTipText("Rimuovi filtri");
@@ -5926,7 +5994,47 @@ public class SemGui extends javax.swing.JFrame {
 
         jPanel1.add(tableToolbar2, java.awt.BorderLayout.PAGE_START);
 
-        jSplitPane8.setRightComponent(jPanel1);
+        jSplitPane11.setTopComponent(jPanel1);
+
+        jPanel16.setLayout(new java.awt.BorderLayout());
+
+        jToolBar16.setRollover(true);
+
+        exStopWords1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/stop.png"))); // NOI18N
+        exStopWords1.setText("Estrai Stop Word");
+        exStopWords1.setFocusable(false);
+        exStopWords1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        exStopWords1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        exStopWords1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exStopWords1ActionPerformed(evt);
+            }
+        });
+        jToolBar16.add(exStopWords1);
+
+        jPanel16.add(jToolBar16, java.awt.BorderLayout.PAGE_START);
+
+        docText.setEditable(false);
+        docText.setColumns(20);
+        docText.setLineWrap(true);
+        docText.setRows(5);
+        docText.setWrapStyleWord(true);
+        jScrollPane36.setViewportView(docText);
+
+        jPanel16.add(jScrollPane36, java.awt.BorderLayout.CENTER);
+
+        docTokens.setColumns(20);
+        docTokens.setLineWrap(true);
+        docTokens.setRows(5);
+        jScrollPane37.setViewportView(docTokens);
+
+        jPanel16.add(jScrollPane37, java.awt.BorderLayout.PAGE_END);
+
+        jTabbedPane7.addTab("Testo", jPanel16);
+
+        jSplitPane11.setRightComponent(jTabbedPane7);
+
+        jSplitPane8.setRightComponent(jSplitPane11);
 
         manageDocuments.add(jSplitPane8, java.awt.BorderLayout.CENTER);
 
@@ -6219,7 +6327,7 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_batchActionPerformed
 
     private void classificationTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_classificationTreeMouseClicked
-        GuiUtils.treeActionPerformed(classificationTree, testo, token.getText(), evt, true, this);
+        GuiUtils.treeActionPerformed(classificationTree, testo, token.getText(), evt, true, this, segmentsTable, 4);
         categorieSegmentsPanel.setModel(classificationTree.getModel());
         classificationTree1.setModel(classificationTree.getModel());
         manageClassificationTree.setModel(classificationTree.getModel());
@@ -6364,7 +6472,7 @@ public class SemGui extends javax.swing.JFrame {
 
 
     private void categorieSegmentsPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categorieSegmentsPanelMouseClicked
-        GuiUtils.treeActionPerformed(categorieSegmentsPanel, segmentText, segmentTokens.getText(), evt, false, this);
+        GuiUtils.treeActionPerformed(categorieSegmentsPanel, segmentText, segmentTokens.getText(), evt, false, this, segmentsTable, 4);
         classificationTree.setModel(categorieSegmentsPanel.getModel());
         classificationTree1.setModel(categorieSegmentsPanel.getModel());
     }//GEN-LAST:event_categorieSegmentsPanelMouseClicked
@@ -6414,14 +6522,6 @@ public class SemGui extends javax.swing.JFrame {
         }
         FilesAndSegmentsUtils.segmentsTableFilterOnFirstLevel(this, classStartLevel.getSelectedIndex() + 1);
     }//GEN-LAST:event_firstLevelOnlyActionPerformed
-
-
-    private void underTresholdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underTresholdActionPerformed
-        if (isClassify) {
-            return;
-        }
-        FilesAndSegmentsUtils.segmentsTableUnderTreshold(this, classStartLevel.getSelectedIndex() + 1);
-    }//GEN-LAST:event_underTresholdActionPerformed
 
 
     private void removeFiltersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeFiltersActionPerformed
@@ -6721,9 +6821,6 @@ public class SemGui extends javax.swing.JFrame {
     private void learningFactorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_learningFactorActionPerformed
     }//GEN-LAST:event_learningFactorActionPerformed
 
-    private void sogliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sogliaActionPerformed
-    }//GEN-LAST:event_sogliaActionPerformed
-
     private void segmentPatternDefinitionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_segmentPatternDefinitionFocusGained
         segmentPatternSuggestor.setDictionary(me.getSuggestions((DefaultMutableTreeNode) modelTree.getModel().getRoot()));
         confirmSegmentPattern.setEnabled(true);
@@ -6933,19 +7030,30 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_stopWordsTableKeyTyped
 
     private void deleteDocumentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteDocumentActionPerformed
-        LuceneIndexUtils.deleteDocument(this);
+        deleteSelected();
     }//GEN-LAST:event_deleteDocumentActionPerformed
+
+    /**
+     * Cancella dall'indice i documenti selezionati
+     */
+    public void deleteSelected() {
+        LuceneIndexUtils.deleteDocument(this);
+        classificaTesto1.setEnabled(false);
+        classificaTesto.setEnabled(false);
+    }
 
     private void removeDocumentFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDocumentFilterActionPerformed
         GuiUtils.filterTable(documentsTable, null, 1);
         serachDocumentBody.setText("");
+        LuceneIndexUtils.searchDocumentBody(this);
     }//GEN-LAST:event_removeDocumentFilterActionPerformed
 
     private void serachDocumentBodyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serachDocumentBodyActionPerformed
+        LuceneIndexUtils.searchDocumentBody(this);
     }//GEN-LAST:event_serachDocumentBodyActionPerformed
 
     private void serachDocumentBodyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serachDocumentBodyKeyReleased
-        LuceneIndexUtils.searchDocumentBody(this);
+
     }//GEN-LAST:event_serachDocumentBodyKeyReleased
 
     private void serachDocumentBodyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serachDocumentBodyKeyTyped
@@ -7210,6 +7318,7 @@ public class SemGui extends javax.swing.JFrame {
         selectIndexFolder.setVisible(true);
         jButton3.setEnabled(false);
         classificaTesto.setEnabled(false);
+        classificaTesto1.setEnabled(false);
     }//GEN-LAST:event_selezionaIndiceActionPerformed
 
     private void percorsoIndiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_percorsoIndiceActionPerformed
@@ -7539,6 +7648,7 @@ public class SemGui extends javax.swing.JFrame {
 
     private void wFreqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreqActionPerformed
         freqOverTotal = false;
+        wFreq1.setEnabled(true);
         FilesAndSegmentsUtils.doExtractFrequencies(this, freqOverTotal);
     }//GEN-LAST:event_wFreqActionPerformed
 
@@ -7696,6 +7806,7 @@ public class SemGui extends javax.swing.JFrame {
 
     private void wFreq2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreq2ActionPerformed
         freqOverTotal = true;
+        wFreq1.setEnabled(true);
         FilesAndSegmentsUtils.doExtractFrequencies(this, freqOverTotal);
     }//GEN-LAST:event_wFreq2ActionPerformed
 
@@ -7725,6 +7836,387 @@ public class SemGui extends javax.swing.JFrame {
         GuiUtils.filterTable(freqTable, jTextField4.getText(), 1);
         freqLabel.setText("Totale elementi filtrati: " + freqTable.getRowCount());
     }//GEN-LAST:event_jTextField4KeyReleased
+
+    private void classificaTesto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classificaTesto1ActionPerformed
+        if (needUpdate) {
+            GuiUtils.showDialog("Necessario reinizializzare il modello", "Inizializzazione modello");
+            Thread t = new Thread(
+                    () -> {
+                        GuiUtils.clearTable(documentsTable);
+                        initializeModel();
+                    });
+            t.setDaemon(true);
+            t.start();
+            needUpdate = false;
+        } else {
+
+            interrompi.setEnabled(true);
+            filesTab.setTitleAt(7, "Gestione Indice - Classificazione");
+            isClassify = true;
+
+            String language = String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem());
+            DefaultTableModel model = (DefaultTableModel) documentsTable.getModel();
+            final int[] rows = documentsTable.getSelectedRows();
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final List<String> texts = new ArrayList<>();
+                    final List<Integer> isx = new ArrayList<>();
+                    for (int k = 0; k < rows.length; k++) {
+                        int i = documentsTable.convertRowIndexToModel(rows[k]);
+                        isx.add(i);
+                        String text = (String) model.getValueAt(i, 2);
+                        texts.add(text);
+                    }
+                    final int size = texts.size();
+                    int processors = getProcessori2().getSelectedIndex() + 1;
+                    ParallelProcessor classiFy = new ParallelProcessor(processors, 6000); //100 ore
+                    final AtomicInteger correct = new AtomicInteger(0);
+                    AtomicInteger count = new AtomicInteger(0);
+                    stopSegmentAndClassify.setValue(false);
+                    for (int pr = 0; pr < processors; pr++) {
+                        classiFy.add(() -> {
+                            //Legge il file... e agginge in coda
+                            while (true) {
+
+                                int row = count.getAndIncrement();
+                                if (row >= size) {
+                                    break;
+                                }
+
+                                if (row % 7 == 0) {
+                                    filesTab.setTitleAt(7, "Gestione Indice - Classificazione " + row + "/" + size);
+                                }
+                                if (stopSegmentAndClassify.getValue()) {
+                                    break;
+                                }
+                                String text = texts.get(row);
+                                int i = isx.get(row);
+                                if (text == null) {
+                                    continue;
+                                }
+                                if (text.length() > 0) {
+                                    try {
+                                        long startBayes = System.currentTimeMillis();
+                                        List<ClassificationPath> bayes = ME.bayesClassify(text, language);
+                                        long endBayes = System.currentTimeMillis();
+                                        if (bayes.size() > 0) {
+                                            boolean ok = false;
+                                            String leaf = bayes.get(0).getLeaf();
+                                            String oldCat = null;
+                                            for (int j = 8; j > 2; j--) {
+                                                String old = String.valueOf(model.getValueAt(i, j));
+                                                if (!old.equalsIgnoreCase("null") && oldCat == null) {
+                                                    oldCat = old;
+                                                }
+                                                if (leaf.equals(old)) {
+                                                    ok = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (ok) {
+                                                model.setValueAt("OK", i, 9);
+                                                correct.incrementAndGet();
+                                            } else {
+
+                                                model.setValueAt("[" + leaf + "] " + bayes.get(0).toSmallClassString(), i, 9);
+                                            }
+                                        } else {
+                                            model.setValueAt("Non classificata", i, 9);
+                                        }
+                                    } catch (Exception e) {
+                                        LogGui.printException(e);
+                                    }
+                                }
+                            }
+
+                        });
+                    }
+                    classiFy.waitTermination();
+                    stopSegmentAndClassify.setValue(false);
+                    double score = ((double) correct.intValue()) / ((double) size);
+                    score = score * 100;
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    filesTab.setTitleAt(7, "Gestione Indice - " + correct.intValue() + "/" + size + " " + df.format(score) + "%");
+                    interrompi.setEnabled(false);
+                    isClassify = false;
+                }
+            });
+            t.setDaemon(true);
+            t.start();
+
+        }
+    }//GEN-LAST:event_classificaTesto1ActionPerformed
+
+    private void exStopWords1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exStopWords1ActionPerformed
+        String text = docText.getSelectedText(); //Riprende il testo
+        if (text == null) {
+            text = docTokens.getSelectedText();
+        }
+        if (text.length() > 0) {
+            String language = String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem());
+            if (GuiUtils.showConfirmDialog("Confermi l'inserimento dei termini selezionati nel vocabolario delle stop words per la lingua " + language + "? ", "Conferma stop words")) {
+                String[] words = text.split(" ");
+                for (String word : words) {
+                    StopWordsUtils.addStopWord(word, language, this);
+                }
+                classificaTesto1.setEnabled(false);
+                classificaTesto.setEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_exStopWords1ActionPerformed
+
+    private void documentsTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documentsTableKeyPressed
+
+    }//GEN-LAST:event_documentsTableKeyPressed
+
+    private void documentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_documentsTableMouseClicked
+        DefaultTableModel model = (DefaultTableModel) documentsTable.getModel();
+        int[] rows = documentsTable.getSelectedRows();
+        if (rows.length == 1) {
+            int i = documentsTable.convertRowIndexToModel(rows[0]);
+            String text = (String) model.getValueAt(i, 2);
+            String token = (String) model.getValueAt(i, 1);
+            docText.setText(text);
+            docText.setCaretPosition(0);
+            docTokens.setText(token);
+            docTokens.setCaretPosition(0);
+        }
+    }//GEN-LAST:event_documentsTableMouseClicked
+
+    private void documentsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documentsTableKeyReleased
+        documentsTableMouseClicked(null);
+    }//GEN-LAST:event_documentsTableKeyReleased
+
+    private void wFreq3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wFreq3ActionPerformed
+        LuceneIndexUtils.doExtractFrequencies(this);
+        wFreq1.setEnabled(false);
+    }//GEN-LAST:event_wFreq3ActionPerformed
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        interrompi.setEnabled(true);
+        filesTab.setTitleAt(7, "Gestione Indice - Spostamento");
+        isClassify = true;
+        String language = String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem());
+        DefaultTableModel model = (DefaultTableModel) documentsTable.getModel();
+        final String structurePath = percorsoIndice.getText();
+        final int[] rows = documentsTable.getSelectedRows();
+        final SemGui semGui = this;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Map<String, Object>> docs = new ArrayList<>();
+                final List<Integer> isx = new ArrayList<>();
+                List<String> toRemove = new ArrayList();
+                for (int i = 0; i < rows.length; i++) {
+                    int pos = documentsTable.convertRowIndexToModel(rows[i]);
+                    String classe = (String) model.getValueAt(pos, 9);
+                    if (!classe.startsWith("OK") && !classe.startsWith("Non classificata")) {
+                        String record = (String) model.getValueAt(pos, 0);
+                        String text = (String) model.getValueAt(pos, 2);
+                        Object[] path = new Object[7];
+                        int posEnd = classe.indexOf("] ");
+                        String subPath = classe.substring(posEnd + 2);
+                        String[] cats = subPath.split(">");
+                        for (int k = 0; k < 6; k++) {
+                            if (k < cats.length) {
+                                path[k + 1] = cats[k];
+                            }
+                        }
+                        Map<String, Object> d = new HashMap<>();
+                        d.put("text", text);
+                        d.put("path", path);
+                        docs.add(d);
+                        isx.add(pos);
+                        toRemove.add(record);
+                    }
+
+                }
+
+                final int size = docs.size();
+                int processors = getProcessori2().getSelectedIndex() + 1;
+                ParallelProcessor classiFy = new ParallelProcessor(processors, 6000); //100 ore
+
+                AtomicInteger count = new AtomicInteger(0);
+                stopSegmentAndClassify.setValue(false);
+                for (int pr = 0; pr < processors; pr++) {
+                    classiFy.add(() -> {
+                        //Legge il file... e agginge in coda
+                        while (true) {
+
+                            int row = count.getAndIncrement();
+                            if (row >= size) {
+                                break;
+                            }
+
+                            if (row % 7 == 0) {
+                                filesTab.setTitleAt(7, "Gestione Indice - Spostamento " + row + "/" + size);
+                            }
+                            if (stopSegmentAndClassify.getValue()) {
+                                break;
+                            }
+                            Map<String, Object> m = docs.get(row);
+                            int i = isx.get(row);
+                            if (m == null) {
+                                continue;
+                            }
+
+                            try {
+                                String text = (String) m.get("text");
+                                Object[] path = (Object[]) m.get("path");
+                                IndexManager.addToIndex(structurePath, text, path, language, 1, true);
+                                for (int j = 1; j < path.length; j++) {
+                                    if (path[j] != null) {
+                                        model.setValueAt(String.valueOf(path[j]), i, 2 + j);
+                                    } else {
+                                        model.setValueAt(null, i, 2 + j);
+                                    }
+                                }
+                                model.setValueAt("OK - Cambiato", i, 9);
+                            } catch (Exception e) {
+                                LogGui.printException(e);
+                            }
+                        }
+                    });
+                }
+                classiFy.waitTermination();
+                LogGui.info("Remove...");
+                filesTab.setTitleAt(7, "Gestione Indice - Pulizia...");
+                ME.removeDocuments(toRemove, language);
+                stopSegmentAndClassify.setValue(false);
+                filesTab.setTitleAt(7, "Gestione Indice");
+                interrompi.setEnabled(false);
+                isClassify = false;
+                LuceneIndexUtils.searchDocumentBody(semGui);
+
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }//GEN-LAST:event_jButton16ActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        GuiUtils.filterTable(getDocumentsTable(), null, 1);
+        TreePath selPath = getManageClassificationTree().getSelectionPath();
+        if (selPath != null) {
+            getManageClassificationTree().setSelectionPath(selPath);
+            Object[] path = selPath.getPath();
+            switch (path.length) {
+                case 1:
+                    GuiUtils.filterTable(getDocumentsTable(), null, 1);
+                    break;
+                case 2:
+                    getSerachDocumentBody().setText("Level1:" + path[1].toString());
+                    break;
+                case 3:
+                    getSerachDocumentBody().setText("Level2:" + path[2].toString());
+                    break;
+                case 4:
+                    getSerachDocumentBody().setText("Level3:" + path[3].toString());
+                    break;
+                case 5:
+                    getSerachDocumentBody().setText("Level4:" + path[4].toString());
+                    break;
+                case 6:
+                    getSerachDocumentBody().setText("Level5:" + path[5].toString());
+                    break;
+                case 7:
+                    getSerachDocumentBody().setText("Level6:" + path[6].toString());
+                    break;
+                default:
+                    break;
+            }
+        }
+        serachDocumentBodyKeyReleased();
+    }//GEN-LAST:event_jButton17ActionPerformed
+
+    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+        interrompi.setEnabled(true);
+        filesTab.setTitleAt(7, "Gestione Indice - Spostamento");
+        isClassify = true;
+        String language = String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem());
+        DefaultTableModel model = (DefaultTableModel) documentsTable.getModel();
+        final String structurePath = percorsoIndice.getText();
+        final int[] rows = documentsTable.getSelectedRows();
+        final SemGui semGui = this;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Map<String, Object>> docs = new ArrayList<>();
+                final List<Integer> isx = new ArrayList<>();
+                for (int i = 0; i < rows.length; i++) {
+                    int pos = documentsTable.convertRowIndexToModel(rows[i]);
+                    String classe = (String) model.getValueAt(pos, 9);
+                    if (!classe.startsWith("OK") && !classe.startsWith("Non classificata")) {
+                        String record = (String) model.getValueAt(pos, 0);
+                        String text = (String) model.getValueAt(pos, 2);
+                        Object[] path = new Object[7];
+                        for (int k = 0; k < 6; k++) {
+                            Object o = model.getValueAt(pos, 3 + k);
+                            if (o != null) {
+                                path[k + 1] = String.valueOf(o);
+                            }
+                        }
+                        Map<String, Object> d = new HashMap<>();
+                        d.put("text", text);
+                        d.put("path", path);
+                        docs.add(d);
+                        isx.add(pos);
+                    }
+
+                }
+
+                final int size = docs.size();
+                int processors = getProcessori2().getSelectedIndex() + 1;
+                ParallelProcessor classiFy = new ParallelProcessor(processors, 6000); //100 ore
+
+                AtomicInteger count = new AtomicInteger(0);
+                stopSegmentAndClassify.setValue(false);
+                for (int pr = 0; pr < processors; pr++) {
+                    classiFy.add(() -> {
+                        //Legge il file... e agginge in coda
+                        while (true) {
+
+                            int row = count.getAndIncrement();
+                            if (row >= size) {
+                                break;
+                            }
+
+                            if (row % 7 == 0) {
+                                filesTab.setTitleAt(7, "Gestione Indice - Reistruzione " + row + "/" + size);
+                            }
+                            if (stopSegmentAndClassify.getValue()) {
+                                break;
+                            }
+                            Map<String, Object> m = docs.get(row);
+                            int i = isx.get(row);
+                            if (m == null) {
+                                continue;
+                            }
+
+                            try {
+                                String text = (String) m.get("text");
+                                Object[] path = (Object[]) m.get("path");
+                                IndexManager.addToIndex(structurePath, text, path, language, Integer.parseInt(learningFactor.getText()), true);
+                                model.setValueAt("OK - Istruito", i, 9);
+                            } catch (Exception e) {
+                                LogGui.printException(e);
+                            }
+                        }
+                    });
+                }
+                classiFy.waitTermination();
+                stopSegmentAndClassify.setValue(false);
+                filesTab.setTitleAt(7, "Gestione Indice");
+                interrompi.setEnabled(false);
+                isClassify = false;
+                LuceneIndexUtils.searchDocumentBody(semGui);
+
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }//GEN-LAST:event_jButton18ActionPerformed
 
     /**
      *
@@ -7981,6 +8473,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane changesTreeScrollPanel;
     private javax.swing.JComboBox<String> classStartLevel;
     private javax.swing.JButton classificaTesto;
+    private javax.swing.JButton classificaTesto1;
     private javax.swing.JTree classificationResult;
     private javax.swing.JLabel classificationStatus;
     private javax.swing.JTree classificationTree;
@@ -8034,6 +8527,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTable dictionaryTable;
     private javax.swing.JScrollPane dictionaryTableScrollPanel;
     private javax.swing.JToolBar dictionaryToolbar;
+    private javax.swing.JTextArea docText;
+    private javax.swing.JTextArea docTokens;
     private javax.swing.JTable documentsTable;
     private javax.swing.JScrollPane documentsTableScrollPanel;
     private javax.swing.JPanel dpConfigurationPanel;
@@ -8068,6 +8563,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel etichettaAlberoSegmenti;
     private javax.swing.JButton exPattern;
     private javax.swing.JButton exStopWords;
+    private javax.swing.JButton exStopWords1;
     private javax.swing.JFileChooser excelCorpusChooser;
     private javax.swing.JFileChooser excelFileChooser;
     private javax.swing.JFileChooser excelFileChooserClass;
@@ -8142,6 +8638,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton18;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -8206,7 +8705,6 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel64;
     private javax.swing.JLabel jLabel65;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -8216,6 +8714,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -8253,6 +8752,8 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane33;
     private javax.swing.JScrollPane jScrollPane34;
     private javax.swing.JScrollPane jScrollPane35;
+    private javax.swing.JScrollPane jScrollPane36;
+    private javax.swing.JScrollPane jScrollPane37;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -8273,7 +8774,6 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator20;
     private javax.swing.JToolBar.Separator jSeparator21;
-    private javax.swing.JToolBar.Separator jSeparator22;
     private javax.swing.JToolBar.Separator jSeparator23;
     private javax.swing.JToolBar.Separator jSeparator24;
     private javax.swing.JToolBar.Separator jSeparator25;
@@ -8291,7 +8791,6 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator36;
     private javax.swing.JToolBar.Separator jSeparator37;
     private javax.swing.JToolBar.Separator jSeparator38;
-    private javax.swing.JToolBar.Separator jSeparator39;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator40;
     private javax.swing.JToolBar.Separator jSeparator41;
@@ -8312,12 +8811,16 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator55;
     private javax.swing.JToolBar.Separator jSeparator56;
     private javax.swing.JToolBar.Separator jSeparator57;
+    private javax.swing.JToolBar.Separator jSeparator58;
+    private javax.swing.JToolBar.Separator jSeparator59;
     private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JToolBar.Separator jSeparator60;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
     private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane10;
+    private javax.swing.JSplitPane jSplitPane11;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JSplitPane jSplitPane4;
@@ -8332,6 +8835,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JTabbedPane jTabbedPane6;
+    private javax.swing.JTabbedPane jTabbedPane7;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -8343,6 +8847,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar13;
     private javax.swing.JToolBar jToolBar14;
     private javax.swing.JToolBar jToolBar15;
+    private javax.swing.JToolBar jToolBar16;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private javax.swing.JToolBar jToolBar4;
@@ -8509,7 +9014,6 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JButton selezionaStop;
     private javax.swing.JTextField serachDocumentBody;
     private javax.swing.JButton setupRank;
-    private javax.swing.JTextField soglia;
     private javax.swing.JButton startBuildIndex;
     private javax.swing.JCheckBox startTimeInterval;
     private javax.swing.JLabel statusGestioneIndice;
@@ -8539,11 +9043,11 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JTextArea testo;
     private javax.swing.JTextArea testoDaSegmentare;
     private javax.swing.JTextArea token;
-    private javax.swing.JButton underTreshold;
     private javax.swing.JCheckBox usaCategorie;
     private javax.swing.JButton wFreq;
     private javax.swing.JButton wFreq1;
     private javax.swing.JButton wFreq2;
+    private javax.swing.JButton wFreq3;
     private javax.swing.JDialog wordFrequencies;
     // End of variables declaration//GEN-END:variables
 
@@ -9304,14 +9808,6 @@ public class SemGui extends javax.swing.JFrame {
 
     /**
      *
-     * @return soglia
-     */
-    public JTextField getSoglia() {
-        return soglia;
-    }
-
-    /**
-     *
      * @return stopwords
      */
     public JTextField getStopWords2() {
@@ -9869,15 +10365,6 @@ public class SemGui extends javax.swing.JFrame {
      */
     public JButton getTestSegmentPattern() {
         return testSegmentPattern;
-    }
-
-    /**
-     *
-     * @return pulsante per filtrare i documenti classificati con uno score
-     * sottosoglia
-     */
-    public JButton getUnderTreshold() {
-        return underTreshold;
     }
 
     /**
@@ -10486,12 +10973,14 @@ public class SemGui extends javax.swing.JFrame {
      */
     public void initializeModel() {
         isInit = false;
-        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
+        cc.updateConfiguration(percorsoIndice.getText(), "0", fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
         //LogGui.setjTextArea(logInizializzazione);
         logInizializzazione.setEditable(false);
         logInizializzazione.setEnabled(true);
         logInizializzazione.setText("");
         jButton2.setEnabled(false);
+        filesTab.setSelectedIndex(8);
+        GuiUtils.clearTable(documentsTable);
         //Abilita i testi...
         boolean ok = false;
         try {
@@ -10507,6 +10996,8 @@ public class SemGui extends javax.swing.JFrame {
                     classificaTesto.setEnabled(true);
                     jButton3.setEnabled(true);
                     batch.setEnabled(true);
+                    rebuildIndex.setSelected(false);
+                    classificaTesto1.setEnabled(true);
 
                 }
             }
@@ -10521,6 +11012,8 @@ public class SemGui extends javax.swing.JFrame {
                 tagCloud.setEnabled(true);
                 wFreq.setEnabled(true);
                 wFreq2.setEnabled(true);
+                wFreq3.setEnabled(true);
+                wFreq1.setEnabled(true);
                 capturesFilter.setEnabled(true);
                 filesPanelSegmenta.setEnabled(true);
                 segmentaFile.setEnabled(true);
@@ -10561,7 +11054,9 @@ public class SemGui extends javax.swing.JFrame {
         }
         jButton2.setEnabled(true);
         RankUtils.loadRank(this);
+        System.gc();
         LogGui.printMemorySummary();
+        needUpdate = false;
     }
 
     /**
@@ -10571,7 +11066,7 @@ public class SemGui extends javax.swing.JFrame {
      */
     public void updateLastSelectFolder(String absolutePath) {
         lastFolder = absolutePath;
-        cc.updateConfiguration(percorsoIndice.getText(), soglia.getText(), fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
+        cc.updateConfiguration(percorsoIndice.getText(), "", fattoreK.getText(), getSegmentsPath(), lastFolder, String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem()), learningFactor.getText(), percorsoOCR.getText());
     }
 
     /**
@@ -10622,7 +11117,8 @@ public class SemGui extends javax.swing.JFrame {
      * Evento quando si cerca nel documento
      */
     public void serachDocumentBodyKeyReleased() {
-        serachDocumentBodyKeyReleased(null);
+        //serachDocumentBodyKeyReleased(null);
+        serachDocumentBodyActionPerformed(null);
     }
 
     private void doReadClassifyWriteExcel(ActionEvent evt) {
@@ -10639,7 +11135,7 @@ public class SemGui extends javax.swing.JFrame {
             logInizializzazione.requestFocus();
             Thread t = new Thread(() -> {
                 ReadClassifyWrite rpw = new ReadClassifyWrite(Integer.parseInt((String) processori.getSelectedItem()));
-                rpw.process(fileName, colonnaDescrizione.getSelectedIndex(), ME, DP, Double.parseDouble(soglia.getText()));
+                rpw.process(fileName, colonnaDescrizione.getSelectedIndex(), ME, DP);
                 batch.setEnabled(true);
             });
             t.setDaemon(true);
@@ -10681,7 +11177,7 @@ public class SemGui extends javax.swing.JFrame {
                     imagesPanel.repaint();
                     testoDaSegmentare.setText(text);
                     htmlFormatted.setText(html);
-                    Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = SE.getSegments(text, ME, Double.parseDouble(soglia.getText()), language);
+                    Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = SE.getSegments(text, ME, language);
                     htmlResult.setText(SegmentationUtils.getHtml(identifiedSegments, language));
                     htmlTimeline.setText(SegmentationUtils.getHtmlDurations(identifiedSegments));
                     segmentTree.setModel(new javax.swing.tree.DefaultTreeModel(SegmentationUtils.getJTree(new DefaultMutableTreeNode("Segmentazione"), identifiedSegments, language)));
@@ -10737,7 +11233,7 @@ public class SemGui extends javax.swing.JFrame {
                             }
                         }
                     }
-                    identifiedSegments = SE.getSegments(text, ME, Double.parseDouble(soglia.getText()), language);
+                    identifiedSegments = SE.getSegments(text, ME, language);
                     dto.setIdentifiedSegments(identifiedSegments);
 
                     List<Object[]> rows = dto.getSegmentRows();
@@ -10798,9 +11294,9 @@ public class SemGui extends javax.swing.JFrame {
                         token.setText(ME.tokenize(text, language));
                         try {
                             long startBayes = System.currentTimeMillis();
-                            List<ClassificationPath> bayes = ME.bayesClassify(text, Double.parseDouble(soglia.getText()), language);
+                            List<ClassificationPath> bayes = ME.bayesClassify(text, language);
                             long endBayes = System.currentTimeMillis();
-                            ClassificationPath knn = ME.knnClassify(text, Double.parseDouble(soglia.getText()), language);
+                            ClassificationPath knn = ME.knnClassify(text, language);
                             long endKnn = System.currentTimeMillis();
                             classificationStatus.setText("");
                             javax.swing.tree.DefaultMutableTreeNode clResults = new javax.swing.tree.DefaultMutableTreeNode("Classificazione");
@@ -10929,7 +11425,7 @@ public class SemGui extends javax.swing.JFrame {
         logInizializzazione.requestFocus();
         Thread t = new Thread(() -> {
             ReadSegmentWrite rtw = new ReadSegmentWrite(processors);
-            rtw.process(sourceDir.getAbsolutePath(), DP, SE, ME, Double.parseDouble(soglia.getText()), html, percorsoOCR.getText());
+            rtw.process(sourceDir.getAbsolutePath(), DP, SE, ME, html, percorsoOCR.getText());
         });
         t.setDaemon(true);
         t.start();
@@ -10947,7 +11443,7 @@ public class SemGui extends javax.swing.JFrame {
             try {
                 String text = testoDaSegmentare.getText();
                 String language = DP.getLanguageFromText(text);
-                Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = SE.getSegments(text, ME, Double.parseDouble(soglia.getText()), language);
+                Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = SE.getSegments(text, ME, language);
                 htmlResult.setText(SegmentationUtils.getHtml(identifiedSegments, language));
                 htmlTimeline.setText(SegmentationUtils.getHtmlDurations(identifiedSegments));
                 segmentTree.setModel(new javax.swing.tree.DefaultTreeModel(SegmentationUtils.getJTree(new DefaultMutableTreeNode("Segmentazione"), identifiedSegments, language)));
@@ -11093,6 +11589,22 @@ public class SemGui extends javax.swing.JFrame {
      */
     public JCheckBox getNotSubscribe() {
         return notSubscribe;
+    }
+
+    /**
+     * 
+     * @return area testo documento lucene
+     */
+    public JTextArea getDocText() {
+        return docText;
+    }
+
+    /**
+     * 
+     * @return area token documento lucene
+     */
+    public JTextArea getDocTokens() {
+        return docTokens;
     }
 
 }

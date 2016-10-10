@@ -75,6 +75,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -186,16 +187,16 @@ public class GuiUtils {
      * @param table tabella
      */
     public static void clearTable(JTable table) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        DefaultTableModel dm = (DefaultTableModel) table.getModel();
+        dm.getDataVector().removeAllElements();
+        table.setAutoCreateRowSorter(false);
         TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) table.getRowSorter();
         if (sorter != null) {
             sorter.setRowFilter(null);
+            table.setRowSorter(sorter);
         }
-        table.setRowSorter(sorter);
-        int size = table.getRowCount();
-        for (int i = size - 1; i >= 0; i--) {
-            model.removeRow(i);
-        }
+        table.setAutoCreateRowSorter(true);
+
     }
 
     /**
@@ -449,12 +450,23 @@ public class GuiUtils {
         table.getColumnModel().getColumn(idx).setCellRenderer(new JTableCellRender(text));
         if (text != null && text.length() > 0) {
             TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) table.getRowSorter();
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, idx));
-            table.setRowSorter(sorter);
+            try {
+                if (sorter != null) {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, idx));
+                    table.setRowSorter(sorter);
+                }
+            } catch (Exception e) {
+                if (sorter != null) {
+                    sorter.setRowFilter(null);
+                    table.setRowSorter(sorter);
+                }
+            }
         } else {
             TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) table.getRowSorter();
-            sorter.setRowFilter(null);
-            table.setRowSorter(sorter);
+            if (sorter != null) {
+                sorter.setRowFilter(null);
+                table.setRowSorter(sorter);
+            }
 
         }
 
@@ -826,9 +838,11 @@ public class GuiUtils {
      * @param tokenText testo tokenizzato
      * @param evt evento
      * @param ignoreSelected true se deve ignorare i selezionati
+     * @param table tabella da cui prendere i selezionati.
+     * @param textIdx indice della tabella dove c'è il testo
      * @param semGui frame
      */
-    public static void treeActionPerformed(JTree tree, JTextArea area, String tokenText, MouseEvent evt, final boolean ignoreSelected, SemGui semGui) {
+    public static void treeActionPerformed(JTree tree, JTextArea area, String tokenText, MouseEvent evt, final boolean ignoreSelected, SemGui semGui, JTable table, int textIdx) {
         if (semGui.isIsClassify()) {
             return;
         }
@@ -845,7 +859,8 @@ public class GuiUtils {
                 if (tokenized.length() > 50) {
                     txt = tokenized.substring(0, 50) + "...";
                 }
-                final int[] selected = semGui.getSegmentsTable().getSelectedRows();
+                final int rowSelected = table.getSelectedRow();
+                final int[] selected = table.getSelectedRows();
                 if (selected.length > 1) {
                     txt = "tutte le descrizioni selezionate";
                     tokenized = "I testi di tutte le righe selezionate";
@@ -868,14 +883,21 @@ public class GuiUtils {
                                             String text = area.getText();
                                             String language1 = semGui.getDP().getLanguageFromText(text);
                                             IndexManager.addToIndex(semGui.getPercorsoIndice().getText(), tokenText, path, language1, factor, false);
+                                            if (textIdx == 2) {
+                                                semGui.deleteSelected();
+                                            }
                                         } else {
                                             for (int id : selected) {
-                                                String text = (String) semGui.getSegmentsTable().getValueAt(id, 4);
+                                                String text = (String) table.getValueAt(id, textIdx);
                                                 String language2 = semGui.getDP().getLanguageFromText(text);
                                                 IndexManager.addToIndex(semGui.getPercorsoIndice().getText(), text, path, language2, factor, true);
                                             }
+                                            if (textIdx == 2) {
+                                                semGui.deleteSelected();
+                                            }
                                         }
                                     } catch (Exception ex) {
+                                        LogGui.printException(ex);
                                     }
                                     semGui.getSegmentaEClassifica().setEnabled(true);
                                     semGui.getTagCloud().setEnabled(true);
@@ -1079,7 +1101,7 @@ public class GuiUtils {
             try {
                 String text = semGui.getFileText1().getText();
                 String language = semGui.getDP().getLanguageFromText(text);
-                Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = semGui.getSE().getSegments(text, semGui.getME(), Double.parseDouble(semGui.getSoglia().getText()), language);
+                Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments = semGui.getSE().getSegments(text, semGui.getME(), language);
                 semGui.getFilesPanelHtml1().setText(SegmentationUtils.getHtml(identifiedSegments, language));
                 semGui.getFilesPanelHtml1().setCaretPosition(0);
                 semGui.getFileText1().setCaretPosition(0);

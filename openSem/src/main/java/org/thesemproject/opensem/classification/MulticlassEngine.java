@@ -41,12 +41,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.classification.KNearestNeighborClassifier;
 import org.apache.lucene.classification.SimpleNaiveBayesClassifier;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
@@ -56,6 +60,9 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
+import static org.thesemproject.opensem.classification.IndexManager.getNotTokenizedFieldType;
+import static org.thesemproject.opensem.classification.IndexManager.reindexDoc;
 import org.thesemproject.opensem.parser.DocumentParser;
 import org.thesemproject.opensem.utils.interning.InternPool;
 
@@ -204,7 +211,7 @@ public class MulticlassEngine {
     private boolean init(String index, String stop, String language, int startLevel, int k, boolean needReindex) {
         try {
 
-            List<Document> reindexDoc = new ArrayList<>();
+            // List<Document> reindexDoc = new ArrayList<>();
             IndexReader reader = readers.get(language);
             if (isInit) {
                 closeReader(reader);
@@ -228,6 +235,21 @@ public class MulticlassEngine {
             LogGui.info("Read all example dataset");
             HashSet categories = new HashSet<>();
             Bits liveDocs = MultiFields.getLiveDocs(reader);
+
+            LogGui.info("Apro l'indice...");
+            IndexWriter indexWriter = null;
+
+            File origin = new File(index);
+            String pathOrigin = origin.getAbsolutePath();
+            String pathNew = pathOrigin + ".new." + System.currentTimeMillis();
+            String pathBackup = pathOrigin + ".bck." + System.currentTimeMillis();
+            if (needReindex) {
+                LogGui.info("Creo il nuovo indice in: "+pathNew+" leggendo dall'indice in : "+pathOrigin);
+                File fNew = new File(pathNew);
+                fNew.mkdirs();
+                indexWriter = getIndexWriter(Paths.get(pathNew), new File(stop), language, false, IndexWriterConfig.OpenMode.CREATE);
+            }
+            FieldType ft = getNotTokenizedFieldType();
             for (int i = 0; i < maxdoc; i++) {
                 if (liveDocs != null && !liveDocs.get(i)) {
                     continue;
@@ -235,62 +257,49 @@ public class MulticlassEngine {
                 Document doc = ar.document(i);
                 if (doc.get(IndexManager.UUID) == null) {
                     doc.add(new StringField(UUID, java.util.UUID.randomUUID().toString(), Field.Store.YES));
-
                 }
                 if (needReindex) {
-                    reindexDoc.add(doc);
-
-                }
-                String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
-                if (level1 != null) {
-                    if (!categories.contains(level1)) { //Nuova categoria di livello 1
-                        addNode(ar, analyzer, root, categories, level1, k, language);
+                    reindexDoc(doc, ft, analyzer, indexWriter);
+                    if (i % 100 == 0) {
+                        LogGui.info("Reindex Commit... " + i);
+                        indexWriter.commit();
                     }
-                    String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
-                    if (level2 != null) {
-                        if (!categories.contains(level2)) { //Nuova categoria di livello 2
-                            NodeData parent = root.getNode(level1);
-                            addNode(ar, analyzer, parent, categories, level2, k, language);
+                } else {
+                    String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
+                    if (level1 != null) {
+                        if (!categories.contains(level1)) { //Nuova categoria di livello 1
+                            addNode(ar, analyzer, root, categories, level1, k, language);
                         }
-                        String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
-                        if (level3 != null) {
-                            if (!categories.contains(level3)) { //Nuova categoria di livello 3
-                                NodeData p1 = root.getNode(level1);
-                                if (p1 != null) {
-                                    NodeData p2 = p1.getNode(level2);
-                                    addNode(ar, analyzer, p2, categories, level3, k, language);
-                                }
+                        String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
+                        if (level2 != null) {
+                            if (!categories.contains(level2)) { //Nuova categoria di livello 2
+                                NodeData parent = root.getNode(level1);
+                                addNode(ar, analyzer, parent, categories, level2, k, language);
                             }
-                            String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
-                            if (level4 != null) {
-                                if (!categories.contains(level4)) { //Nuova categoria di livello 4
+                            String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
+                            if (level3 != null) {
+                                if (!categories.contains(level3)) { //Nuova categoria di livello 3
                                     NodeData p1 = root.getNode(level1);
                                     if (p1 != null) {
                                         NodeData p2 = p1.getNode(level2);
-                                        if (p2 != null) {
-                                            NodeData p3 = p2.getNode(level3);
-                                            addNode(ar, analyzer, p3, categories, level4, k, language);
-                                        }
+                                        addNode(ar, analyzer, p2, categories, level3, k, language);
                                     }
                                 }
-                                String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
-                                if (level5 != null) {
-                                    if (!categories.contains(level5)) { //Nuova categoria di livello 5
+                                String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
+                                if (level4 != null) {
+                                    if (!categories.contains(level4)) { //Nuova categoria di livello 4
                                         NodeData p1 = root.getNode(level1);
                                         if (p1 != null) {
                                             NodeData p2 = p1.getNode(level2);
                                             if (p2 != null) {
                                                 NodeData p3 = p2.getNode(level3);
-                                                if (p3 != null) {
-                                                    NodeData p4 = p3.getNode(level4);
-                                                    addNode(ar, analyzer, p4, categories, level5, k, language);
-                                                }
+                                                addNode(ar, analyzer, p3, categories, level4, k, language);
                                             }
                                         }
                                     }
-                                    String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
-                                    if (level6 != null) {
-                                        if (!categories.contains(level6)) { //Nuova categoria di livello 6
+                                    String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
+                                    if (level5 != null) {
+                                        if (!categories.contains(level5)) { //Nuova categoria di livello 5
                                             NodeData p1 = root.getNode(level1);
                                             if (p1 != null) {
                                                 NodeData p2 = p1.getNode(level2);
@@ -298,9 +307,25 @@ public class MulticlassEngine {
                                                     NodeData p3 = p2.getNode(level3);
                                                     if (p3 != null) {
                                                         NodeData p4 = p3.getNode(level4);
-                                                        if (p4 != null) {
-                                                            NodeData p5 = p4.getNode(level5);
-                                                            addNode(ar, analyzer, p5, categories, level6, k, language);
+                                                        addNode(ar, analyzer, p4, categories, level5, k, language);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
+                                        if (level6 != null) {
+                                            if (!categories.contains(level6)) { //Nuova categoria di livello 6
+                                                NodeData p1 = root.getNode(level1);
+                                                if (p1 != null) {
+                                                    NodeData p2 = p1.getNode(level2);
+                                                    if (p2 != null) {
+                                                        NodeData p3 = p2.getNode(level3);
+                                                        if (p3 != null) {
+                                                            NodeData p4 = p3.getNode(level4);
+                                                            if (p4 != null) {
+                                                                NodeData p5 = p4.getNode(level5);
+                                                                addNode(ar, analyzer, p5, categories, level6, k, language);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -311,17 +336,30 @@ public class MulticlassEngine {
                             }
                         }
                     }
-                }
-                if (i % 1000 == 0) {
-                    LogGui.info("Read Progress... " + i);
+                    if (i % 1000 == 0) {
+                        LogGui.info("Read Progress... " + i);
+                    }
                 }
             }
-            LogGui.info("End training");
-            this.cats.addAll(categories);
+
             if (needReindex) {
-                LogGui.info("Start reindex...");
-                IndexManager.reindex(reindexDoc, Paths.get(index), new File(stop), language);
-                LogGui.info("End reindex...");
+                indexWriter.commit();
+                indexWriter.flush();
+                LogGui.info("Close index...");
+                indexWriter.close();
+                closeReader(reader);
+                LogGui.info("Index written");
+                LogGui.info("Rename index...");
+                File backup = new File(pathBackup);
+                File originName = new File(origin.getAbsolutePath());
+                origin.renameTo(backup);
+                File newFile = new File(pathNew);
+                newFile.renameTo(originName);
+                LogGui.info("Re-Init...");
+                return init(index, stop, language, startLevel, k, false);
+            } else {
+                LogGui.info("End training");
+                this.cats.addAll(categories);
             }
             return true;
         } catch (Exception e) {
@@ -353,27 +391,29 @@ public class MulticlassEngine {
                     continue;
                 }
                 Document doc = ar.document(i);
-                String[] row = new String[8];
+                String[] row = new String[10];
+                row[9] = "";
                 row[0] = doc.get(IndexManager.UUID);
                 row[1] = doc.get(IndexManager.BODY);
+                row[2] = doc.get(IndexManager.TEXT);
                 String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
-                row[2] = level1;
+                row[3] = level1;
                 if (level1 != null) {
                     String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
                     if (level2 != null) {
-                        row[3] = level2;
+                        row[4] = level2;
                         String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
                         if (level3 != null) {
-                            row[4] = level3;
+                            row[5] = level3;
                             String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
                             if (level4 != null) {
-                                row[5] = level4;
+                                row[6] = level4;
                                 String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
                                 if (level5 != null) {
-                                    row[6] = level5;
+                                    row[7] = level5;
                                     String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
                                     if (level6 != null) {
-                                        row[7] = level6;
+                                        row[8] = level6;
                                     }
                                 }
                             }
@@ -506,10 +546,11 @@ public class MulticlassEngine {
 
     /**
      * Ripulisce gli analizzatori sintattici
+     *
      * @since 1.4.1
-     
+     *
      */
-    public void resetAnalyzers()  {
+    public void resetAnalyzers() {
         analyzers.clear();
     }
 
@@ -537,20 +578,16 @@ public class MulticlassEngine {
      * Classifica un testo con il classificatore Bayesiano di lucene
      *
      * @param text testo da analizzare
-     * @param th soglia (tra 0 e 1) di accettabilità della classificazione. Il
-     * bayesiano per definizione classifica sempre su tutte le categorie. Ad
-     * ogni classificazione assegna uno score di affidabilità espresso in %. La
-     * somma degli score da sempre 1.
      * @param language lingua del testo
      * @return lista dei percorsi di classificazione (un documento può essere
      * classificato su più categorie)
      */
-    public List<ClassificationPath> bayesClassify(String text, double th, String language) {
+    public List<ClassificationPath> bayesClassify(String text, String language) {
         if (!isInit) {
             return null;
         }
         try {
-            return classifyOnRoot(tokenize(text, language), root, th, false, language);
+            return classifyOnRoot(tokenize(text, language), root, false, language);
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -561,16 +598,15 @@ public class MulticlassEngine {
      * Classifica un testo con il classificatore KNN di lucene
      *
      * @param text testo da analizzre
-     * @param th soglia (tra 0 e 1) di accettabilità della classificazione
      * @param language lingua del testo
      * @return percorso di classificazione
      */
-    public ClassificationPath knnClassify(String text, double th, String language) {
+    public ClassificationPath knnClassify(String text, String language) {
         if (!isInit) {
             return null;
         }
         try {
-            List<ClassificationPath> path = classifyOnRoot(tokenize(text, language), root, th, true, language);
+            List<ClassificationPath> path = classifyOnRoot(tokenize(text, language), root, true, language);
             if (path.size() > 0) {
                 return path.get(0);
             } else {
@@ -582,7 +618,7 @@ public class MulticlassEngine {
         return null;
     }
 
-    private ClassificationPath classifyOnSubNode(String text, NodeData nd, int level, ClassificationPath cp, double threshold, String language) throws IOException {
+    private ClassificationPath classifyOnSubNode(String text, NodeData nd, int level, ClassificationPath cp, String language) throws IOException {
         if (!isInit) {
             return null;
         }
@@ -608,12 +644,14 @@ public class MulticlassEngine {
         }
         if (resultNdList != null) {
             double score = resultNdList.getScore();
-            if (score >= threshold) {
+            double size = nd.getChildrenNames().size();
+            double realThreshold = 1 / size;
+            if (score >= realThreshold) {
                 cp.addResult(nd.getNameFromId(resultNdList.getAssignedClass().utf8ToString()), score, level);
                 NodeData child = nd.getNode(cp.getNodeName(level));
                 if (child != null) {
                     if (child.hasChildren()) {
-                        return classifyOnSubNode(text, child, level + 1, cp, threshold, language);
+                        return classifyOnSubNode(text, child, level + 1, cp, language);
                     }
                 }
             }
@@ -621,7 +659,7 @@ public class MulticlassEngine {
         return cp;
     }
 
-    private List<ClassificationPath> classifyOnRoot(String text, NodeData root, double threshold, boolean knn, String language) throws IOException {
+    private List<ClassificationPath> classifyOnRoot(String text, NodeData root, boolean knn, String language) throws IOException {
         try {
             List<ClassificationPath> results = new ArrayList<>();
             int level = root.getStartLevel() - 1;
@@ -644,13 +682,15 @@ public class MulticlassEngine {
                             NodeData.findPath(bChoice1, child1, level);
                         }
                         if (child1.hasChildren()) {
-                            bChoice1 = classifyOnSubNode(text, child1, level + 1, bChoice1, threshold, language);
+                            bChoice1 = classifyOnSubNode(text, child1, level + 1, bChoice1, language);
                         }
                     }
                     results.add(bChoice1);
                     if (resultNdList.size() > 1) {
                         double score2 = resultNdList.get(1).getScore();
-                        if (score2 >= threshold) {
+                        double childrenSize = root.getChildrenNames().size(); //Numero di figli
+                        double realThreshold = 1 / childrenSize;
+                        if (score2 >= realThreshold) {
                             bChoice2.addResult(root.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
                             NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
@@ -658,7 +698,7 @@ public class MulticlassEngine {
                                     NodeData.findPath(bChoice2, child2, level);
                                 }
                                 if (child2.hasChildren()) {
-                                    bChoice2 = classifyOnSubNode(text, child2, level + 1, bChoice2, threshold, language);
+                                    bChoice2 = classifyOnSubNode(text, child2, level + 1, bChoice2, language);
                                 }
                             }
                             results.add(bChoice2);
@@ -682,7 +722,7 @@ public class MulticlassEngine {
                             NodeData.findPath(kChoice1, child1, level);
                         }
                         if (child1.hasChildren()) {
-                            kChoice1 = classifyOnSubNode(text, child1, level + 1, kChoice1, threshold, language);
+                            kChoice1 = classifyOnSubNode(text, child1, level + 1, kChoice1, language);
                         }
                     }
                     results.add(kChoice1);

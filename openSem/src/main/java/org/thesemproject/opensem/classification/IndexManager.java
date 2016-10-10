@@ -200,7 +200,7 @@ public class IndexManager {
      * @throws FileNotFoundException file non trovato
      * @throws Exception Eccezione eccezione
      */
-    public static void addToIndex(String structurePath, String text, Object[] path, String language, int factor, boolean tokenize) throws IOException, FileNotFoundException, Exception {
+    public synchronized static void addToIndex(String structurePath, String text, Object[] path, String language, int factor, boolean tokenize) throws IOException, FileNotFoundException, Exception {
         File fPath = new File(structurePath);
         if (fPath.exists() && fPath.isDirectory()) {
             String indexDir = getIndexFolder(fPath, language);
@@ -229,9 +229,13 @@ public class IndexManager {
             for (int count = 0; count < factor; count++) {
                 Document doc = new Document();
                 doc.add(new TextField(BODY, body, Field.Store.YES));
+                doc.add(new TextField(TEXT, text, Field.Store.YES));
                 doc.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
                 doc.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
                 for (int i = 0; i < path.length; i++) { //IL path 0 del threepath è la root quindi non ci inderessa
+                    if (path[i] == null) {
+                        continue;
+                    }
                     if (i == 1) {
                         doc.add(new StringField(LEVEL_1, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL1_NAME, path[i].toString(), Field.Store.YES));
@@ -257,6 +261,7 @@ public class IndexManager {
                         doc.add(new StringField(LEVEL5_NAME, path[i].toString(), Field.Store.YES));
                     }
                     if (i == 6) {
+
                         doc.add(new StringField(LEVEL_6, NodeData.getNodeCodeForFilter(path[i].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(NodeData.getNodeCodeForFilter(path[5].toString()) + "", NodeData.getNodeCodeForFilter(path[6].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL6_NAME, path[i].toString(), Field.Store.YES));
@@ -264,6 +269,7 @@ public class IndexManager {
                 }
                 indexWriter.addDocument(doc);
             }
+
             indexWriter.commit();
             indexWriter.flush();
             LogGui.info("Close index...");
@@ -734,58 +740,37 @@ public class IndexManager {
      * Reindicizza il contenuto dell'indice di istruzione imponendo l'UUID come
      * field non tokenizzato
      *
+     * @deprecated
+     *
      * @param reindexDoc Lista dei documenti di lucene da reindicizzare
      * @param indexDir path dell'indice
      * @param fStop file di stopwords
      * @param language lingua
      * @throws Exception Eccezione eccezione
      */
-    public static void reindex(List<Document> reindexDoc, Path indexDir, File fStop, String language) throws Exception {
+    public static void reindexOld(List<Document> reindexDoc, Path indexDir, File fStop, String language) throws Exception {
+        LogGui.info("Garbaging prima della reindicizzazione...");
+        System.gc();
+        LogGui.printMemorySummary();
+        String pathOrigin = indexDir.toFile().getAbsolutePath();
+        LogGui.info("Backup...");
+        String pathBackup = pathOrigin + ".bck." + System.currentTimeMillis();
+        File origin = new File(pathOrigin);
+        File backup = new File(pathBackup);
+        origin.renameTo(backup);
+        File newFile = new File(pathOrigin);
+        LogGui.info("Creo cartella...");
+        newFile.mkdirs();
+        LogGui.info("Apro l'indice...");
         IndexWriter indexWriter = getIndexWriter(indexDir, fStop, language, false, IndexWriterConfig.OpenMode.CREATE);
         FieldType ft = getNotTokenizedFieldType();
+        Analyzer analyzer = indexWriter.getAnalyzer();
         try {
             int count = 0;
             for (Document d : reindexDoc) {
-                d.removeField(UUID);
-                d.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
-                String l1 = d.get(LEVEL1_NAME);
-                if (l1 != null) {
-                    d.removeField(LEVEL_1);
-                    d.add(new StringField(LEVEL_1, NodeData.getNodeCodeForFilter(l1) + "", Field.Store.YES));
-                }
-                String l2 = d.get(LEVEL2_NAME);
-                if (l2 != null) {
-                    d.removeField(LEVEL_2);
-                    d.add(new StringField(LEVEL_2, NodeData.getNodeCodeForFilter(l2) + "", Field.Store.YES));
-                    d.add(new StringField(NodeData.getNodeCodeForFilter(l1) + "", NodeData.getNodeCodeForFilter(l2) + "", Field.Store.YES));
-                }
-                String l3 = d.get(LEVEL3_NAME);
-                if (l3 != null) {
-                    d.removeField(LEVEL_3);
-                    d.add(new StringField(LEVEL_3, NodeData.getNodeCodeForFilter(l3) + "", Field.Store.YES));
-                    d.add(new StringField(NodeData.getNodeCodeForFilter(l2) + "", NodeData.getNodeCodeForFilter(l3) + "", Field.Store.YES));
-                }
-                String l4 = d.get(LEVEL4_NAME);
-                if (l4 != null) {
-                    d.removeField(LEVEL_4);
-                    d.add(new StringField(LEVEL_4, NodeData.getNodeCodeForFilter(l4) + "", Field.Store.YES));
-                    d.add(new StringField(NodeData.getNodeCodeForFilter(l3) + "", NodeData.getNodeCodeForFilter(l4) + "", Field.Store.YES));
-                }
-                String l5 = d.get(LEVEL5_NAME);
-                if (l5 != null) {
-                    d.removeField(LEVEL_5);
-                    d.add(new StringField(LEVEL_5, NodeData.getNodeCodeForFilter(l5) + "", Field.Store.YES));
-                    d.add(new StringField(NodeData.getNodeCodeForFilter(l4) + "", NodeData.getNodeCodeForFilter(l5) + "", Field.Store.YES));
-                }
-                String l6 = d.get(LEVEL6_NAME);
-                if (l6 != null) {
-                    d.removeField(LEVEL_6);
-                    d.add(new StringField(LEVEL_6, NodeData.getNodeCodeForFilter(l6) + "", Field.Store.YES));
-                    d.add(new StringField(NodeData.getNodeCodeForFilter(l5) + "", NodeData.getNodeCodeForFilter(l6) + "", Field.Store.YES));
-                }
-                indexWriter.addDocument(d);
+                reindexDoc(d, ft, analyzer, indexWriter);
                 if (count++ % 100 == 0) {
-                    LogGui.info("Commit... " + count);
+                    LogGui.info("Reindex Commit... " + count);
                     indexWriter.commit();
                 }
             }
@@ -797,6 +782,62 @@ public class IndexManager {
         } catch (Exception e) {
             LogGui.printException(e);
         }
+    }
+
+    /**
+     * Reindicizza il contenuto dell'indice di istruzione imponendo l'UUID come
+     * field non tokenizzato
+     *
+     * @param d document da reindicizzare
+     * @param ft field type
+     * @param analyzer analizzatore
+     * @param indexWriter  indexwriter
+     * @throws Exception Eccezione eccezione
+     */
+    public static void reindexDoc(Document d, FieldType ft, Analyzer analyzer, IndexWriter indexWriter) throws Exception, IOException {
+        d.removeField(UUID);
+        String text = d.get(TEXT);
+        d.removeField(BODY);
+        // d.removeField(TEXT);
+        d.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
+        d.add(new TextField(BODY, Tokenizer.tokenize(text, analyzer), Field.Store.YES));
+        //d.add(new StringField(TEXT, text, Field.Store.YES));
+        String l1 = d.get(LEVEL1_NAME);
+        if (l1 != null) {
+            d.removeField(LEVEL_1);
+            d.add(new StringField(LEVEL_1, NodeData.getNodeCodeForFilter(l1) + "", Field.Store.YES));
+        }
+        String l2 = d.get(LEVEL2_NAME);
+        if (l2 != null) {
+            d.removeField(LEVEL_2);
+            d.add(new StringField(LEVEL_2, NodeData.getNodeCodeForFilter(l2) + "", Field.Store.YES));
+            d.add(new StringField(NodeData.getNodeCodeForFilter(l1) + "", NodeData.getNodeCodeForFilter(l2) + "", Field.Store.YES));
+        }
+        String l3 = d.get(LEVEL3_NAME);
+        if (l3 != null) {
+            d.removeField(LEVEL_3);
+            d.add(new StringField(LEVEL_3, NodeData.getNodeCodeForFilter(l3) + "", Field.Store.YES));
+            d.add(new StringField(NodeData.getNodeCodeForFilter(l2) + "", NodeData.getNodeCodeForFilter(l3) + "", Field.Store.YES));
+        }
+        String l4 = d.get(LEVEL4_NAME);
+        if (l4 != null) {
+            d.removeField(LEVEL_4);
+            d.add(new StringField(LEVEL_4, NodeData.getNodeCodeForFilter(l4) + "", Field.Store.YES));
+            d.add(new StringField(NodeData.getNodeCodeForFilter(l3) + "", NodeData.getNodeCodeForFilter(l4) + "", Field.Store.YES));
+        }
+        String l5 = d.get(LEVEL5_NAME);
+        if (l5 != null) {
+            d.removeField(LEVEL_5);
+            d.add(new StringField(LEVEL_5, NodeData.getNodeCodeForFilter(l5) + "", Field.Store.YES));
+            d.add(new StringField(NodeData.getNodeCodeForFilter(l4) + "", NodeData.getNodeCodeForFilter(l5) + "", Field.Store.YES));
+        }
+        String l6 = d.get(LEVEL6_NAME);
+        if (l6 != null) {
+            d.removeField(LEVEL_6);
+            d.add(new StringField(LEVEL_6, NodeData.getNodeCodeForFilter(l6) + "", Field.Store.YES));
+            d.add(new StringField(NodeData.getNodeCodeForFilter(l5) + "", NodeData.getNodeCodeForFilter(l6) + "", Field.Store.YES));
+        }
+        indexWriter.addDocument(d);
     }
 
     /**

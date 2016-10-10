@@ -127,6 +127,56 @@ public class StopWordsUtils {
     /**
      * Aggiunge il menu di aggiunta di una parola alle stopwords
      *
+     * @since 1.5
+     * @param ta text area da dove prendere il valore
+     * @param gui frame
+     */
+    public static void addStopWordsMenuIndex(JTextArea ta, SemGui gui) {
+        ta.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(final MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    final JPopupMenu menu = new JPopupMenu();
+                    JMenuItem item;
+                    item = new JMenuItem(new DefaultEditorKit.CopyAction());
+                    item.setText("Copia");
+                    item.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/page_copy.png")));
+                    item.setEnabled(ta.getSelectionStart() != ta.getSelectionEnd());
+                    menu.add(item);
+
+                    String language = String.valueOf(gui.getLinguaAnalizzatoreIstruzione().getSelectedItem());
+                    JMenuItem item2;
+                    if (ta.getSelectedText() != null) {
+                        String word = ta.getSelectedText().toLowerCase();
+                        final String stopWord = word;
+                        if (stopWord.length() > 20) {
+                            item2 = new JMenuItem("Inserisci quanto selezionato nelle stop words " + language);
+                        } else {
+                            item2 = new JMenuItem("Inserisci '" + stopWord + "' nelle stop words " + language);
+                        }
+                        item2.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/" + language + ".png")));
+                        item2.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent ae) {
+                                String[] words = stopWord.split(" ");
+                                for (String word : words) {
+                                    addStopWord(word, language, gui);
+                                }
+                            }
+                        });
+                        item2.setEnabled(ta.getSelectionStart() != ta.getSelectionEnd());
+                        menu.add(item2);
+
+                        if (gui.isIsInit()) {
+                            menu.show(e.getComponent(), e.getX(), e.getY());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Aggiunge il menu di aggiunta di una parola alle stopwords
+     *
      * @param ta text area da dove prendere il valore
      * @param gui frame
      */
@@ -141,7 +191,6 @@ public class StopWordsUtils {
                     item.setIcon(new ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/page_copy.png")));
                     item.setEnabled(ta.getSelectionStart() != ta.getSelectionEnd());
                     menu.add(item);
-
 
                     for (String language : MyAnalyzer.languages) {
                         JMenuItem item2;

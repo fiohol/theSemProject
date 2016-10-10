@@ -163,26 +163,25 @@ public class SegmentEngine {
      *
      * @param text testo da segmentare
      * @param me motore di classificazione (deve essere inizializzato)
-     * @param threshold soglia di classificazione
      * @param language lingua del testo
      * @return risultato della segmentazione sottoforma di mappa
      * {configurazioneSegmento, Lista di segmentResult} la mappa è gerchica in
      * quanto segmentConfiguration lo può essere. Il risultato va quindi letto
      * gerarchicamente
      */
-    public Map<SegmentConfiguration, List<SegmentationResults>> getSegments(String text, MulticlassEngine me, double threshold, String language) {
+    public Map<SegmentConfiguration, List<SegmentationResults>> getSegments(String text, MulticlassEngine me, String language) {
         if (text == null) {
             return null;
         }
         text = text.toLowerCase();
-        return startProcess(Arrays.asList(text.split(CR)), me, threshold, language);
+        return startProcess(Arrays.asList(text.split(CR)), me, language);
     }
 
     private Map<SegmentConfiguration, List<SegmentationResults>> getSegments(List<String> lines, String language) {
-        return startProcess(lines, null, -1, language);
+        return startProcess(lines, null, language);
     }
 
-    private Map<SegmentConfiguration, List<SegmentationResults>> startProcess(List<String> lines, MulticlassEngine me, double threshold, String language) {
+    private Map<SegmentConfiguration, List<SegmentationResults>> startProcess(List<String> lines, MulticlassEngine me, String language) {
         //Apre tutti gli indici dei dataproviders...
 
         String line;
@@ -278,7 +277,7 @@ public class SegmentEngine {
         }
         //Fa le sottosezioni e le catture
         for (SegmentConfiguration segmentBean : patternMatrix) { //Verifico se qualche sergment ha figli
-            processSegment(segmentBean, identifiedSegments, me, threshold, language);
+            processSegment(segmentBean, identifiedSegments, me, language);
         }
         //Chiude tutti gli indici dei dataproviders...asdas
 
@@ -940,7 +939,7 @@ public class SegmentEngine {
         identifiedSegments.put(currentSegment, sent);
     }
 
-    private Map<SegmentConfiguration, List<SegmentationResults>> getSegments(List<SegmentConfiguration> patternMatrix, List<String> lines, MulticlassEngine me, double threshold, String language) {
+    private Map<SegmentConfiguration, List<SegmentationResults>> getSegments(List<SegmentConfiguration> patternMatrix, List<String> lines, MulticlassEngine me, String language) {
         String line;
         String previousLine = "";
         SegmentConfiguration currentSegment = null;
@@ -997,7 +996,7 @@ public class SegmentEngine {
         }
         //Fa le sottosezioni e le catture
         patternMatrix.stream().forEach((segmentBean) -> {
-            processSegment(segmentBean, identifiedSegments, me, threshold, language);
+            processSegment(segmentBean, identifiedSegments, me, language);
         });
         if (me != null) {
             //Fa le pulizie di primavera ovvero toglie tutti i segmenti con testo tokenizzato non significativo
@@ -1031,7 +1030,7 @@ public class SegmentEngine {
         });
     }
 
-    private void processSegment(SegmentConfiguration segmentBean, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, MulticlassEngine me, double threshold, String language) {
+    private void processSegment(SegmentConfiguration segmentBean, Map<SegmentConfiguration, List<SegmentationResults>> identifiedSegments, MulticlassEngine me, String language) {
         List<CaptureConfiguration> captureConfigurations = segmentBean.getCaptureConfigurations();
         List<CaptureConfiguration> sCaptureConfigurations = segmentBean.getSentenceCaptureConfigurations();
         List<FormulaConfiguration> formulasAfter = segmentBean.getFormulasAfterEnrich();
@@ -1052,7 +1051,7 @@ public class SegmentEngine {
             }
             segmentResults.stream().map((sr) -> {
                 if (!segmentConfigurations.isEmpty()) {
-                    Map<SegmentConfiguration, List<SegmentationResults>> subSegments = getSegments(segmentConfigurations, sr.getLines(), me, threshold, language);
+                    Map<SegmentConfiguration, List<SegmentationResults>> subSegments = getSegments(segmentConfigurations, sr.getLines(), me, language);
                     sr.setSubsentencies(subSegments);
                 }
                 return sr;
@@ -1099,7 +1098,7 @@ public class SegmentEngine {
             if (me != null) {
                 if (me.isIsInit()) {
                     segmentResults.stream().forEach((sr) -> {
-                        classify(sr, me, threshold, language);
+                        classify(sr, me, language);
                     });
                 }
             }
@@ -1175,7 +1174,7 @@ public class SegmentEngine {
         }
     }
 
-    private void classify(SegmentationResults sr, MulticlassEngine me, double threshold, String language) {
+    private void classify(SegmentationResults sr, MulticlassEngine me, String language) {
         if (me != null) {
             if (!sr.isClassifyByCapture()) {
                 List<String> lines = sr.getLines();
@@ -1183,7 +1182,7 @@ public class SegmentEngine {
                 lines.stream().forEach((line) -> {
                     text.append(line).append(CR);
                 });
-                List<ClassificationPath> path = me.bayesClassify(text.toString(), threshold, language);
+                List<ClassificationPath> path = me.bayesClassify(text.toString(), language);
                 sr.addClassificationPath(path);
             }
         }

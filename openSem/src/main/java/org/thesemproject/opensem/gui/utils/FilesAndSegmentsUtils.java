@@ -230,7 +230,7 @@ public class FilesAndSegmentsUtils {
                         semGui.initializeModel();
                         semGui.setNeedUpdate(false);
                     }
-                    bayes = semGui.getME().bayesClassify(text, Double.parseDouble(semGui.getSoglia().getText()), semGui.getSegmentsTable().getValueAt(currentFilesPosition, 3).toString());
+                    bayes = semGui.getME().bayesClassify(text, semGui.getSegmentsTable().getValueAt(currentFilesPosition, 3).toString());
                     dto.setClassPath(sid, bayes);
                 }
             }
@@ -315,39 +315,7 @@ public class FilesAndSegmentsUtils {
         }
     }
 
-    /**
-     * Gestisce il filtro delle righe (segmenti) classificati con uno score
-     * sottosoglia
-     *
-     * @param semGui frame
-     * @param level livello
-     * @throws NumberFormatException eccezione sui valori numerici
-     */
-    public static void segmentsTableUnderTreshold(SemGui semGui, int level) throws NumberFormatException {
-        double sg = Double.parseDouble(semGui.getSoglia().getText());
-        TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) semGui.getSegmentsTable().getRowSorter();
-        sorter.setRowFilter(new RowFilter() {
-            @Override
-            public boolean include(RowFilter.Entry entry) {
-                String idSeg = (String) entry.getValue(0);
-                Integer id = Integer.parseInt(idSeg.substring(0, idSeg.indexOf(".")));
-                SemDocument dto = semGui.getTableData().get(id);
-                if (dto != null) {
-                    List<ClassificationPath> cpl = dto.getClassPath(idSeg);
-                    if (cpl.size() > 0) {
-                        if (cpl.get(0).getScore()[level - 1] < sg) {
-                            return true;
-                        }
-                    } else {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        semGui.getSegmentsTable().setRowSorter(sorter);
-        semGui.getStatusSegments().setText("Totale filtrati elementi: " + semGui.getSegmentsTable().getRowCount());
-    }
+    
 
     /**
      * Gestisce l'esportaizone excel della filestable (e dei segmenti)
@@ -639,9 +607,9 @@ public class FilesAndSegmentsUtils {
             String language = dto.getLanguage();
             DefaultTableModel model = (DefaultTableModel) semGui.getSegmentsTable().getModel();
             if (classify) {
-                identifiedSegments = semGui.getSE().getSegments(text, semGui.getME(), Double.parseDouble(semGui.getSoglia().getText()), language);
+                identifiedSegments = semGui.getSE().getSegments(text, semGui.getME(), language);
             } else {
-                identifiedSegments = semGui.getSE().getSegments(text, null, Double.parseDouble(semGui.getSoglia().getText()), language);
+                identifiedSegments = semGui.getSE().getSegments(text, null, language);
             }
             dto.setIdentifiedSegments(identifiedSegments);
             Map<String, Integer> stats = dto.getStats();

@@ -89,9 +89,8 @@ public class ReadClassifyWrite {
      * @param descriptionColumn colonna descrizione
      * @param me motore di classificazione
      * @param dp parser
-     * @param th soglia del bayesiano
      */
-    public void process(final String inputFile, final int descriptionColumn, final MulticlassEngine me, final DocumentParser dp, final double th) {
+    public void process(final String inputFile, final int descriptionColumn, final MulticlassEngine me, final DocumentParser dp) {
         //Costruisce 2+n processi: uno per leggere, n per classificare, uno per scrivere
         isReading.setValue(true); //dice che sta leggendo
         classifingThread.set(processors); //dice che sta classificando
@@ -117,7 +116,7 @@ public class ReadClassifyWrite {
                         }
                         String text = document.getString(BSonUtils.TEXT);
                         String language = dp.getLanguageFromText(text);
-                        List<ClassificationPath> list = me.bayesClassify(text, th, language);
+                        List<ClassificationPath> list = me.bayesClassify(text, language);
                         for (int i = 0; i < list.size(); i++) {
                             document.put("BayesPath" + (i + 1), list.get(i).getPath());
                             document.put("BayesScore" + (i + 1), list.get(i).getScore());
