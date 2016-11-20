@@ -87,6 +87,11 @@ public class TesseractOCRParser extends AbstractParser {
     })));
     private static Map<String, Boolean> TESSERACT_PRESENT = new HashMap<String, Boolean>();
 
+    /**
+     * Ritorna i tipi supportati
+     * @param context contesto
+     * @return tipi supportati
+     */
     @Override
     public Set<MediaType> getSupportedTypes(ParseContext context) {
         // If Tesseract is installed, offer our supported image types
@@ -174,6 +179,16 @@ public class TesseractOCRParser extends AbstractParser {
 
     }
 
+    /**
+     * Parsa lo stream
+     * @param stream stream
+     * @param handler handler
+     * @param metadata metadata
+     * @param context contesto
+     * @throws IOException eccezione
+     * @throws SAXException eccezione
+     * @throws TikaException  eccezione
+     */
     @Override
     public void parse(InputStream stream, ContentHandler handler, Metadata metadata, ParseContext context)
             throws IOException, SAXException, TikaException {

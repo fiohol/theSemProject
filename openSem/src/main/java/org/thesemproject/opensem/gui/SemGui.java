@@ -111,6 +111,7 @@ import org.apache.lucene.document.Document;
 import org.eclipse.jetty.util.URIUtil;
 import org.thesemproject.opensem.classification.IndexManager;
 import org.thesemproject.opensem.gui.modelEditor.FormulaTreeNode;
+import org.thesemproject.opensem.gui.modelEditor.MyCellRenderer;
 import org.thesemproject.opensem.gui.utils.RankUtils;
 import org.thesemproject.opensem.segmentation.functions.rank.RankEvaluations;
 import org.thesemproject.opensem.utils.FinalBoolean;
@@ -230,6 +231,11 @@ public class SemGui extends javax.swing.JFrame {
         htmlFormatted.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlResult.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         htmlTimeline.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        modelTree.setCellRenderer(new MyCellRenderer());
+        classificationTree.setCellRenderer(new MyCellRenderer());
+        classificationTree1.setCellRenderer(new MyCellRenderer());
+        manageClassificationTree.setCellRenderer(new MyCellRenderer());
+        categorieSegmentsPanel.setCellRenderer(new MyCellRenderer());
     }
 
     /**
@@ -5806,14 +5812,14 @@ public class SemGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Testo", "Originale", "Level1", "Level2", "Level3", "Level4", "Level5", "Level6", "KPI"
+                "ID", "Testo", "Originale", "Level1", "Level2", "Level3", "Level4", "Level5", "Level6", "Class1", "Class2"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false, false, false, false, false
+                false, true, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -5909,8 +5915,8 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(wFreq3);
         tableToolbar2.add(jSeparator58);
 
-        classificaTesto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_view_columns.png"))); // NOI18N
-        classificaTesto1.setText("Classifica selezionati");
+        classificaTesto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bug.png"))); // NOI18N
+        classificaTesto1.setText("Classifica");
         classificaTesto1.setToolTipText("Classifica");
         classificaTesto1.setFocusable(false);
         classificaTesto1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -6798,7 +6804,7 @@ public class SemGui extends javax.swing.JFrame {
     }//GEN-LAST:event_compileModelActionPerformed
 
     private void resetModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetModelActionPerformed
-        if (SE.init(getSegmentsPath())) {
+        if (SE.init(getSegmentsPath(), ME)) {
             modelTree.setModel(SE.getVisualStructure());
             DefaultTreeModel model = (DefaultTreeModel) (modelTree.getModel());
             model.reload();
@@ -7046,10 +7052,12 @@ public class SemGui extends javax.swing.JFrame {
         GuiUtils.filterTable(documentsTable, null, 1);
         serachDocumentBody.setText("");
         LuceneIndexUtils.searchDocumentBody(this);
+        getManageDocumentsStatus().setText("Lingua corrente: " + linguaAnalizzatoreIstruzione.getSelectedItem() + " - Documenti Totali: " + documentsTable.getRowCount());
     }//GEN-LAST:event_removeDocumentFilterActionPerformed
 
     private void serachDocumentBodyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serachDocumentBodyActionPerformed
         LuceneIndexUtils.searchDocumentBody(this);
+        getManageDocumentsStatus().setText("Lingua corrente: " + linguaAnalizzatoreIstruzione.getSelectedItem() + " - Documenti Filtrati: " + documentsTable.getRowCount());
     }//GEN-LAST:event_serachDocumentBodyActionPerformed
 
     private void serachDocumentBodyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serachDocumentBodyKeyReleased
@@ -7432,7 +7440,7 @@ public class SemGui extends javax.swing.JFrame {
         String command = evt.getActionCommand();
         if (command.equals(JFileChooser.APPROVE_SELECTION)) {
             String fileToExport = expotExcelIndexFileChooser.getSelectedFile().getAbsolutePath();
-            LuceneIndexUtils.exportExcelFile(fileToExport, this);
+            LuceneIndexUtils.exportExcelFile(fileToExport, this, documentsTable);
         }
         selectExportExcelIndex.setVisible(false);
     }//GEN-LAST:event_expotExcelIndexFileChooserActionPerformed
@@ -7849,14 +7857,18 @@ public class SemGui extends javax.swing.JFrame {
             t.start();
             needUpdate = false;
         } else {
-
+            final DecimalFormat df = new DecimalFormat("#.00");
             interrompi.setEnabled(true);
             filesTab.setTitleAt(7, "Gestione Indice - Classificazione");
             isClassify = true;
 
             String language = String.valueOf(linguaAnalizzatoreIstruzione.getSelectedItem());
             DefaultTableModel model = (DefaultTableModel) documentsTable.getModel();
+            if (documentsTable.getSelectedRows().length == 0) {
+                documentsTable.selectAll();
+            }
             final int[] rows = documentsTable.getSelectedRows();
+
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -7885,7 +7897,10 @@ public class SemGui extends javax.swing.JFrame {
                                 }
 
                                 if (row % 7 == 0) {
-                                    filesTab.setTitleAt(7, "Gestione Indice - Classificazione " + row + "/" + size);
+                                    double score = ((double) correct.intValue()) / ((double) count.intValue());
+                                    score = score * 100;
+
+                                    filesTab.setTitleAt(7, "Gestione Indice - Classificazione " + row + "/" + size + " Score:" + df.format(score) + "%");
                                 }
                                 if (stopSegmentAndClassify.getValue()) {
                                     break;
@@ -7902,24 +7917,11 @@ public class SemGui extends javax.swing.JFrame {
                                         long endBayes = System.currentTimeMillis();
                                         if (bayes.size() > 0) {
                                             boolean ok = false;
-                                            String leaf = bayes.get(0).getLeaf();
-                                            String oldCat = null;
-                                            for (int j = 8; j > 2; j--) {
-                                                String old = String.valueOf(model.getValueAt(i, j));
-                                                if (!old.equalsIgnoreCase("null") && oldCat == null) {
-                                                    oldCat = old;
-                                                }
-                                                if (leaf.equals(old)) {
-                                                    ok = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (ok) {
-                                                model.setValueAt("OK", i, 9);
-                                                correct.incrementAndGet();
-                                            } else {
-
-                                                model.setValueAt("[" + leaf + "] " + bayes.get(0).toSmallClassString(), i, 9);
+                                            
+                                            evaluateClassification(i, ok, bayes, 0, 9, correct);
+                                            if (bayes.size() > 1) {
+                                                evaluateClassification(i, ok, bayes, 1, 10, correct);
+                                                
                                             }
                                         } else {
                                             model.setValueAt("Non classificata", i, 9);
@@ -7936,10 +7938,32 @@ public class SemGui extends javax.swing.JFrame {
                     stopSegmentAndClassify.setValue(false);
                     double score = ((double) correct.intValue()) / ((double) size);
                     score = score * 100;
-                    DecimalFormat df = new DecimalFormat("#.00");
-                    filesTab.setTitleAt(7, "Gestione Indice - " + correct.intValue() + "/" + size + " " + df.format(score) + "%");
+
+                    filesTab.setTitleAt(7, "Gestione Indice - " + correct.intValue() + "/" + size + " Score: " + df.format(score) + "%");
                     interrompi.setEnabled(false);
                     isClassify = false;
+                }
+
+                private void evaluateClassification(int i,  boolean ok, List<ClassificationPath> bayes, int xx, int idx, final AtomicInteger correct) {
+                    String leaf = bayes.get(xx).getLeaf();
+                    String oldCat = null;
+                    for (int j = 8; j > 2; j--) {
+                        String old = String.valueOf(model.getValueAt(i, j));
+                        if (!old.equalsIgnoreCase("null") && oldCat == null) {
+                            oldCat = old;
+                        }
+                        if (leaf.equals(old)) {
+                            ok = true;
+                            break;
+                        }
+                    }
+                    if (ok) {
+                        model.setValueAt("OK", i, idx);
+                        correct.incrementAndGet();
+                    } else {
+                        
+                        model.setValueAt("[" + leaf + "] " + bayes.get(xx).toSmallClassString(), i, idx);
+                    }
                 }
             });
             t.setDaemon(true);
@@ -11004,7 +11028,7 @@ public class SemGui extends javax.swing.JFrame {
             LogGui.printMemorySummary();
             initLabel.setText("Init segmenter...");
             LogGui.info("INIT SEGMENTER...");
-            if (SE.init(getSegmentsPath())) {
+            if (SE.init(getSegmentsPath(), ME)) {
                 ok = ok && true;
                 segmenta.setEnabled(true);
                 nuvoletta.setEnabled(true);
@@ -11035,10 +11059,13 @@ public class SemGui extends javax.swing.JFrame {
             NodeData root = ME.getRoot(); // Disegna l'albero
             javax.swing.tree.DefaultMutableTreeNode clResults = new javax.swing.tree.DefaultMutableTreeNode("Classificazione");
             GuiUtils.paintTree(root, clResults);
+            
             classificationTree.setModel(new javax.swing.tree.DefaultTreeModel(clResults));
             classificationTree1.setModel(new javax.swing.tree.DefaultTreeModel(clResults));
             manageClassificationTree.setModel(new javax.swing.tree.DefaultTreeModel(clResults));
             categorieSegmentsPanel.setModel(new javax.swing.tree.DefaultTreeModel(clResults));
+            
+            
             initLabel.setText("");
             GuiUtils.runGarbageCollection();
             LogGui.info("END INIT!!!");
@@ -11046,8 +11073,12 @@ public class SemGui extends javax.swing.JFrame {
             isInit = true;
             needUpdate = false;
             classStartLevel.setModel(getClassTreeDepth());
-            classStartLevel.setSelectedIndex(root.getStartLevel() - 1);
-            firstLevelOnly.setText("Livello " + root.getStartLevel());
+            if (root != null) {
+                if (classStartLevel.getModel().getSize() > 0) {
+                    classStartLevel.setSelectedIndex(root.getStartLevel() - 1);
+                }
+                firstLevelOnly.setText("Livello " + root.getStartLevel());
+            }
 
         } catch (Exception e) {
             LogGui.printException(e);
@@ -11499,6 +11530,9 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.DefaultComboBoxModel getClassTreeDepth() {
         if (isInit) {
             int depth = getClassDepth();
+            if (depth == 0) {
+                depth = 1;
+            }
             String[] lev = new String[depth - 1];
             for (int i = 0; i < lev.length; i++) {
                 lev[i] = String.valueOf((i + 1));
@@ -11510,6 +11544,9 @@ public class SemGui extends javax.swing.JFrame {
     }
 
     private int getClassDepth() {
+        if (manageClassificationTree.getModel() == null) {
+            return 1;
+        }
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot();
         if (node != null) {
             return node.getDepth();
@@ -11592,7 +11629,7 @@ public class SemGui extends javax.swing.JFrame {
     }
 
     /**
-     * 
+     *
      * @return area testo documento lucene
      */
     public JTextArea getDocText() {
@@ -11600,7 +11637,7 @@ public class SemGui extends javax.swing.JFrame {
     }
 
     /**
-     * 
+     *
      * @return area token documento lucene
      */
     public JTextArea getDocTokens() {

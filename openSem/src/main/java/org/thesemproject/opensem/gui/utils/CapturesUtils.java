@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.gui.utils;
 
+import java.awt.Color;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.gui.SemGui;
 import org.thesemproject.opensem.gui.modelEditor.CaptureTreeNode;
@@ -139,9 +140,11 @@ public class CapturesUtils {
         ClassificationPath cp = node.getClassificationPath();
         if (cp != null) {
             semGui.getClassifyPattern().setText(cp.toSmallClassString());
+
         } else {
             semGui.getClassifyPattern().setText("");
         }
+
         GuiUtils.clearTable(semGui.getCapturePatternTable());
         DefaultTableModel model = (DefaultTableModel) semGui.getCapturePatternTable().getModel();
         node.getPatterns().stream().forEach((String[] row) -> {
@@ -169,8 +172,11 @@ public class CapturesUtils {
                 String path = semGui.getCatClass().getText();
                 if (path.length() != 0) {
                     ClassificationPath cp = GuiUtils.getClassificationPath(path);
-                    ctn.setClassificationPath(cp);
-                    semGui.getClassifyPattern().setText(cp.toSmallClassString());
+                    if (!semGui.getME().getRoot().verifyPath(cp)) {
+                        ctn.setClassificationPath(cp);
+                        semGui.getClassifyPattern().setText(cp.toSmallClassString());
+                        ctn.setIsOrphan(false);
+                    }
                 } else {
                     semGui.getClassifyPattern().setText("");
                 }

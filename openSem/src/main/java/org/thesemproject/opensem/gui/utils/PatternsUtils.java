@@ -88,7 +88,7 @@ public class PatternsUtils {
             SegmentEngine seTest = new SegmentEngine();
             DefaultMutableTreeNode root = (DefaultMutableTreeNode) semGui.getModelTree().getModel().getRoot();
             Document doc = semGui.getModelEditor().getXml(root);
-            seTest.init(doc, semGui.getPercorsoIndice().getText());
+            seTest.init(doc, semGui.getPercorsoIndice().getText(), semGui.getME());
             Pattern p = seTest.getPattern(value);
             if (p == null) {
                 GuiUtils.showErrorDialog("Pattern " + value + " errato", "Esito negativo");

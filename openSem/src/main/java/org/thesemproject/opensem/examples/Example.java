@@ -112,7 +112,7 @@ public class Example {
         SegmentEngine se = new SegmentEngine();
         String model = "C:\\esempi\\segment.xml";
         //Inizializzo il segmentatore. Posso reinizializzarlo quante volte voglio
-        se.init(model);
+        se.init(model, me);
         //Se vogio segmentare un testo (senza classificare) mi basta fare:
         Map<SegmentConfiguration, List<SegmentationResults>> results = se.getSegments(text, dp.getLanguageFromText(text));
         //Se vogio segmentare e classificare i segmenti marcati come classificabili:

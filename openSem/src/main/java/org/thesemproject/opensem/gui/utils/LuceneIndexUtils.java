@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -199,6 +201,8 @@ public class LuceneIndexUtils {
     public static void searchDocumentBody(SemGui semGui) {
         int[] idxs = {1, 2, 3, 4, 5, 6};
         String text = semGui.getSerachDocumentBody().getText();
+        text = text.replace("(","\\(");
+        text = text.replace(")","\\)");
         if (text.toLowerCase().startsWith("level1:") && text.length() > 7) {
             GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 3);
         } else if (text.toLowerCase().startsWith("level2:") && text.length() > 7) {
@@ -279,8 +283,9 @@ public class LuceneIndexUtils {
      * @since 1.2
      * @param fileToExport file su cui esportare
      * @param semGui frame
+     * @param documentsTable tabella dei documenti 
      */
-    public static void exportExcelFile(String fileToExport, SemGui semGui) {
+    public static void exportExcelFile(String fileToExport, SemGui semGui, JTable documentsTable) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -289,20 +294,41 @@ public class LuceneIndexUtils {
                     path = path + ".xlsx";
                 }
                 try {
+                    HashMap<String, String> c1 = new HashMap<>();
+                    HashMap<String, String> c2 = new HashMap<>();
+                    if (documentsTable != null) {
+                        int rc = documentsTable.getModel().getRowCount();
+                        for (int i = 0; i < rc; i++) {
+                            String key = (String) documentsTable.getValueAt(i, 0);
+                            String c1v = (String) documentsTable.getValueAt(i, 9);
+                            String c2v = (String) documentsTable.getValueAt(i, 10);
+                            if (key != null) {
+                                if (c1v != null) {
+                                    c1.put(key, c1v);
+                                }
+                                if (c2v != null) {
+                                    c2.put(key, c2v);
+                                }
 
+                            }
+
+                        }
+                    }
                     FileOutputStream fos = new FileOutputStream(path);
                     SXSSFWorkbook wb = new SXSSFWorkbook();
                     SXSSFSheet sheetResults = wb.createSheet("Index");
                     SXSSFRow headerResults = sheetResults.createRow(0);
-                    headerResults.createCell(0).setCellValue("Text");
-                    headerResults.createCell(1).setCellValue("Tokens");
-                    headerResults.createCell(2).setCellValue("Level1");
-                    headerResults.createCell(3).setCellValue("Level2");
-                    headerResults.createCell(4).setCellValue("Level3");
-                    headerResults.createCell(5).setCellValue("Level4");
-                    headerResults.createCell(6).setCellValue("Level5");
-                    headerResults.createCell(7).setCellValue("Level6");
-                    semGui.getME().getDocumentsExcel((String) semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem(), sheetResults);
+                    headerResults.createCell(0).setCellValue("Level1");
+                    headerResults.createCell(1).setCellValue("Level2");
+                    headerResults.createCell(2).setCellValue("Level3");
+                    headerResults.createCell(3).setCellValue("Level4");
+                    headerResults.createCell(4).setCellValue("Level5");
+                    headerResults.createCell(5).setCellValue("Level6");
+                    headerResults.createCell(6).setCellValue("Text");
+                    headerResults.createCell(7).setCellValue("Tokens");
+                    headerResults.createCell(8).setCellValue("Class1");
+                    headerResults.createCell(9).setCellValue("Class2");
+                    semGui.getME().getDocumentsExcel((String) semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem(), sheetResults, c1,c2);
                     wb.write(fos);
                     fos.close();
                 } catch (Exception e) {

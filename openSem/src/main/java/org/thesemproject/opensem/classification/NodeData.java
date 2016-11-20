@@ -61,6 +61,7 @@ public class NodeData {
     private final Map<String, String> reverseMap;
     private final InternPool intern;
     private final Map<String, String> labels;
+    private boolean trained;
 
     /**
      * Crea un nodo radice (ROOT)
@@ -81,6 +82,7 @@ public class NodeData {
         this.labels = new HashMap<>();
         this.intern = intern;
         this.startLevel = startLevel;
+        this.trained = false;
     }
 
     /**
@@ -125,6 +127,7 @@ public class NodeData {
         } else { //Caso root non ho padri
             this.level = null;
         }
+        this.trained = false;
         this.startLevel = -1;
     }
 
@@ -147,6 +150,7 @@ public class NodeData {
      */
     public void train(LeafReader ar, Analyzer analyzer, String language) {
         try {
+            trained = true;
             SimpleNaiveBayesClassifier classifier = classifiers.get(language);
             if (classifier == null) {
                 classifier = new SimpleNaiveBayesClassifier();
@@ -287,6 +291,17 @@ public class NodeData {
     public List<String> getChildrenNames() {
         List<String> ret = Lists.newArrayList(children.keySet());
         Collections.sort(ret);
+        return ret;
+    }
+
+    /**
+     * Ritorna la lista dei nomi dei figli del nodo corrente
+     *
+     * @since 1.6
+     * @return Lista dei figli
+     */
+    public List<NodeData> getChildrens() {
+        List<NodeData> ret = Lists.newArrayList(children.values());
         return ret;
     }
 
@@ -450,7 +465,7 @@ public class NodeData {
 
     private static void processChildrenElement(Element element, NodeData parent, InternPool intern) {
         try {
-            String nodeName = element.getAttributeValue("nodeName");
+            String nodeName = org.thesemproject.opensem.utils.StringUtils.firstUpper(element.getAttributeValue("nodeName"));
             int k = Integer.parseInt(element.getAttributeValue("k"));
             NodeData node = new NodeData(nodeName, parent, k, intern);
             Element labelsElement = element.getChild("labels");
@@ -698,6 +713,82 @@ public class NodeData {
             });
         }
         return ret;
+    }
+
+    /**
+     * Controlla se il percorso esiste
+     *
+     * @since 1.6
+     * @param cp percorso
+     * @return true se esiste
+     */
+    public boolean verifyPath(ClassificationPath cp) {
+        String[] nodes = cp.getPath();
+        return verifyPath(nodes, 0);
+    }
+
+    private boolean verifyPath(String[] nodes, int level) {
+        NodeData child = null;
+        if (nodes.length <= level) {
+            return false;
+        }
+        String value = nodes[level];
+        if (value != null) {
+            child = children.get(value);
+            if (child == null) {
+                return false;
+            }
+            return child.verifyPath(nodes, level + 1);
+        }
+        return true;
+
+    }
+
+    /**
+     * Controlla se il percorso è istruito
+     *
+     * @since 1.6
+     * @param cp percorso
+     * @return true se è istruito
+     */
+    public boolean isTrained(ClassificationPath cp) {
+        String[] nodes = cp.getPath();
+        return NodeData.this.isTrained(nodes, 0);
+    }
+
+    private boolean isTrained(String[] nodes, int level) {
+        NodeData child = null;
+        if (nodes.length <= level) {
+            return false;
+        }
+        String value = nodes[level];
+        if (value != null) {
+            child = children.get(value);
+            if (child == null) {
+                return false;
+            }
+            return child.isTrained(nodes, level + 1);
+        }
+        return this.isTrained();
+
+    }
+
+    /**
+     * Torna true se il nodo è stato istruito
+     *
+     * @return true se istruito
+     */
+    public boolean isTrained() {
+        return trained;
+    }
+
+    /**
+     * Imposta true se il nodo è istruito
+     *
+     * @param trained true se istruito
+     */
+    public void setTrained(boolean trained) {
+        this.trained = trained;
     }
 
 }

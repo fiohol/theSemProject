@@ -344,7 +344,8 @@ public class DataProviderConfiguration implements Serializable{
                         }
                     }
                     doc.add(new StringField(fieldName, field, Field.Store.YES));
-                    doc.add(new StringField(fieldName+"_lower", field.toLowerCase(), Field.Store.YES));
+                    String lowerField = field.toLowerCase();
+                    doc.add(new StringField(fieldName+"_lower", lowerField, Field.Store.YES));
                     pos++;
                 }
                 indexWriter.addDocument(doc);

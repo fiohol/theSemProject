@@ -25,14 +25,12 @@ import org.thesemproject.opensem.classification.Tokenizer;
 import org.thesemproject.opensem.gui.JTableCellRender;
 import org.thesemproject.opensem.gui.LogGui;
 import org.thesemproject.opensem.gui.SemGui;
-import org.thesemproject.opensem.gui.modelEditor.CaptureTreeNode;
 import org.thesemproject.opensem.gui.modelEditor.ModelTreeNode;
 import org.thesemproject.opensem.segmentation.SegmentConfiguration;
 import org.thesemproject.opensem.segmentation.SegmentationResults;
 import org.thesemproject.opensem.segmentation.SegmentationUtils;
 import org.thesemproject.opensem.tagcloud.TagCloudResults;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,19 +46,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -75,7 +68,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.RowFilter;
-import javax.swing.RowSorter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -89,13 +81,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.thesemproject.opensem.segmentation.SegmentEngine;
+import org.thesemproject.opensem.gui.modelEditor.ClassicationTreeNode;
 
 /**
  *
@@ -275,7 +265,7 @@ public class GuiUtils {
         String[] categories = path.split(">");
         ClassificationPath cp = new ClassificationPath("Bayes");
         for (int i = 0; i < categories.length; i++) {
-            cp.addResult(categories[i], 1, i);
+            cp.addResult(org.thesemproject.opensem.utils.StringUtils.firstUpper(categories[i]), 1, i);
         }
         return cp;
     }
@@ -668,7 +658,7 @@ public class GuiUtils {
             GuiUtils.storeXml(doc, semGui.getSegmentsPath());
         }
         LogGui.info(String.valueOf(new Date()) + ": Reinizializzazione");
-        if (semGui.getSE().init(doc, semGui.getPercorsoIndice().getText())) {
+        if (semGui.getSE().init(doc, semGui.getPercorsoIndice().getText(), semGui.getME())) {
             semGui.getModelTree().setModel(semGui.getSE().getVisualStructure());
             DefaultTreeModel model = (DefaultTreeModel) (semGui.getModelTree().getModel());
             model.reload();
@@ -820,11 +810,17 @@ public class GuiUtils {
     public static void paintTree(NodeData currentNode, DefaultMutableTreeNode currentTreeNode) {
         if (currentNode != null) {
             if (currentNode.hasChildren()) {
-                List<String> children = currentNode.getChildrenNames();
-                children.stream().forEach((String child) -> {
-                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(child);
+                List<NodeData> children = currentNode.getChildrens();
+                Collections.sort(children, new Comparator<NodeData>() {
+                    @Override
+                    public int compare(NodeData t, NodeData t1) {
+                        return (t.nodeName.compareTo(t1.nodeName));
+                    }
+                });
+                children.stream().forEach((NodeData child) -> {
+                    ClassicationTreeNode node = new ClassicationTreeNode(child.isTrained(), child.nodeName);
                     currentTreeNode.add(node);
-                    paintTree(currentNode.getNode(child), node);
+                    paintTree(currentNode.getNode(child.nodeName), node);
                 });
             }
         }

@@ -101,11 +101,12 @@ public class SegmentEngine {
      * Inizializza il segmentEngine con una configurazione XML
      *
      * @param model percorso del file di configurazione
+     * @param me motore di classificazione
      * @return true se il sistema è inizializzato
      */
-    public boolean init(String model) {
+    public boolean init(String model, MulticlassEngine me) {
         try {
-            buildPatternMatrix(new File(model));
+            buildPatternMatrix(new File(model), me);
             return true;
         } catch (Exception e) {
             LogGui.printException(e);
@@ -118,11 +119,12 @@ public class SegmentEngine {
      *
      * @param model DOM del file di configurazione
      * @param path percorso della struttura
+     * @param me motore di classificazione
      * @return true se inizializzato
      */
-    public boolean init(Document model, String path) {
+    public boolean init(Document model, String path, MulticlassEngine me) {
         try {
-            buildPatternMatrix(model, path);
+            buildPatternMatrix(model, path, me);
             return true;
         } catch (JDOMException | IOException e) {
             LogGui.printException(e);
@@ -225,7 +227,8 @@ public class SegmentEngine {
                     if (match) {
                         break;
                     } else //Provo a vedere se c'è un match con linea precedente + \n linea 
-                     if (lastLine.length() != 0) {
+                    {
+                        if (lastLine.length() != 0) {
                             String newLine = lastLine + "@" + line;
                             for (Pattern pattern : patterns) {
                                 if (pattern.matcher(newLine).find()) { //ha matchato la sezione
@@ -255,6 +258,7 @@ public class SegmentEngine {
                                 }
                             }
                         }
+                    }
                 }
                 if (previousLines.length() != 0) {
                     previousLines = previousLines + " " + line;
@@ -284,14 +288,14 @@ public class SegmentEngine {
         return identifiedSegments;
     }
 
-    private void buildPatternMatrix(File fXmlFile) throws JDOMException, Exception {
+    private void buildPatternMatrix(File fXmlFile, MulticlassEngine me) throws JDOMException, Exception {
         if (fXmlFile.exists()) {
             LogGui.info("Read XML File...");
             Document document = GuiUtils.readXml(fXmlFile.getAbsolutePath());
             LogGui.info("Build pattern matrix...");
-            buildPatternMatrix(document, fXmlFile.getParent());
+            buildPatternMatrix(document, fXmlFile.getParent(), me);
         } else {
-            buildPatternMatrix(null, fXmlFile.getParent());
+            buildPatternMatrix(null, fXmlFile.getParent(), me);
         }
     }
 
@@ -310,7 +314,7 @@ public class SegmentEngine {
         return model;
     }
 
-    private void buildPatternMatrix(Document document, String storageFolder) throws JDOMException, IOException {
+    private void buildPatternMatrix(Document document, String storageFolder, MulticlassEngine me) throws JDOMException, IOException {
         dictionaryNode.removeAllChildren();
         segmentsNode.removeAllChildren();
         globalCapturesTreeNode.removeAllChildren();
@@ -527,13 +531,13 @@ public class SegmentEngine {
                 }
                 if (globalCaptures != null) {
                     List<Element> children = globalCaptures.getChildren("c");
-                    processGlobalCapture(globalCapturesTreeNode, children, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations);
+                    processGlobalCapture(globalCapturesTreeNode, children, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations, me);
                     List<Element> groups = globalCaptures.getChildren("cg"); //Catture nel gruppo
                     for (Element group : groups) {
                         List<Element> gchildren = group.getChildren("c");
                         CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(group.getAttributeValue("n"));
                         globalCapturesTreeNode.add(groupNode);
-                        processGlobalCapture(groupNode, gchildren, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations);
+                        processGlobalCapture(groupNode, gchildren, globalSentenciesCaptureConfigurations, globalLinesCaptureConfigurations, me);
                     }
 
                 }
@@ -544,7 +548,7 @@ public class SegmentEngine {
                     segmentList = rootNode.getChildren("S");
                 }
                 segmentList.stream().map((element) -> element.getChildren()).forEach((List<Element> segments) -> {
-                    segments.stream().map((segment) -> getSegmentBean(segment, dictionary, tables, null, globalLinesCaptureConfigurations, globalSentenciesCaptureConfigurations, enrichment)).forEach((sb) -> {
+                    segments.stream().map((segment) -> getSegmentBean(segment, dictionary, tables, null, globalLinesCaptureConfigurations, globalSentenciesCaptureConfigurations, enrichment, me)).forEach((sb) -> {
                         patternMatrix.add(sb);
                     });
                 });
@@ -552,7 +556,7 @@ public class SegmentEngine {
         }
     }
 
-    private void processGlobalCapture(ModelTreeNode captureContainer, List<Element> children, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, List<CaptureConfiguration> globalLinesCaptureConfigurations) {
+    private void processGlobalCapture(ModelTreeNode captureContainer, List<Element> children, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, List<CaptureConfiguration> globalLinesCaptureConfigurations, MulticlassEngine me) {
         children.stream().forEach((child) -> {
             if (null != child.getName()) {
                 String captureName = child.getAttributeValue("name");
@@ -564,16 +568,16 @@ public class SegmentEngine {
                     captureContainer.add(capture);
                     if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
                         capture.setScope("sentence");
-                        globalSentenciesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                        globalSentenciesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture, me));
                     } else {
-                        globalLinesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                        globalLinesCaptureConfigurations.add(getCaptureConfiguration(child, captureName, dictionary, tables, capture, me));
                     }
                 }
             }
         });
     }
 
-    private SegmentConfiguration getSegmentBean(Element segment, Map<String, Pattern> dictionary, Map<String, Pattern> tables, SegmentTreeNode parentNode, List<CaptureConfiguration> globalLinesCaptureConfigurations, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, Map<String, List<DataProviderRelationship>> enrichment) {
+    private SegmentConfiguration getSegmentBean(Element segment, Map<String, Pattern> dictionary, Map<String, Pattern> tables, SegmentTreeNode parentNode, List<CaptureConfiguration> globalLinesCaptureConfigurations, List<CaptureConfiguration> globalSentenciesCaptureConfigurations, Map<String, List<DataProviderRelationship>> enrichment, MulticlassEngine me) {
         String name = segment.getAttributeValue("name");
         if (name == null) {
             name = segment.getAttributeValue("n");
@@ -641,18 +645,18 @@ public class SegmentEngine {
                         break;
                     case "s":
                     case "segment":
-                        sb.addSegment(getSegmentBean(child, dictionary, tables, segmentModelTreeNode, globalLinesCaptureConfigurations, globalSentenciesCaptureConfigurations, enrichment));
+                        sb.addSegment(getSegmentBean(child, dictionary, tables, segmentModelTreeNode, globalLinesCaptureConfigurations, globalSentenciesCaptureConfigurations, enrichment, me));
                         break;
                     case "c":
                     case "capture":
-                        processCapture(sb, capturesTreeNode, child);
+                        processCapture(sb, capturesTreeNode, child, me);
                         break;
                     case "cg":
                         List<Element> gchildren = child.getChildren("c");
                         CapturesGroupTreeNode groupNode = new CapturesGroupTreeNode(child.getAttributeValue("n"));
                         capturesTreeNode.add(groupNode);
                         gchildren.stream().forEach((gChild) -> {
-                            processCapture(sb, groupNode, gChild);
+                            processCapture(sb, groupNode, gChild, me);
                         });
                         break;
                     case "f":
@@ -667,7 +671,7 @@ public class SegmentEngine {
         return sb;
     }
 
-    private void processCapture(SegmentConfiguration sb, ModelTreeNode capturesTreeNode, Element child) {
+    private void processCapture(SegmentConfiguration sb, ModelTreeNode capturesTreeNode, Element child, MulticlassEngine me) {
         String captureName = child.getAttributeValue("name");
         if (captureName == null) {
             captureName = child.getAttributeValue("n");
@@ -677,9 +681,9 @@ public class SegmentEngine {
             capturesTreeNode.add(capture);
             if ("sentence".equals(child.getAttributeValue("scope")) || "s".equals(child.getAttributeValue("s"))) {
                 capture.setScope("sentence");
-                sb.addSentenceCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                sb.addSentenceCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture, me));
             } else {
-                sb.addCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture));
+                sb.addCapture(getCaptureConfiguration(child, captureName, dictionary, tables, capture, me));
             }
         }
     }
@@ -785,7 +789,7 @@ public class SegmentEngine {
         return pattern;
     }
 
-    private CaptureConfiguration getCaptureConfiguration(Element child, String captureName, Map<String, Pattern> dictionary, Map<String, Pattern> tables, CaptureTreeNode captureTreeNode) {
+    private CaptureConfiguration getCaptureConfiguration(Element child, String captureName, Map<String, Pattern> dictionary, Map<String, Pattern> tables, CaptureTreeNode captureTreeNode, MulticlassEngine me) {
         String captureType = child.getAttributeValue("type");
         if (captureType == null) {
             captureType = child.getAttributeValue("t");
@@ -885,7 +889,7 @@ public class SegmentEngine {
                 CaptureTreeNode subCapt = new CaptureTreeNode(subCaptureName);
                 subCapt.setScope("parent");
                 captureTreeNode.add(subCapt);
-                cc.addSubCapture(getCaptureConfiguration(captureChildren, subCaptureName, dictionary, tables, subCapt));
+                cc.addSubCapture(getCaptureConfiguration(captureChildren, subCaptureName, dictionary, tables, subCapt, me));
             } else if ("segment".equalsIgnoreCase(captureChildren.getName()) || "s".equalsIgnoreCase(captureChildren.getName())) {
                 String segName = captureChildren.getValue();
                 captureTreeNode.addEnabledSegment(segName);
@@ -897,8 +901,21 @@ public class SegmentEngine {
             } else if ("classification".equalsIgnoreCase(captureChildren.getName()) || "cl".equalsIgnoreCase(captureChildren.getName())) {
                 String path = captureChildren.getValue();
                 ClassificationPath cp = GuiUtils.getClassificationPath(path);
-                captureTreeNode.setClassificationPath(cp);
-                cc.setClassificationPath(cp);
+                if (me != null) {
+                    if (me.getRoot() != null) {
+                        if (!me.getRoot().verifyPath(cp)) {
+                            LogGui.info("Path: " + cp.toSmallClassString() + " non esiste.");
+                            captureTreeNode.setIsOrphan(true);
+                            cc.setIsOrphan(true);
+                        }
+                        if (!me.getRoot().isTrained(cp)) {
+                            captureTreeNode.setPointToNotBayes(true);
+                            cc.setPointToNotBayes(true);
+                        }
+                        captureTreeNode.setClassificationPath(cp);
+                        cc.setClassificationPath(cp);
+                    }
+                }
             }
         });
         return cc;
@@ -1109,8 +1126,9 @@ public class SegmentEngine {
         Set<String> toRemove = new HashSet<>();
         for (CaptureConfiguration captureConfiguration : captureConfigurations) {
             if (captureConfiguration.isNotSubscribe()) {
-                if (sr.getCaptureResults().get(captureConfiguration.getName()) != null)
+                if (sr.getCaptureResults().get(captureConfiguration.getName()) != null) {
                     continue;
+                }
             }
             List<CapturePattern> patterns = captureConfiguration.getPatterns();
             String capturedValue = null;
@@ -1134,12 +1152,14 @@ public class SegmentEngine {
                                 value = searchSimilar(value, fv.substring(1));
                             }
                             sr.addCaptureResult(captureConfiguration, value);
-                            ClassificationPath cp = captureConfiguration.getClassificationPath();
-                            if (cp != null) {
-                                List<ClassificationPath> cps = new ArrayList<>();
-                                cps.add(cp);
-                                sr.addClassificationPath(cps);
-                                sr.setClassifyByCapture(true);
+                            if (!captureConfiguration.isIsOrphan()) {
+                                ClassificationPath cp = captureConfiguration.getClassificationPath();
+                                if (cp != null) {
+                                    List<ClassificationPath> cps = new ArrayList<>();
+                                    cps.add(cp);
+                                    sr.addClassificationPath(cps);
+                                    sr.setClassifyByCapture(true);
+                                }
                             }
                             continueWithNext = false;
                             capturedValue = value;

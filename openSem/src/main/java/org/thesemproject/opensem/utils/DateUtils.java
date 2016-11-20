@@ -38,36 +38,38 @@ public class DateUtils {
     /**
      * Patterns che possono corrispondere ad un modo di scrivere una data
      */
-    public static final Pattern PATTERNS[] = {Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])$"),
-        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^([1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9])[- /.,](0[1-9]|[12][0-9]|3[01])$"),
-        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,]([1-9])$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])(19|20)\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^(19|20)\\d\\d(0[1-9]|1[012])([0-9])([0-9])$"),
-        Pattern.compile("^([1-9])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\\d\\d$"),
-        Pattern.compile("^(0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),
-        Pattern.compile("^([1-9])[- /.,](19|20)\\d\\d$")
-
+    public static final Pattern PATTERNS[] = {
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"), //0
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"), //1
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])$"), //2
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),                  //3
+        Pattern.compile("^([1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,](19|20)\\d\\d$"),  //4
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9])[- /.,](0[1-9]|[12][0-9]|3[01])$"),        //5
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])[- /.,]([1-9])$"),                  //6
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),        //7
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),        //8
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])(19|20)\\d\\d$"),               //9   
+        Pattern.compile("^([1-9])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),                         //10
+        Pattern.compile("^(19|20)\\d\\d(0[1-9]|1[012])([0-9])([0-9])$"),                        //11
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|[12][0-9]|3[01])[- /.,]\\d\\d$"),               //12
+        Pattern.compile("^([1-9])[- /.,](0[1-9]|1[012])[- /.,]\\d\\d$"),                        //13
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\\d\\d$"),                     //14
+        Pattern.compile("^(0[1-9]|1[012])[- /.,](19|20)\\d\\d$"),                               //15        
+        Pattern.compile("^(0[1-9]|[12][0-9]|3[01])[- /.,]([1-9])[- /.,](19|20)\\d\\d$"),        //16
+        Pattern.compile("^([1-9])[- /.,](19|20)\\d\\d$"),                                       //17
+        Pattern.compile("^(19|20)\\d\\d[- /.,](0[1-9]|1[012])$"),                               //18
+        Pattern.compile("^(19|20)\\d\\d[- /.,]([1-9])$")                                        //19
     };
 
     /**
      * Modi di scrivere gennaio
      */
-    public static final String GEN = "janu(a|á)r|genn?aio|january|(gen|jan)(\\.)?";
+    public static final String GEN = "janu(a|á)r|genn?aio|january|(gen|genn|jan)(\\.)?";
 
     /**
      * Modi di scrivere febbraio
      */
-    public static final String FEB = "febb?raio|february|febru(a|ár)|(feb|febbr|febb)(\\.)?";
+    public static final String FEB = "febb?raio|february|febru(a|ár)|(febbr|febb|feb)(\\.)?";
 
     /**
      * Modi di scrivere marzo
@@ -82,7 +84,7 @@ public class DateUtils {
     /**
      * Modi di scrivere maggio
      */
-    public static final String MAG = "m(a|á)j|magg?io|may|mag(\\.)?";
+    public static final String MAG = "m(a|á)j|magg?io|may|(magg|mag)(\\.)?";
 
     /**
      * Modi di scrivere giugno
@@ -102,7 +104,7 @@ public class DateUtils {
     /**
      * Modi di scrivere settembre
      */
-    public static final String SET = "septemb(ra|er)|sett?embre|september|(set|sep|sett|sept)(\\.)?";
+    public static final String SET = "septemb(ra|er)|sett?embre|september|(sett|sept|set|sep)(\\.)?";
 
     /**
      * Modi di scrivere ottobre
@@ -151,6 +153,19 @@ public class DateUtils {
         stringDate = stringDate.replaceAll("\\b(" + OTT + ")\\b", " 10 ");
         stringDate = stringDate.replaceAll("\\b(" + NOV + ")\\b", " 11 ");
         stringDate = stringDate.replaceAll("\\b(" + DIC + ")\\b", " 12 ");
+        //Secondo giro, tenta l'impossibile....
+        stringDate = stringDate.replaceAll("(" + GEN + ")", " 01 ");
+        stringDate = stringDate.replaceAll("(" + FEB + ")", " 02 ");
+        stringDate = stringDate.replaceAll("(" + MAR + ")", " 03 ");
+        stringDate = stringDate.replaceAll("(" + APR + ")", " 04 ");
+        stringDate = stringDate.replaceAll("(" + MAG + ")", " 05 ");
+        stringDate = stringDate.replaceAll("(" + GIU + ")", " 06 ");
+        stringDate = stringDate.replaceAll("(" + LUG + ")", " 07 ");
+        stringDate = stringDate.replaceAll("(" + AGO + ")", " 08 ");
+        stringDate = stringDate.replaceAll("(" + SET + ")", " 09 ");
+        stringDate = stringDate.replaceAll("(" + OTT + ")", " 10 ");
+        stringDate = stringDate.replaceAll("(" + NOV + ")", " 11 ");
+        stringDate = stringDate.replaceAll("(" + DIC + ")", " 12 ");
         stringDate = stringDate.replaceAll("(\\s+)", " ").replace(". ", ".").replace("/ ", "/").replace(", ", ",").replace(" /", "/").replace(" .",".").replace(" ,",",");
         String ret = STRING_FORMAT_CACHE.get(stringDate);
         if (ret != null) {
@@ -207,6 +222,8 @@ public class DateUtils {
                     str = '0' + stringDate.substring(0, 1) + '/' + stringDate.substring(2, 4) + '/' + stringDate.substring(5);
                 } else if (PATTERNS[15].matcher(stringDate).matches()) {
                     str = "01/" + stringDate.substring(0, 2) + '/' + stringDate.substring(3);
+                } else if (PATTERNS[18].matcher(stringDate).matches()) {
+                    str = "01/" + stringDate.substring(5) + '/' + stringDate.substring(0,4);
                 }
                 break;
             case 6:
@@ -218,6 +235,8 @@ public class DateUtils {
                     str = stringDate.substring(0, 2) + '/' + stringDate.substring(2, 4) + "/20" + stringDate.substring(4);
                 } else if (PATTERNS[17].matcher(stringDate).matches()) {
                     str = "01/0" + stringDate.substring(0, 1) + '/' + stringDate.substring(2);
+                } else if (PATTERNS[19].matcher(stringDate).matches()) {
+                    str = "01/0" + stringDate.substring(5) + '/' + stringDate.substring(0,4);
                 }
                 break;
             case 4:
@@ -409,7 +428,16 @@ public class DateUtils {
      */
     public static void main(String args[]) {
 
-        System.out.println(DateUtils.parseString("5/2015"));
+        System.out.println(DateUtils.parseString("genn 2015"));
+        System.out.println(DateUtils.parseString("genn.2015"));
+        System.out.println(DateUtils.parseString("magg 2015"));
+        System.out.println(DateUtils.parseString("novembre 2015"));
+        System.out.println(DateUtils.parseString("novembre2015"));
+        System.out.println(DateUtils.parseString("nov2015"));
+        System.out.println(DateUtils.parseString("2015/10"));
+        System.out.println(DateUtils.parseString("2015 10"));
+        System.out.println(DateUtils.parseString("2015 1"));
+        
 
     }
 }

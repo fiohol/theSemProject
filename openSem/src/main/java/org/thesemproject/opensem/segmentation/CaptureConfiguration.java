@@ -35,6 +35,8 @@ public class CaptureConfiguration implements Serializable {
     boolean notSubscribe;
     boolean startPeriod;
     boolean endPeriod;
+    boolean isOrphan;
+    boolean pointToNotBayes;
     List<CaptureConfiguration> subCaptures;
     Set<String> enabledSegments;
     Set<String> blockedCaptures;
@@ -68,6 +70,8 @@ public class CaptureConfiguration implements Serializable {
         this.endPeriod = endPeriod;
         this.blockedCaptures = new HashSet<>();
         this.notSubscribe = notSubsctibe;
+        this.isOrphan = false;
+        this.pointToNotBayes = false;
     }
 
     /**
@@ -222,6 +226,49 @@ public class CaptureConfiguration implements Serializable {
     }
 
     /**
+     * Ritorna true se la cattura che classifica è orfana
+     *
+     * @since 1.6
+     *
+     * @return true se orfana
+     */
+    public boolean isIsOrphan() {
+        return isOrphan;
+    }
+
+    /**
+     * Imposta se la cattura è orfana
+     *
+     * @since 1.6
+     *
+     * @param isOrphan true se orfana di categoria
+     *
+     */
+    public void setIsOrphan(boolean isOrphan) {
+        this.isOrphan = isOrphan;
+    }
+
+    /**
+     * Ritorna true se la cattura che classifica punta ad un nodo non istruito
+     *
+     * @since 1.6
+     * @return true se punta
+     */
+    public boolean isPointToNotBayes() {
+        return pointToNotBayes;
+    }
+
+    /**
+     * Imposta se la cattura punta ad un nodo non istruito
+     *
+     * @since 1.6
+     * @param pointToNotBayes true se punta ad un nodo non istruiot
+     */
+    public void setPointToNotBayes(boolean pointToNotBayes) {
+        this.pointToNotBayes = pointToNotBayes;
+    }
+
+    /**
      * Ritorna il classificationPath associato ad una cattura
      *
      * @return classificationPath
@@ -296,7 +343,8 @@ public class CaptureConfiguration implements Serializable {
 
     /**
      * Verifica se la cattura non deve sovrascrivere
-     *@since 1.4
+     *
+     * @since 1.4
      * @return true se non deve sovrascrivere
      */
     public boolean isNotSubscribe() {
@@ -305,11 +353,11 @@ public class CaptureConfiguration implements Serializable {
 
     /**
      * Imposta se la cattura non deve sovrascrivere
+     *
      * @param notSubscribe true se non deve sovrascrivere
      */
     public void setNotSubscribe(boolean notSubscribe) {
         this.notSubscribe = notSubscribe;
     }
-    
-    
+
 }

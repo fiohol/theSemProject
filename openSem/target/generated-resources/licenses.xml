@@ -63,7 +63,7 @@
     <dependency>
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
-      <version>2.8.0</version>
+      <version>2.9.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -111,7 +111,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-base</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -123,7 +123,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -135,7 +135,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-jaxb-annotations</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -218,10 +218,10 @@
     <dependency>
       <groupId>com.googlecode.mp4parser</groupId>
       <artifactId>isoparser</artifactId>
-      <version>1.0.2</version>
+      <version>1.1.18</version>
       <licenses>
         <license>
-          <name>Apache 2</name>
+          <name>Apache Software License - Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
           <comments>A business-friendly OSS license</comments>
@@ -231,7 +231,7 @@
     <dependency>
       <groupId>com.healthmarketscience.jackcess</groupId>
       <artifactId>jackcess</artifactId>
-      <version>2.1.2</version>
+      <version>2.1.4</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -247,6 +247,18 @@
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>annotations</artifactId>
+      <version>12.0</version>
+      <licenses>
+        <license>
+          <name>Apache License 2</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -327,9 +339,44 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>com.optimaize.languagedetector</groupId>
+      <artifactId>language-detector</artifactId>
+      <version>0.5</version>
+      <licenses>
+        <license>
+          <name>Apache 2</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>com.pff</groupId>
       <artifactId>java-libpst</artifactId>
       <version>0.8.1</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.rometools</groupId>
+      <artifactId>rome</artifactId>
+      <version>1.5.1</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.rometools</groupId>
+      <artifactId>rome-utils</artifactId>
+      <version>1.5.1</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -533,10 +580,10 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>2.5</version>
       <licenses>
         <license>
-          <name>The Apache Software License, Version 2.0</name>
+          <name>Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -761,20 +808,24 @@
       </licenses>
     </dependency>
     <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.0</version>
-      <licenses>
-        <!--No license information available. -->
-      </licenses>
-    </dependency>
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>net.arnx</groupId>
+      <artifactId>jsonic</artifactId>
+      <version>1.2.11</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -830,19 +881,6 @@
       </licenses>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jmatio</groupId>
-      <artifactId>jmatio</artifactId>
-      <version>1.0</version>
-      <licenses>
-        <license>
-          <name>BSD</name>
-          <url>http://www.linfo.org/bsdlicense.html</url>
-          <distribution>repo</distribution>
-          <comments>Free for open or commercial use, with credit line</comments>
-        </license>
-      </licenses>
-    </dependency>
-    <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>1.8.2</version>
@@ -869,7 +907,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.10</version>
+      <version>1.12</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1300,10 +1338,10 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>fontbox</artifactId>
-      <version>1.8.10</version>
+      <version>2.0.3</version>
       <licenses>
         <license>
-          <name>The Apache Software License, Version 2.0</name>
+          <name>Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -1312,10 +1350,10 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>jempbox</artifactId>
-      <version>1.8.10</version>
+      <version>1.8.12</version>
       <licenses>
         <license>
-          <name>The Apache Software License, Version 2.0</name>
+          <name>Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -1324,10 +1362,34 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
-      <version>1.8.10</version>
+      <version>2.0.3</version>
       <licenses>
         <license>
-          <name>The Apache Software License, Version 2.0</name>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox-debugger</artifactId>
+      <version>2.0.3</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox-tools</artifactId>
+      <version>2.0.3</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -1391,7 +1453,7 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-metadata</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1403,7 +1465,7 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-referencing</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1415,7 +1477,7 @@
     <dependency>
       <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1427,7 +1489,7 @@
     <dependency>
       <groupId>org.apache.sis.storage</groupId>
       <artifactId>sis-netcdf</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1439,7 +1501,7 @@
     <dependency>
       <groupId>org.apache.sis.storage</groupId>
       <artifactId>sis-storage</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1451,7 +1513,19 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-langdetect</artifactId>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1463,7 +1537,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1475,7 +1549,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-serialization</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1487,7 +1561,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-server</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1499,7 +1573,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-translate</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1511,7 +1585,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-xmp</artifactId>
-      <version>1.11</version>
+      <version>1.14</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
@@ -1761,21 +1835,9 @@
       </licenses>
     </dependency>
     <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>1.8.0</version>
-      <licenses>
-        <license>
-          <name>Eclipse Public License - v 1.0</name>
-          <url>http://www.eclipse.org/legal/epl-v10.html</url>
-          <distribution>repo</distribution>
-        </license>
-      </licenses>
-    </dependency>
-    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk15on</artifactId>
-      <version>1.52</version>
+      <version>1.54</version>
       <licenses>
         <license>
           <name>Bouncy Castle Licence</name>
@@ -1787,7 +1849,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.52</version>
+      <version>1.54</version>
       <licenses>
         <license>
           <name>Bouncy Castle Licence</name>
@@ -1799,7 +1861,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.52</version>
+      <version>1.54</version>
       <licenses>
         <license>
           <name>Bouncy Castle Licence</name>
@@ -2026,7 +2088,7 @@
     <dependency>
       <groupId>org.gagravarr</groupId>
       <artifactId>vorbis-java-core</artifactId>
-      <version>0.6</version>
+      <version>0.8</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -2038,7 +2100,7 @@
     <dependency>
       <groupId>org.gagravarr</groupId>
       <artifactId>vorbis-java-tika</artifactId>
-      <version>0.6</version>
+      <version>0.8</version>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -2295,6 +2357,19 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>org.tallison</groupId>
+      <artifactId>jmatio</artifactId>
+      <version>1.2</version>
+      <licenses>
+        <license>
+          <name>BSD</name>
+          <url>http://www.linfo.org/bsdlicense.html</url>
+          <distribution>repo</distribution>
+          <comments>Free for open or commercial use, with credit line</comments>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>org.tukaani</groupId>
       <artifactId>xz</artifactId>
       <version>1.5</version>
@@ -2310,14 +2385,6 @@
       <groupId>regexp</groupId>
       <artifactId>regexp</artifactId>
       <version>1.3</version>
-      <licenses>
-        <!--No license information available. -->
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>rome</groupId>
-      <artifactId>rome</artifactId>
-      <version>1.0</version>
       <licenses>
         <!--No license information available. -->
       </licenses>

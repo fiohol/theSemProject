@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.gui.modelEditor;
 
+import java.awt.Component;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.segmentation.CaptureConfiguration;
 import java.util.ArrayList;
@@ -24,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import org.jdom2.Element;
@@ -45,6 +48,8 @@ public class CaptureTreeNode extends ModelTreeNode {
     private boolean startPeriod;
     private boolean endPeriod;
     private boolean notSubscribe;
+    private boolean isOrphan;
+    private boolean pointToNotBayes;
     private Set<String> blockedCaptures;
 
     /**
@@ -65,6 +70,7 @@ public class CaptureTreeNode extends ModelTreeNode {
         startPeriod = false;
         endPeriod = false;
         notSubscribe = false;
+        isOrphan = false;
     }
 
     /**
@@ -86,6 +92,7 @@ public class CaptureTreeNode extends ModelTreeNode {
         endPeriod = cloned.endPeriod;
         classificationPath = cloned.classificationPath;
         blockedCaptures = cloned.blockedCaptures;
+        isOrphan = cloned.isOrphan;
     }
 
     /**
@@ -476,5 +483,43 @@ public class CaptureTreeNode extends ModelTreeNode {
     public void removeBlockedCapture(String capture) {
         blockedCaptures.remove(capture);
     }
+
+    /**
+     * Imposta la cattura come possibile orfano
+     *
+     * @since 1.6
+     *
+     * @param isOrphan true se è orfana
+     */
+    public void setIsOrphan(boolean isOrphan) {
+        this.isOrphan = isOrphan;
+    }
+
+    /**
+     * Ritorna true se orfano di classificazione
+     *
+     * @return true se orfano
+     */
+    public boolean isIsOrphan() {
+        return isOrphan;
+    }
+
+    /**
+     * Verifica se la cattura punta su un nodo non istruito
+     * @return true se punta su un nodo non istruito
+     */
+    public boolean isPointToNotBayes() {
+        return pointToNotBayes;
+    }
+
+    /**
+     * Imposta se la cattura punta su un nodo non istruito.
+     * @param pointToNotBayes  true se punta su un nodo non istruito
+     */
+    public void setPointToNotBayes(boolean pointToNotBayes) {
+        this.pointToNotBayes = pointToNotBayes;
+    }
+
+    
 
 }

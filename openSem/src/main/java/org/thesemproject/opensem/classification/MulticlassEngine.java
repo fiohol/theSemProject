@@ -60,11 +60,13 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.jdom2.input.SAXBuilder;
 import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
 import static org.thesemproject.opensem.classification.IndexManager.getNotTokenizedFieldType;
 import static org.thesemproject.opensem.classification.IndexManager.reindexDoc;
 import org.thesemproject.opensem.parser.DocumentParser;
 import org.thesemproject.opensem.utils.interning.InternPool;
+import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
 
 /**
  * Motore di classificazione statistico basato su Lucene IL motore è stato
@@ -181,6 +183,9 @@ public class MulticlassEngine {
                 } catch (Exception e) {
                     LogGui.printException(e);
                 }
+            } else {
+                root = new NodeData(1, k, intern); //Root
+                
             }
             cats = new HashSet<>();
             for (String language : MyAnalyzer.languages) {
@@ -190,8 +195,12 @@ public class MulticlassEngine {
                 File fStop = new File(stopWords);
                 if (fIndex.exists()) {
                     if (fIndex.listFiles().length > 0) {
+                        int level = 1;
+                        if (root != null) {
+                            level = root.getStartLevel();
+                        }
                         try {
-                            ret = ret && init(indexFolder, stopWords, language, root.getStartLevel(), k, reindex);
+                            ret = ret && init(indexFolder, stopWords, language, level, k, reindex);
                         } catch (Exception e) {
                             LogGui.printException(e);
                         }
@@ -244,7 +253,7 @@ public class MulticlassEngine {
             String pathNew = pathOrigin + ".new." + System.currentTimeMillis();
             String pathBackup = pathOrigin + ".bck." + System.currentTimeMillis();
             if (needReindex) {
-                LogGui.info("Creo il nuovo indice in: "+pathNew+" leggendo dall'indice in : "+pathOrigin);
+                LogGui.info("Creo il nuovo indice in: " + pathNew + " leggendo dall'indice in : " + pathOrigin);
                 File fNew = new File(pathNew);
                 fNew.mkdirs();
                 indexWriter = getIndexWriter(Paths.get(pathNew), new File(stop), language, false, IndexWriterConfig.OpenMode.CREATE);
@@ -380,52 +389,54 @@ public class MulticlassEngine {
     public List<String[]> getDocuments(String language) {
         List<String[]> rows = new ArrayList<>();
         try {
-
             String index = getIndexFolder(language);
-            IndexReader reader = DirectoryReader.open(getFolderDir(index));
-            final LeafReader ar = SlowCompositeReaderWrapper.wrap(reader);
-            Bits liveDocs = MultiFields.getLiveDocs(reader);
-            final int maxdoc = reader.maxDoc();
-            for (int i = 0; i < maxdoc; i++) {
-                if (liveDocs != null && !liveDocs.get(i)) {
-                    continue;
-                }
-                Document doc = ar.document(i);
-                String[] row = new String[10];
-                row[9] = "";
-                row[0] = doc.get(IndexManager.UUID);
-                row[1] = doc.get(IndexManager.BODY);
-                row[2] = doc.get(IndexManager.TEXT);
-                String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
-                row[3] = level1;
-                if (level1 != null) {
-                    String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
-                    if (level2 != null) {
-                        row[4] = level2;
-                        String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
-                        if (level3 != null) {
-                            row[5] = level3;
-                            String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
-                            if (level4 != null) {
-                                row[6] = level4;
-                                String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
-                                if (level5 != null) {
-                                    row[7] = level5;
-                                    String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
-                                    if (level6 != null) {
-                                        row[8] = level6;
+            File fIndex = new File(index);
+            if (fIndex.exists()) {
+                IndexReader reader = DirectoryReader.open(getFolderDir(index));
+                final LeafReader ar = SlowCompositeReaderWrapper.wrap(reader);
+                Bits liveDocs = MultiFields.getLiveDocs(reader);
+                final int maxdoc = reader.maxDoc();
+                for (int i = 0; i < maxdoc; i++) {
+                    if (liveDocs != null && !liveDocs.get(i)) {
+                        continue;
+                    }
+                    Document doc = ar.document(i);
+                    String[] row = new String[10];
+                    row[9] = "";
+                    row[0] = doc.get(IndexManager.UUID);
+                    row[1] = doc.get(IndexManager.BODY);
+                    row[2] = doc.get(IndexManager.TEXT);
+                    String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
+                    row[3] = level1;
+                    if (level1 != null) {
+                        String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
+                        if (level2 != null) {
+                            row[4] = level2;
+                            String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
+                            if (level3 != null) {
+                                row[5] = level3;
+                                String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
+                                if (level4 != null) {
+                                    row[6] = level4;
+                                    String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
+                                    if (level5 != null) {
+                                        row[7] = level5;
+                                        String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
+                                        if (level6 != null) {
+                                            row[8] = level6;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    if (i % 1000 == 0) {
+                        LogGui.info("Read Progress... " + i);
+                    }
+                    rows.add(row);
                 }
-                if (i % 1000 == 0) {
-                    LogGui.info("Read Progress... " + i);
-                }
-                rows.add(row);
+                reader.close();
             }
-            reader.close();
         } catch (Exception e) {
             LogGui.printException(e);
         }
@@ -438,8 +449,10 @@ public class MulticlassEngine {
      * @since 1.2
      * @param language lingua indice
      * @param sheetResults excel da popolare
+     * @param c1 valori della colonna kpi1
+     * @param c2 valori della colonna kpi2
      */
-    public void getDocumentsExcel(String language, SXSSFSheet sheetResults) {
+    public void getDocumentsExcel(String language, SXSSFSheet sheetResults,  HashMap<String, String> c1 ,  HashMap<String, String> c2) {
         try {
             int rownum = 1;
             String index = getIndexFolder(language);
@@ -457,26 +470,31 @@ public class MulticlassEngine {
                 if (text == null) {
                     text = "";
                 }
-                row.createCell(0).setCellValue(text);
-                row.createCell(1).setCellValue(doc.get(IndexManager.BODY));
+                row.createCell(6).setCellValue(text);
+                row.createCell(7).setCellValue(doc.get(IndexManager.BODY));
+                String id = doc.get(IndexManager.UUID);
+                String c1v = c1.get(id);
+                String c2v = c2.get(id);
+                if (c1v != null) row.createCell(8).setCellValue(c1v);
+                if (c2v != null) row.createCell(9).setCellValue(c2v);
                 String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
-                row.createCell(2).setCellValue(level1);
+                row.createCell(0).setCellValue(level1);
                 if (level1 != null) {
                     String level2 = (String) intern.intern(doc.get(IndexManager.LEVEL2_NAME));
                     if (level2 != null) {
-                        row.createCell(3).setCellValue(level2);
+                        row.createCell(1).setCellValue(level2);
                         String level3 = (String) intern.intern(doc.get(IndexManager.LEVEL3_NAME));
                         if (level3 != null) {
-                            row.createCell(4).setCellValue(level3);
+                            row.createCell(2).setCellValue(level3);
                             String level4 = (String) intern.intern(doc.get(IndexManager.LEVEL4_NAME));
                             if (level4 != null) {
-                                row.createCell(5).setCellValue(level4);
+                                row.createCell(3).setCellValue(level4);
                                 String level5 = (String) intern.intern(doc.get(IndexManager.LEVEL5_NAME));
                                 if (level5 != null) {
-                                    row.createCell(6).setCellValue(level5);
+                                    row.createCell(4).setCellValue(level5);
                                     String level6 = (String) intern.intern(doc.get(IndexManager.LEVEL6_NAME));
                                     if (level6 != null) {
-                                        row.createCell(7).setCellValue(level6);
+                                        row.createCell(5).setCellValue(level6);
                                     }
                                 }
                             }
@@ -646,15 +664,15 @@ public class MulticlassEngine {
             double score = resultNdList.getScore();
             double size = nd.getChildrenNames().size();
             double realThreshold = 1 / size;
-            if (score >= realThreshold) {
-                cp.addResult(nd.getNameFromId(resultNdList.getAssignedClass().utf8ToString()), score, level);
-                NodeData child = nd.getNode(cp.getNodeName(level));
-                if (child != null) {
-                    if (child.hasChildren()) {
-                        return classifyOnSubNode(text, child, level + 1, cp, language);
-                    }
+            //if (score >= realThreshold) {
+            cp.addResult(nd.getNameFromId(resultNdList.getAssignedClass().utf8ToString()), score, level);
+            NodeData child = nd.getNode(cp.getNodeName(level));
+            if (child != null) {
+                if (child.hasChildren()) {
+                    return classifyOnSubNode(text, child, level + 1, cp, language);
                 }
             }
+            //}
         }
         return cp;
     }
@@ -688,9 +706,10 @@ public class MulticlassEngine {
                     results.add(bChoice1);
                     if (resultNdList.size() > 1) {
                         double score2 = resultNdList.get(1).getScore();
+                        double score1 = resultNdList.get(0).getScore();
                         double childrenSize = root.getChildrenNames().size(); //Numero di figli
                         double realThreshold = 1 / childrenSize;
-                        if (score2 >= realThreshold) {
+                        if (score2 >= realThreshold || (Math.abs(score2 - score1) < 0.1)) {
                             bChoice2.addResult(root.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
                             NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
