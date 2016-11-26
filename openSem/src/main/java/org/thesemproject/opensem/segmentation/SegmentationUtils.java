@@ -260,7 +260,7 @@ public class SegmentationUtils {
                         List<ClassificationPath> bayes = sr.getClassificationPaths();
                         if (bayes.size() == 1) {
                             row[1] = bayes.get(0).toSmallString();
-                        } else if (bayes.size() == 2) {
+                        } else if (bayes.size() >= 2) {
                             row[1] = bayes.get(0).toSmallString();
                             row[2] = bayes.get(1).toSmallString();
                         }

@@ -51,8 +51,8 @@ public class MyCellRenderer extends DefaultTreeCellRenderer {
             }
         } else if (value instanceof ClassicationTreeNode) {
             ClassicationTreeNode ctn = (ClassicationTreeNode) value;
-            if (!ctn.isTrained()) { //Rosso se punta ad un nodo non esistente
-                setForeground(Color.LIGHT_GRAY);
+            if (!ctn.isTrained()) { //Blue scuro se non istruito
+                setForeground(Color.BLUE);
             }
         }
 

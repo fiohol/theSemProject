@@ -124,7 +124,10 @@ public class LuceneIndexUtils {
         AtomicInteger count = new AtomicInteger(0);
         semGui.getME().resetAnalyzers(); //Resetta gli analyzers
         LogGui.info("Start processing");
-        final int size = semGui.getDocumentsTable().getSelectedRows().length;
+
+        final int[] sRows = semGui.getDocumentsTable().getSelectedRows();
+        final int size = sRows.length;
+
         final TagCloudResults ret = new TagCloudResults();
         for (int j = 0; j < processors; j++) {
             tagClouding.add(() -> {
@@ -136,8 +139,9 @@ public class LuceneIndexUtils {
                     if (row >= size) {
                         break;
                     }
-                    int pos = semGui.getDocumentsTable().convertRowIndexToModel(row);
-                    String text = String.valueOf(semGui.getDocumentsTable().getValueAt(pos, 2));
+                    
+                    //int pos = documentsTable.convertRowIndexToModel(rows[i]);
+                    String text = String.valueOf(semGui.getDocumentsTable().getValueAt(sRows[row], 2));
                     if (text == null) {
                         text = "";
                     }
@@ -200,28 +204,8 @@ public class LuceneIndexUtils {
      */
     public static void searchDocumentBody(SemGui semGui) {
         int[] idxs = {1, 2, 3, 4, 5, 6};
-        String text = semGui.getSerachDocumentBody().getText();
-        text = text.replace("(","\\(");
-        text = text.replace(")","\\)");
-        if (text.toLowerCase().startsWith("level1:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 3);
-        } else if (text.toLowerCase().startsWith("level2:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 4);
-        } else if (text.toLowerCase().startsWith("level3:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 5);
-        } else if (text.toLowerCase().startsWith("level4:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 6);
-        } else if (text.toLowerCase().startsWith("level5:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 7);
-        } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(7).trim(), 8);
-        } else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(6).trim(), 1);
-        } else if (text.toLowerCase().startsWith("origine:") && text.length() > 8) {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text.substring(8).trim(), 2);
-        } else {
-            GuiUtils.filterTable(semGui.getDocumentsTable(), text, idxs);
-        }
+        GuiUtils.searchDocumentBody(idxs, semGui.getSerachDocumentBody(), semGui.getDocumentsTable());
+         
     }
 
     /**
@@ -283,7 +267,7 @@ public class LuceneIndexUtils {
      * @since 1.2
      * @param fileToExport file su cui esportare
      * @param semGui frame
-     * @param documentsTable tabella dei documenti 
+     * @param documentsTable tabella dei documenti
      */
     public static void exportExcelFile(String fileToExport, SemGui semGui, JTable documentsTable) {
         Thread t = new Thread(new Runnable() {
@@ -328,7 +312,7 @@ public class LuceneIndexUtils {
                     headerResults.createCell(7).setCellValue("Tokens");
                     headerResults.createCell(8).setCellValue("Class1");
                     headerResults.createCell(9).setCellValue("Class2");
-                    semGui.getME().getDocumentsExcel((String) semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem(), sheetResults, c1,c2);
+                    semGui.getME().getDocumentsExcel((String) semGui.getLinguaAnalizzatoreIstruzione().getSelectedItem(), sheetResults, c1, c2);
                     wb.write(fos);
                     fos.close();
                 } catch (Exception e) {

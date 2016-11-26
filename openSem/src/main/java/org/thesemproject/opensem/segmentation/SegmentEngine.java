@@ -912,6 +912,7 @@ public class SegmentEngine {
                             captureTreeNode.setPointToNotBayes(true);
                             cc.setPointToNotBayes(true);
                         }
+                        cp.setTechnology(ClassificationPath.CAPTURE);
                         captureTreeNode.setClassificationPath(cp);
                         cc.setClassificationPath(cp);
                     }
@@ -1196,7 +1197,7 @@ public class SegmentEngine {
 
     private void classify(SegmentationResults sr, MulticlassEngine me, String language) {
         if (me != null) {
-            if (!sr.isClassifyByCapture()) {
+           // if (!sr.isClassifyByCapture()) {
                 List<String> lines = sr.getLines();
                 StringBuilder text = new StringBuilder();
                 lines.stream().forEach((line) -> {
@@ -1204,7 +1205,7 @@ public class SegmentEngine {
                 });
                 List<ClassificationPath> path = me.bayesClassify(text.toString(), language);
                 sr.addClassificationPath(path);
-            }
+           // }
         }
     }
 

@@ -151,6 +151,7 @@ public class SemConfiguration {
         RAF.writeBytes("last=" + lastFolder + "\r\n");
         RAF.writeBytes("lang=" + language + "\r\n");
         RAF.writeBytes("ocrPath=" + ocrPath + "\r\n");
+        RAF.writeBytes("learning=" + learningFactor + "\r\n");
     }
 
     /**

@@ -1135,7 +1135,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-common</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1146,7 +1146,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-icu</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1157,7 +1157,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-kuromoji</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1168,7 +1168,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-morfologik</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1179,7 +1179,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-phonetic</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1190,7 +1190,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-smartcn</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1201,7 +1201,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-stempel</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1212,7 +1212,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-uima</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1223,7 +1223,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-classification</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1234,7 +1234,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1245,7 +1245,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queries</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1256,7 +1256,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queryparser</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>
@@ -1267,7 +1267,7 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-sandbox</artifactId>
-      <version>5.4.1</version>
+      <version>5.5.2</version>
       <licenses>
         <license>
           <name>Apache 2</name>

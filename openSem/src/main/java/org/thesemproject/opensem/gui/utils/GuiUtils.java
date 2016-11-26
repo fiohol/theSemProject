@@ -142,7 +142,7 @@ public class GuiUtils {
             "Tree.font"};
 
         for (String k : keys) {
-            resetFontSize(k, 72);
+            resetFontSize(k, 70);
         }
 
     }
@@ -160,6 +160,40 @@ public class GuiUtils {
         Enumeration<DefaultMutableTreeNode> e = root.depthFirstEnumeration();
         while (e.hasMoreElements()) {
             DefaultMutableTreeNode node = e.nextElement();
+            if (!onlyEquals) {
+                if (node.toString().toLowerCase().contains(s.toLowerCase())) {
+                    ret.add(new TreePath(node.getPath()));
+                }
+            } else if (node.toString().toLowerCase().equals(s.toLowerCase())) {
+                ret.add(new TreePath(node.getPath()));
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Implementa la ricerca su un albero. Se si tratta di un albero di
+     * categorie cerca solo gli istruiti
+     *
+     * @since 1.6.1
+     *
+     * @param root root albero
+     * @param s String cercata
+     * @param onlyEquals true se si vuole il match esatto
+     * @return lista dei percorsi trovati
+     */
+    public static List<TreePath> findOnTrained(DefaultMutableTreeNode root, String s, boolean onlyEquals) {
+        List<TreePath> ret = new ArrayList<>();
+        Enumeration<DefaultMutableTreeNode> e = root.depthFirstEnumeration();
+        while (e.hasMoreElements()) {
+            DefaultMutableTreeNode node = e.nextElement();
+            if (node instanceof ClassicationTreeNode) {
+                ClassicationTreeNode nx = (ClassicationTreeNode) node;
+                if (!nx.isTrained()) {
+                    continue;
+                }
+
+            }
             if (!onlyEquals) {
                 if (node.toString().toLowerCase().contains(s.toLowerCase())) {
                     ret.add(new TreePath(node.getPath()));
@@ -480,6 +514,38 @@ public class GuiUtils {
                 filters.add(filterC1);
             }
             RowFilter<TableModel, Integer> filter = RowFilter.orFilter(filters);
+            sorter.setRowFilter(filter);
+        } else {
+            sorter.setRowFilter(null);
+        }
+
+        table.setRowSorter(sorter);
+    }
+
+    /**
+     * gestisce filtri diversi su campi diversi sulla tabella
+     *
+     * @since 1.7
+     *
+     * @param table tabella
+     * @param text testi cercati
+     * @param idxs elenco degli id dei campi dove cercare
+     */
+    public static void filterTable(JTable table, String text[], int idxs[]) {
+        TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) table.getRowSorter();
+        List<RowFilter<TableModel, Integer>> filters = new ArrayList<>(idxs.length);
+
+        if (text != null && text.length > 0) {
+            for (int i = 0; i < idxs.length; i++) {
+                if (text[i] != null && text[i].length() > 0) {
+                    LogGui.info("Aggiungo filtro " + text[i] + " su colonna "
+                            + idxs[i]);
+                    table.getColumnModel().getColumn(idxs[i]).setCellRenderer(new JTableCellRender(text[i]));
+                    RowFilter<TableModel, Integer> filterC1 = RowFilter.regexFilter("(?i)" + text[i], idxs[i]);
+                    filters.add(filterC1);
+                }
+            }
+            RowFilter<TableModel, Integer> filter = RowFilter.andFilter(filters);
             sorter.setRowFilter(filter);
         } else {
             sorter.setRowFilter(null);
@@ -839,6 +905,23 @@ public class GuiUtils {
      * @param semGui frame
      */
     public static void treeActionPerformed(JTree tree, JTextArea area, String tokenText, MouseEvent evt, final boolean ignoreSelected, SemGui semGui, JTable table, int textIdx) {
+        treeActionPerformed(tree, area, tokenText, evt, ignoreSelected, semGui, table, textIdx, -1);
+    }
+
+    /**
+     * Gestisce le action su un albero
+     *
+     * @param tree albero
+     * @param area area di testo
+     * @param tokenText testo tokenizzato
+     * @param evt evento
+     * @param ignoreSelected true se deve ignorare i selezionati
+     * @param table tabella da cui prendere i selezionati.
+     * @param textIdx indice della tabella dove c'è il testo
+     * @param semGui frame
+     * @param langIdx indice della lingua
+     */
+    public static void treeActionPerformed(JTree tree, JTextArea area, String tokenText, MouseEvent evt, final boolean ignoreSelected, SemGui semGui, JTable table, int textIdx, int langIdx) {
         if (semGui.isIsClassify()) {
             return;
         }
@@ -849,7 +932,7 @@ public class GuiUtils {
             if (selRow != -1) {
                 final DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                 String txt = (area == null) ? "" : area.getText();
-                String language = semGui.getDP().getLanguageFromText(txt);
+
                 String tokenized = (tokenText == null) ? "" : tokenText;
                 txt = tokenized;
                 if (tokenized.length() > 50) {
@@ -875,17 +958,30 @@ public class GuiUtils {
                                     semGui.getTagCloud().setEnabled(false);
                                     try {
                                         int factor = Integer.parseInt(semGui.getLearningFactor().getText());
+                                        if (textIdx == 2) {
+                                            factor = 1;
+                                        }
                                         if (selected.length == 1 || ignoreSelected) {
                                             String text = area.getText();
-                                            String language1 = semGui.getDP().getLanguageFromText(text);
-                                            IndexManager.addToIndex(semGui.getPercorsoIndice().getText(), tokenText, path, language1, factor, false);
+                                            String language1;
+                                            if (langIdx == -1) {
+                                                language1 = semGui.getDP().getLanguageFromText(text);
+                                            } else {
+                                                language1 = (String) table.getValueAt(selected[0], langIdx);
+                                            }
+                                            IndexManager.addToIndex(semGui.getPercorsoIndice().getText(), text, path, language1, factor, true);
                                             if (textIdx == 2) {
                                                 semGui.deleteSelected();
                                             }
                                         } else {
                                             for (int id : selected) {
                                                 String text = (String) table.getValueAt(id, textIdx);
-                                                String language2 = semGui.getDP().getLanguageFromText(text);
+                                                String language2;
+                                                if (langIdx == -1) {
+                                                    language2 = semGui.getDP().getLanguageFromText(text);
+                                                } else {
+                                                    language2 = (String) table.getValueAt(selected[0], langIdx);
+                                                }
                                                 IndexManager.addToIndex(semGui.getPercorsoIndice().getText(), text, path, language2, factor, true);
                                             }
                                             if (textIdx == 2) {
@@ -1187,6 +1283,39 @@ public class GuiUtils {
         int[] rows = table.getSelectedRows();
         model.moveRow(rows[0], rows[rows.length - 1], rows[0] + 1);
         table.setRowSelectionInterval(rows[0] + 1, rows[rows.length - 1] + 1);
+    }
+
+    /**
+     * gestisce la ricerca nel testo del documento
+     *
+     * @param idxs
+     * @param search
+     * @param table
+     */
+    public static void searchDocumentBody(int[] idxs, JTextField search, JTable table) {
+
+        String text = search.getText();
+        text = text.replace("(", "\\(");
+        text = text.replace(")", "\\)");
+        if (text.toLowerCase().startsWith("level1:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 3);
+        } else if (text.toLowerCase().startsWith("level2:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 4);
+        } else if (text.toLowerCase().startsWith("level3:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 5);
+        } else if (text.toLowerCase().startsWith("level4:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 6);
+        } else if (text.toLowerCase().startsWith("level5:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 7);
+        } else if (text.toLowerCase().startsWith("level6:") && text.length() > 7) {
+            GuiUtils.filterTable(table, text.substring(7).trim(), 8);
+        } else if (text.toLowerCase().startsWith("testo:") && text.length() > 6) {
+            GuiUtils.filterTable(table, text.substring(6).trim(), 1);
+        } else if (text.toLowerCase().startsWith("origine:") && text.length() > 8) {
+            GuiUtils.filterTable(table, text.substring(8).trim(), 2);
+        } else {
+            GuiUtils.filterTable(table, text, idxs);
+        }
     }
 
 }

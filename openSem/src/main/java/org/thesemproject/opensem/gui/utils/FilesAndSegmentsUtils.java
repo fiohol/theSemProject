@@ -315,8 +315,6 @@ public class FilesAndSegmentsUtils {
         }
     }
 
-    
-
     /**
      * Gestisce l'esportaizone excel della filestable (e dei segmenti)
      *
@@ -477,7 +475,7 @@ public class FilesAndSegmentsUtils {
      *
      * @since 1.3.3
      * @param semGui frame
-     * @param fullText  true se deve essere fatta sull'intero testo
+     * @param fullText true se deve essere fatta sull'intero testo
      */
     public static void doExtractFrequencies(SemGui semGui, boolean fullText) {
         GuiUtils.clearTable(semGui.getFreqTable());
@@ -855,5 +853,128 @@ public class FilesAndSegmentsUtils {
             t.setDaemon(true);
             t.start();
         }
+    }
+
+    /**
+     *
+     * @param semGui
+     */
+    public static void doSegmentTableClass(SemGui semGui) {
+        if (semGui.isIsClassify()) {
+            semGui.getStopSegmentAndClassify().setValue(true);
+            semGui.getInterrompi().setEnabled(false);
+        } else {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!semGui.isIsClassify()) {
+                        semGui.getStopSegmentAndClassify().setValue(false);
+                        semGui.getInterrompi().setEnabled(true);
+                        semGui.setIsClassify(true);
+                        semGui.resetFilesFilters();
+                        ChangedUtils.prepareChanged(semGui);
+                        semGui.getFilesTab().setTitleAt(0, "Storage (" + semGui.getFilesTable().getRowCount() + ")");
+                        semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ")");
+                        semGui.getFilesTab().setTitleAt(2, "Cambiamenti (" + semGui.getChangedTable().getRowCount() + ")");
+                        if (semGui.isNeedUpdate()) {
+                            semGui.getRebuildIndex().setSelected(true);
+                            semGui.initializeModel(false);
+                            semGui.setNeedUpdate(false);
+                        }
+                        semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ") - Classificazione in corso");
+                        int processors = semGui.getProcessori2().getSelectedIndex() + 1;
+                        ParallelProcessor segmentAndClassify = new ParallelProcessor(processors, 6000); //100 ore
+                        AtomicInteger count = new AtomicInteger(0);
+                        LogGui.info("Start processing");
+                        final int size = semGui.getSegmentsTable().getRowCount();
+                        for (int j = 0; j < processors; j++) {
+                            segmentAndClassify.add(() -> {
+                                //Legge il file... e agginge in coda
+                                while (true) {
+                                    if (semGui.getStopSegmentAndClassify().getValue()) {
+                                        break;
+                                    }
+                                    int row = count.getAndIncrement();
+                                    if (row >= size) {
+                                        break;
+                                    }
+                                    int pos = semGui.getSegmentsTable().convertRowIndexToModel(row);
+                                    String idSeg = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 0));
+                                    int p2 = idSeg.indexOf(".");
+                                    Integer id = Integer.parseInt(idSeg.substring(0, p2));
+                                    SemDocument dto = semGui.getTableData().get(id);
+                                    List<Object[]> rows = dto.getSegmentRows();
+                                    int posSegRow = -1;
+                                    
+                                    for (int k = 0; k < rows.size(); k++) {
+                                        Object[] rx = rows.get(k);
+                                        if (String.valueOf(rx[0]).equals(idSeg)) {
+                                            posSegRow = k;
+                                            break;
+                                        }
+                                    }
+                                    String text = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 4));
+                                    String lang = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 3));
+                                    if (text == null) {
+                                        text = "";
+                                        continue;
+                                    }
+
+                                    if (row % 3 == 0) {
+                                        semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ") - " + row + "/" + size);
+                                    }
+                                    
+                                    String language = dto.getLanguage();
+                                   
+                                    List<ClassificationPath> bayes = semGui.getME().bayesClassify(text, language);
+                                    String oldClass1 = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 1));
+                                    String oldClass2 = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 2));
+                                    String newClass1 = "";
+                                    String newClass2 = "";
+                                    if (bayes.size() == 1) {
+                                        newClass1 = bayes.get(0).toSmallClassString();
+                                    } else if (bayes.size() >= 2) {
+                                        newClass1 = bayes.get(0).toSmallClassString();
+                                        newClass2 = bayes.get(1).toSmallClassString();
+                                    }
+                                    String check = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 6));
+                                    if ("X".equalsIgnoreCase(check)) {
+                                        if (!newClass1.equalsIgnoreCase(oldClass1) || !newClass2.equalsIgnoreCase(oldClass2)) {
+                                            semGui.getSegmentsTable().setValueAt("A", pos, 6);
+                                            rows.get(posSegRow)[6] = "A";
+                                        }
+                                    } else if (!newClass1.equalsIgnoreCase(oldClass1) || !newClass2.equalsIgnoreCase(oldClass2)) {
+                                        semGui.getSegmentsTable().setValueAt("C", pos, 6);
+                                        rows.get(posSegRow)[6] = "C";
+                                    } else {
+                                        semGui.getSegmentsTable().setValueAt("", pos, 6);
+                                        rows.get(posSegRow)[6] = "";
+                                    }
+                                    semGui.getSegmentsTable().setValueAt(newClass1, pos, 1);
+                                    semGui.getSegmentsTable().setValueAt(newClass2, pos, 2);
+                                    rows.get(posSegRow)[1] = newClass1;
+                                    rows.get(posSegRow)[2] = newClass2;
+                                    dto.setClassPath(idSeg, bayes);
+                                    dto.setSegmentRows(rows);
+                                } //Quello che legge
+                            });
+                        }
+                        segmentAndClassify.waitTermination();
+                        ChangedUtils.updateChangedTree(semGui);
+                        LogGui.info("Terminated...");
+                        GuiUtils.runGarbageCollection();
+                        semGui.getFilesInfoLabel().setText("Fine");
+                        semGui.updateStats();
+                        semGui.setIsClassify(false);
+                        semGui.captureCoverageUpdate();
+                        semGui.getInterrompi().setEnabled(false);
+                        GuiUtils.filterOnStatus("C", null, semGui);
+                    }
+                }
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+
     }
 }

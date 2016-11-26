@@ -41,7 +41,7 @@ public class Tokenizer {
      * @throws Exception Eccezione
      */
     public static String tokenize(String text, Analyzer analyzer) throws Exception {
-        return tokenize(text, analyzer, 50);
+        return tokenize(text, analyzer, 25);
     }
 
     /**

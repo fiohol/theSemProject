@@ -223,14 +223,16 @@ public class IndexManager {
     private static void addToIndex(Path indexDir, String text, Object[] path, File fStop, String language, int factor, boolean tokenize) throws IOException, FileNotFoundException, Exception {
         try {
             IndexWriter indexWriter = getIndexWriter(indexDir, fStop, language);
+            MyAnalyzer analyzer = IndexManager.getAnalyzer(fStop, language);
+            
             if (factor <= 0) {
                 factor = 1;
             }
-            String body = tokenize ? Tokenizer.tokenize(text.toLowerCase().trim(), indexWriter.getAnalyzer()) : text;
+            //String body = tokenize ? Tokenizer.tokenize(text.toLowerCase().trim(), indexWriter.getAnalyzer()) : text;
             FieldType ft = getNotTokenizedFieldType();
             for (int count = 0; count < factor; count++) {
                 Document doc = new Document();
-                doc.add(new TextField(BODY, body, Field.Store.YES));
+              //  doc.add(new TextField(BODY, body, Field.Store.YES));
                 doc.add(new TextField(TEXT, text, Field.Store.YES));
                 doc.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
                 doc.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
@@ -268,8 +270,10 @@ public class IndexManager {
                         doc.add(new StringField(NodeData.getNodeCodeForFilter(path[5].toString()) + "", NodeData.getNodeCodeForFilter(path[6].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL6_NAME, path[i].toString(), Field.Store.YES));
                     }
+                    
                 }
-                indexWriter.addDocument(doc);
+                //indexWriter.addDocument(doc);
+                reindexDoc(doc, ft, analyzer, indexWriter);
             }
 
             indexWriter.commit();
@@ -767,54 +771,6 @@ public class IndexManager {
         }
         LogGui.info("Index written");
 
-    }
-
-    /**
-     * Reindicizza il contenuto dell'indice di istruzione imponendo l'UUID come
-     * field non tokenizzato
-     *
-     * @deprecated
-     *
-     * @param reindexDoc Lista dei documenti di lucene da reindicizzare
-     * @param indexDir path dell'indice
-     * @param fStop file di stopwords
-     * @param language lingua
-     * @throws Exception Eccezione eccezione
-     */
-    public static void reindexOld(List<Document> reindexDoc, Path indexDir, File fStop, String language) throws Exception {
-        LogGui.info("Garbaging prima della reindicizzazione...");
-        System.gc();
-        LogGui.printMemorySummary();
-        String pathOrigin = indexDir.toFile().getAbsolutePath();
-        LogGui.info("Backup...");
-        String pathBackup = pathOrigin + ".bck." + System.currentTimeMillis();
-        File origin = new File(pathOrigin);
-        File backup = new File(pathBackup);
-        origin.renameTo(backup);
-        File newFile = new File(pathOrigin);
-        LogGui.info("Creo cartella...");
-        newFile.mkdirs();
-        LogGui.info("Apro l'indice...");
-        IndexWriter indexWriter = getIndexWriter(indexDir, fStop, language, false, IndexWriterConfig.OpenMode.CREATE);
-        FieldType ft = getNotTokenizedFieldType();
-        Analyzer analyzer = indexWriter.getAnalyzer();
-        try {
-            int count = 0;
-            for (Document d : reindexDoc) {
-                reindexDoc(d, ft, analyzer, indexWriter);
-                if (count++ % 100 == 0) {
-                    LogGui.info("Reindex Commit... " + count);
-                    indexWriter.commit();
-                }
-            }
-            indexWriter.commit();
-            indexWriter.flush();
-            LogGui.info("Close index...");
-            indexWriter.close();
-            LogGui.info("Index written");
-        } catch (Exception e) {
-            LogGui.printException(e);
-        }
     }
 
     /**

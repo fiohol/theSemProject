@@ -29,6 +29,11 @@ public class ClassificationPath implements Serializable {
      * classificatore Bayesiano (Lucene)
      */
     public static final String BAYES = "Bayes";
+    
+    /**
+     * Tipo classificazione cattura
+     */
+    public static final String CAPTURE = "Capture";
 
     /**
      * Costante che identifica una classificazione fatta attraverso il
@@ -215,4 +220,14 @@ public class ClassificationPath implements Serializable {
      */
     public static final int MAX_DEEP = 6;
 
+    /**
+     *
+     * @param technology
+     */
+    public void setTechnology(String technology) {
+        this.technology = technology;
+    }
+
+    
+    
 }

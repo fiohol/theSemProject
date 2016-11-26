@@ -235,7 +235,7 @@ public class SemDocument implements Serializable {
     public void setClassPath(String segmentId, List<ClassificationPath> cp) {
         classRows.put(segmentId, cp);
     }
-
+    
     /**
      * Imposta il segment come marcato. Un segment marcato ha una X nell'ultima
      * colonna. Inoltre a fronte di una riclassificazione se un segmento marcato

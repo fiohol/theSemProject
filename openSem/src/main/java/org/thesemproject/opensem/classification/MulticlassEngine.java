@@ -169,24 +169,15 @@ public class MulticlassEngine {
         File fStructurePath = new File(structurePath); //Verifica che esistano le structure path
         if (fStructurePath.exists() && fStructurePath.isDirectory()) {
             //Verifica se la struttura è ok.
-            //TODO: Qui legge il file della struttura (in futuro)
             boolean ret = true;
+
+            int level = 1;
+            if (root != null) {
+                level = root.getStartLevel();
+            }
             root = null;
             this.structurePath = fStructurePath;
-            String structueFileName = getStructurePath();
-            File fStructure = new File(structueFileName);
-            boolean fileExists = fStructure.exists();
-            if (fileExists) {
-                try {
-                    org.jdom2.Document document = GuiUtils.readXml(fStructure.getAbsolutePath());
-                    root = NodeData.getNodeData(document, intern);
-                } catch (Exception e) {
-                    LogGui.printException(e);
-                }
-            } else {
-                root = new NodeData(1, k, intern); //Root
-                
-            }
+
             cats = new HashSet<>();
             for (String language : MyAnalyzer.languages) {
                 String indexFolder = getIndexFolder(language);
@@ -195,10 +186,7 @@ public class MulticlassEngine {
                 File fStop = new File(stopWords);
                 if (fIndex.exists()) {
                     if (fIndex.listFiles().length > 0) {
-                        int level = 1;
-                        if (root != null) {
-                            level = root.getStartLevel();
-                        }
+
                         try {
                             ret = ret && init(indexFolder, stopWords, language, level, k, reindex);
                         } catch (Exception e) {
@@ -207,6 +195,7 @@ public class MulticlassEngine {
                     }
                 }
             }
+            String structueFileName = getStructurePath();
             org.jdom2.Document document = NodeData.getDocument(root);
             GuiUtils.storeXml(document, structueFileName);
             isInit = true;
@@ -232,8 +221,21 @@ public class MulticlassEngine {
             MyAnalyzer analyzer = IndexManager.getAnalyzer(new File(stop), language);
             analyzers.put(language, analyzer);
             final int maxdoc = reader.maxDoc();
+
+            String structueFileName = getStructurePath();
+            File fStructure = new File(structueFileName);
+            boolean fileExists = fStructure.exists();
             if (root == null) {
-                root = new NodeData(startLevel, k, intern); //Root
+                if (fileExists) {
+                    try {
+                        org.jdom2.Document document = GuiUtils.readXml(fStructure.getAbsolutePath());
+                        root = NodeData.getNodeData(document, intern);
+                    } catch (Exception e) {
+                        LogGui.printException(e);
+                    }
+                } else {
+                    root = new NodeData(startLevel, k, intern); //Root
+                }
             }
             LogGui.info("Init language: " + language);
             LogGui.info("Documents: " + maxdoc);
@@ -244,10 +246,8 @@ public class MulticlassEngine {
             LogGui.info("Read all example dataset");
             HashSet categories = new HashSet<>();
             Bits liveDocs = MultiFields.getLiveDocs(reader);
-
             LogGui.info("Apro l'indice...");
             IndexWriter indexWriter = null;
-
             File origin = new File(index);
             String pathOrigin = origin.getAbsolutePath();
             String pathNew = pathOrigin + ".new." + System.currentTimeMillis();
@@ -452,7 +452,7 @@ public class MulticlassEngine {
      * @param c1 valori della colonna kpi1
      * @param c2 valori della colonna kpi2
      */
-    public void getDocumentsExcel(String language, SXSSFSheet sheetResults,  HashMap<String, String> c1 ,  HashMap<String, String> c2) {
+    public void getDocumentsExcel(String language, SXSSFSheet sheetResults, HashMap<String, String> c1, HashMap<String, String> c2) {
         try {
             int rownum = 1;
             String index = getIndexFolder(language);
@@ -475,8 +475,12 @@ public class MulticlassEngine {
                 String id = doc.get(IndexManager.UUID);
                 String c1v = c1.get(id);
                 String c2v = c2.get(id);
-                if (c1v != null) row.createCell(8).setCellValue(c1v);
-                if (c2v != null) row.createCell(9).setCellValue(c2v);
+                if (c1v != null) {
+                    row.createCell(8).setCellValue(c1v);
+                }
+                if (c2v != null) {
+                    row.createCell(9).setCellValue(c2v);
+                }
                 String level1 = (String) intern.intern(doc.get(IndexManager.LEVEL1_NAME));
                 row.createCell(0).setCellValue(level1);
                 if (level1 != null) {
@@ -520,7 +524,7 @@ public class MulticlassEngine {
      * @return testo tokenizzato
      */
     public String tokenize(String text, String language) {
-        return tokenize(text, language, 12);
+        return tokenize(text, language, -1);
     }
 
     /**
@@ -541,7 +545,10 @@ public class MulticlassEngine {
             String ret;
             try {
                 MyAnalyzer analyzer = getAnalyzer(language);
+                if (tokens != -1)
                 ret = Tokenizer.tokenize(text, analyzer, tokens);
+                else
+                    ret = Tokenizer.tokenize(text, analyzer);
             } catch (Exception e) {
                 LogGui.printException(e);
                 ret = "";
@@ -680,6 +687,9 @@ public class MulticlassEngine {
     private List<ClassificationPath> classifyOnRoot(String text, NodeData root, boolean knn, String language) throws IOException {
         try {
             List<ClassificationPath> results = new ArrayList<>();
+            if (text.length() == 0) {
+                return results;
+            }
             int level = root.getStartLevel() - 1;
             if (!knn) {
                 ClassificationPath bChoice1 = new ClassificationPath(ClassificationPath.BAYES);
@@ -709,7 +719,7 @@ public class MulticlassEngine {
                         double score1 = resultNdList.get(0).getScore();
                         double childrenSize = root.getChildrenNames().size(); //Numero di figli
                         double realThreshold = 1 / childrenSize;
-                        if (score2 >= realThreshold || (Math.abs(score2 - score1) < 0.1)) {
+                        if ((score2 >= realThreshold && ((score2 * 2) > score1)) || (Math.abs(score2 - score1) < 0.1)) {
                             bChoice2.addResult(root.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
                             NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
