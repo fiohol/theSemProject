@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.classification.KNearestNeighborClassifier;
 import org.apache.lucene.classification.SimpleNaiveBayesClassifier;
@@ -60,11 +58,8 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.jdom2.input.SAXBuilder;
-import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
 import static org.thesemproject.opensem.classification.IndexManager.getNotTokenizedFieldType;
 import static org.thesemproject.opensem.classification.IndexManager.reindexDoc;
-import org.thesemproject.opensem.parser.DocumentParser;
 import org.thesemproject.opensem.utils.interning.InternPool;
 import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
 
@@ -175,8 +170,23 @@ public class MulticlassEngine {
             if (root != null) {
                 level = root.getStartLevel();
             }
-            root = null;
             this.structurePath = fStructurePath;
+
+            String structueFileName = getStructurePath();
+            File fStructure = new File(structueFileName);
+            LogGui.info("Apro fil file di struttura: " + fStructure.getAbsolutePath());
+            boolean fileExists = fStructure.exists();
+
+            if (fileExists) {
+                try {
+                    org.jdom2.Document document = GuiUtils.readXml(fStructure.getAbsolutePath());
+                    root = NodeData.getNodeData(document, intern);
+                } catch (Exception e) {
+                    LogGui.printException(e);
+                }
+            } else {
+                root = new NodeData(level, k, intern); //Root
+            }
 
             cats = new HashSet<>();
             for (String language : MyAnalyzer.languages) {
@@ -195,7 +205,7 @@ public class MulticlassEngine {
                     }
                 }
             }
-            String structueFileName = getStructurePath();
+
             org.jdom2.Document document = NodeData.getDocument(root);
             GuiUtils.storeXml(document, structueFileName);
             isInit = true;
@@ -221,22 +231,6 @@ public class MulticlassEngine {
             MyAnalyzer analyzer = IndexManager.getAnalyzer(new File(stop), language);
             analyzers.put(language, analyzer);
             final int maxdoc = reader.maxDoc();
-
-            String structueFileName = getStructurePath();
-            File fStructure = new File(structueFileName);
-            boolean fileExists = fStructure.exists();
-            if (root == null) {
-                if (fileExists) {
-                    try {
-                        org.jdom2.Document document = GuiUtils.readXml(fStructure.getAbsolutePath());
-                        root = NodeData.getNodeData(document, intern);
-                    } catch (Exception e) {
-                        LogGui.printException(e);
-                    }
-                } else {
-                    root = new NodeData(startLevel, k, intern); //Root
-                }
-            }
             LogGui.info("Init language: " + language);
             LogGui.info("Documents: " + maxdoc);
             LogGui.info("Start training NaiveBayes and KNN");
@@ -545,10 +539,11 @@ public class MulticlassEngine {
             String ret;
             try {
                 MyAnalyzer analyzer = getAnalyzer(language);
-                if (tokens != -1)
-                ret = Tokenizer.tokenize(text, analyzer, tokens);
-                else
+                if (tokens != -1) {
+                    ret = Tokenizer.tokenize(text, analyzer, tokens);
+                } else {
                     ret = Tokenizer.tokenize(text, analyzer);
+                }
             } catch (Exception e) {
                 LogGui.printException(e);
                 ret = "";
@@ -643,45 +638,75 @@ public class MulticlassEngine {
         return null;
     }
 
-    private ClassificationPath classifyOnSubNode(String text, NodeData nd, int level, ClassificationPath cp, String language) throws IOException {
+    private List<ClassificationPath> classifyOnSubNode(String text, NodeData nd, int level, ClassificationPath classPath, String language) throws IOException {
+        List<ClassificationPath> ret = new ArrayList<>();
         if (!isInit) {
             return null;
         }
         if (level < 1) {
-            return cp;
+            ret.add(classPath);
+            return ret;
         }
-        if (cp == null) {
+        if (classPath == null) {
             return null;
         }
-        ClassificationResult<BytesRef> resultNdList = null;
-        if (cp.getTechnology().equals(ClassificationPath.BAYES)) {
+        List<ClassificationResult<BytesRef>> resultNdList = null;
+        if (classPath.getTechnology().equals(ClassificationPath.BAYES)) {
             SimpleNaiveBayesClassifier snbc = nd.getClassifier(language);
             if (snbc != null) {
-                List<ClassificationResult<BytesRef>> list = snbc.getClasses(text);
-                resultNdList = list.get(0);
+                resultNdList = snbc.getClasses(text);
+                //  resultNdList = list.get(0);
+                //Modifica 1.7.2 Controllo lo score dei fratelli e al limite faccio un branch di classificaizone
+
             }
 
-        } else if (cp.getTechnology().equals(ClassificationPath.KNN)) {
+        } else if (classPath.getTechnology().equals(ClassificationPath.KNN)) {
             KNearestNeighborClassifier knnc = nd.getKnn(language);
             if (knnc != null) {
-                resultNdList = knnc.assignClass(text);
+                if (resultNdList == null) {
+                    resultNdList = new ArrayList<>();
+                }
+                resultNdList.add(knnc.assignClass(text));
             }
         }
-        if (resultNdList != null) {
-            double score = resultNdList.getScore();
-            double size = nd.getChildrenNames().size();
-            double realThreshold = 1 / size;
-            //if (score >= realThreshold) {
-            cp.addResult(nd.getNameFromId(resultNdList.getAssignedClass().utf8ToString()), score, level);
-            NodeData child = nd.getNode(cp.getNodeName(level));
+        if (resultNdList != null && resultNdList.size() > 0) {
+            double score1 = resultNdList.get(0).getScore();
+            ClonableClassificationPath ccp = new ClonableClassificationPath(classPath);
+            ClassificationPath cp1 = ccp.clone();
+
+            cp1.addResult(nd.getNameFromId(resultNdList.get(0).getAssignedClass().utf8ToString()), score1, level);
+            NodeData child = nd.getNode(cp1.getNodeName(level));
             if (child != null) {
                 if (child.hasChildren()) {
-                    return classifyOnSubNode(text, child, level + 1, cp, language);
+                    ret.addAll(classifyOnSubNode(text, child, level + 1, cp1, language));
+                } else {
+                    ret.add(cp1);
                 }
             }
-            //}
+            if (resultNdList.size() > 1) {
+                // double childrenSize = nd.getChildrenNames().size(); //Numero di figli
+                double childrenSize = resultNdList.size();
+                for (int j = 1; j < resultNdList.size(); j++) {
+                    double score2 = resultNdList.get(j).getScore();
+                    ClassificationPath cp2 = ccp.clone();
+                    if (canClassifyOnSubtree(score1, score2, childrenSize)) {
+                        cp2.addResult(nd.getNameFromId(resultNdList.get(j).getAssignedClass().utf8ToString()), score2, level);
+                        NodeData child2 = nd.getNode(cp2.getNodeName(level));
+                        if (child2 != null) {
+                            if (child2.hasChildren()) {
+                                ret.addAll(classifyOnSubNode(text, child2, level + 1, cp2, language));
+                            } else {
+                                ret.add(cp2);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            ret.add(classPath);
         }
-        return cp;
+        return ret;
+
     }
 
     private List<ClassificationPath> classifyOnRoot(String text, NodeData root, boolean knn, String language) throws IOException {
@@ -710,16 +735,16 @@ public class MulticlassEngine {
                             NodeData.findPath(bChoice1, child1, level);
                         }
                         if (child1.hasChildren()) {
-                            bChoice1 = classifyOnSubNode(text, child1, level + 1, bChoice1, language);
+                            results.addAll(classifyOnSubNode(text, child1, level + 1, bChoice1, language));
                         }
+                    } else {
+                        results.add(bChoice1);
                     }
-                    results.add(bChoice1);
                     if (resultNdList.size() > 1) {
                         double score2 = resultNdList.get(1).getScore();
                         double score1 = resultNdList.get(0).getScore();
                         double childrenSize = root.getChildrenNames().size(); //Numero di figli
-                        double realThreshold = 1 / childrenSize;
-                        if ((score2 >= realThreshold && ((score2 * 2) > score1)) || (Math.abs(score2 - score1) < 0.1)) {
+                        if (canClassifyOnSubtree(score1, score2, childrenSize)) {
                             bChoice2.addResult(root.getNameFromId(resultNdList.get(1).getAssignedClass().utf8ToString()), score2, level);
                             NodeData child2 = root.getNode(bChoice2.getNodeName(level));
                             if (child2 != null) {
@@ -727,10 +752,11 @@ public class MulticlassEngine {
                                     NodeData.findPath(bChoice2, child2, level);
                                 }
                                 if (child2.hasChildren()) {
-                                    bChoice2 = classifyOnSubNode(text, child2, level + 1, bChoice2, language);
+                                    results.addAll(classifyOnSubNode(text, child2, level + 1, bChoice2, language));
                                 }
+                            } else {
+                                results.add(bChoice2);
                             }
-                            results.add(bChoice2);
                         }
                     }
                 }
@@ -751,10 +777,11 @@ public class MulticlassEngine {
                             NodeData.findPath(kChoice1, child1, level);
                         }
                         if (child1.hasChildren()) {
-                            kChoice1 = classifyOnSubNode(text, child1, level + 1, kChoice1, language);
+                            results.addAll(classifyOnSubNode(text, child1, level + 1, kChoice1, language));
                         }
+                    } else {
+                        results.add(kChoice1);
                     }
-                    results.add(kChoice1);
                 }
             }
             return results;
@@ -762,6 +789,11 @@ public class MulticlassEngine {
             LogGui.printException(e);
             return null;
         }
+    }
+
+    private boolean canClassifyOnSubtree(double score1, double score2, double childrenSize) {
+        double realThreshold = 1 / childrenSize;
+        return (((score2 >= realThreshold) && (score2*2.2 >= score1)) || (Math.abs(score2 - score1) < 0.1));
     }
 
     private void addNode(LeafReader ar, MyAnalyzer analyzer, NodeData parent, Set<String> cats, String name, int k, String language) throws Exception {

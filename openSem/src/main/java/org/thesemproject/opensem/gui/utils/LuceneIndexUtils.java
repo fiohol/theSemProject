@@ -281,6 +281,7 @@ public class LuceneIndexUtils {
                     HashMap<String, String> c1 = new HashMap<>();
                     HashMap<String, String> c2 = new HashMap<>();
                     if (documentsTable != null) {
+                        GuiUtils.filterTable(documentsTable, null, 0);
                         int rc = documentsTable.getModel().getRowCount();
                         for (int i = 0; i < rc; i++) {
                             String key = (String) documentsTable.getValueAt(i, 0);

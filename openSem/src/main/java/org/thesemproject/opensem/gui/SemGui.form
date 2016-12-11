@@ -8159,20 +8159,6 @@
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
                                   </Events>
                                 </Component>
-                                <Component class="javax.swing.JButton" name="jButton17">
-                                  <Properties>
-                                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                      <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/doc_page.png"/>
-                                    </Property>
-                                    <Property name="text" type="java.lang.String" value="Documenti"/>
-                                    <Property name="focusable" type="boolean" value="false"/>
-                                    <Property name="horizontalAlignment" type="int" value="4"/>
-                                    <Property name="horizontalTextPosition" type="int" value="4"/>
-                                  </Properties>
-                                  <Events>
-                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton17ActionPerformed"/>
-                                  </Events>
-                                </Component>
                                 <Component class="javax.swing.JToolBar$Separator" name="jSeparator27">
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel5">
@@ -8187,6 +8173,14 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchManageClassificationActionPerformed"/>
                                   </Events>
+                                </Component>
+                                <Component class="javax.swing.JCheckBox" name="onTrained2">
+                                  <Properties>
+                                    <Property name="text" type="java.lang.String" value="Istruite"/>
+                                    <Property name="focusable" type="boolean" value="false"/>
+                                    <Property name="horizontalAlignment" type="int" value="0"/>
+                                    <Property name="horizontalTextPosition" type="int" value="4"/>
+                                  </Properties>
                                 </Component>
                               </SubComponents>
                             </Container>
@@ -8336,7 +8330,7 @@
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                           <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/table.png"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="Ricarica Indice"/>
+                                        <Property name="text" type="java.lang.String" value="Ricarica"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalAlignment" type="int" value="4"/>
                                         <Property name="horizontalTextPosition" type="int" value="4"/>
@@ -8350,7 +8344,7 @@
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                           <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/arrow_out.png"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="Esporta Indice"/>
+                                        <Property name="text" type="java.lang.String" value="Esporta"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalAlignment" type="int" value="4"/>
                                         <Property name="horizontalTextPosition" type="int" value="4"/>
@@ -8378,6 +8372,20 @@
                                     </Component>
                                     <Component class="javax.swing.JToolBar$Separator" name="jSeparator58">
                                     </Component>
+                                    <Component class="javax.swing.JButton" name="jButton17">
+                                      <Properties>
+                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                          <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/doc_page.png"/>
+                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="Categoria"/>
+                                        <Property name="focusable" type="boolean" value="false"/>
+                                        <Property name="horizontalAlignment" type="int" value="4"/>
+                                        <Property name="horizontalTextPosition" type="int" value="4"/>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton17ActionPerformed"/>
+                                      </Events>
+                                    </Component>
                                     <Component class="javax.swing.JButton" name="classificaTesto1">
                                       <Properties>
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -8398,7 +8406,7 @@
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                           <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/spellcheck.png"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="Conferma cambiati selezionati"/>
+                                        <Property name="text" type="java.lang.String" value="Conferma cambiamenti"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalAlignment" type="int" value="4"/>
                                         <Property name="horizontalTextPosition" type="int" value="4"/>
@@ -8412,7 +8420,7 @@
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                           <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/link_break.png"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="Non confermare cambiati"/>
+                                        <Property name="text" type="java.lang.String" value="Non confermare"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalAlignment" type="int" value="4"/>
                                         <Property name="horizontalTextPosition" type="int" value="4"/>
@@ -8457,7 +8465,7 @@
                                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                           <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/magnifier.png"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="Cerca  nel testo o nei level "/>
+                                        <Property name="text" type="java.lang.String" value="Cerca"/>
                                       </Properties>
                                     </Component>
                                     <Component class="javax.swing.JTextField" name="serachDocumentBody">

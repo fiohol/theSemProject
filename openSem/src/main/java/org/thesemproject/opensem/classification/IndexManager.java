@@ -224,7 +224,7 @@ public class IndexManager {
         try {
             IndexWriter indexWriter = getIndexWriter(indexDir, fStop, language);
             MyAnalyzer analyzer = IndexManager.getAnalyzer(fStop, language);
-            
+
             if (factor <= 0) {
                 factor = 1;
             }
@@ -232,7 +232,7 @@ public class IndexManager {
             FieldType ft = getNotTokenizedFieldType();
             for (int count = 0; count < factor; count++) {
                 Document doc = new Document();
-              //  doc.add(new TextField(BODY, body, Field.Store.YES));
+                //  doc.add(new TextField(BODY, body, Field.Store.YES));
                 doc.add(new TextField(TEXT, text, Field.Store.YES));
                 doc.add(new StringField(STATUS, ACTIVE, Field.Store.YES));
                 doc.add(new Field(UUID, java.util.UUID.randomUUID().toString(), ft));
@@ -270,7 +270,7 @@ public class IndexManager {
                         doc.add(new StringField(NodeData.getNodeCodeForFilter(path[5].toString()) + "", NodeData.getNodeCodeForFilter(path[6].toString()) + "", Field.Store.YES));
                         doc.add(new StringField(LEVEL6_NAME, path[i].toString(), Field.Store.YES));
                     }
-                    
+
                 }
                 //indexWriter.addDocument(doc);
                 reindexDoc(doc, ft, analyzer, indexWriter);
@@ -481,11 +481,12 @@ public class IndexManager {
                         d.add(new StringField(LEVEL_1, NodeData.getNodeCodeForFilter(level1.getStringCellValue()) + "", Field.Store.YES));
                         d.add(new StringField(LEVEL1_NAME, level1.getStringCellValue(), Field.Store.YES));
                         Cell level2 = row.getCell(1);
-                        if (level2.getCellType() != HSSFCell.CELL_TYPE_STRING) {
-                            LogGui.info("Riga " + level2 + " contiene un valore numerico anziché stringa. Scartata");
-                            continue;
-                        }
+
                         if (level2 != null && level2.getStringCellValue().trim().length() > 0) {
+                            if (level2.getCellType() != HSSFCell.CELL_TYPE_STRING) {
+                                LogGui.info("Riga " + level2 + " contiene un valore numerico anziché stringa. Scartata");
+                                continue;
+                            }
                             level2.setCellValue(StringUtils.firstUpper(level2.getStringCellValue()));
                             d.add(new StringField(LEVEL_2, NodeData.getNodeCodeForFilter(level2.getStringCellValue()) + "", Field.Store.YES));
                             d.add(new StringField(NodeData.getNodeCodeForFilter(level1.getStringCellValue()) + "", NodeData.getNodeCodeForFilter(level2.getStringCellValue()) + "", Field.Store.YES));
@@ -629,79 +630,75 @@ public class IndexManager {
             if (dCat != null) {
                 indexWriter.addDocument(dCat);
             }
+        } else if (l4 == null) {
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(l1, l2, Field.Store.YES));
+            dCat.add(new StringField(l2, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat = getDocument(l3n, dCat, indexWriter);
+            if (dCat != null) {
+                indexWriter.addDocument(dCat);
+            }
+        } else if (l5 == null) {
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
+            dCat.add(new StringField(l1, l2, Field.Store.YES));
+            dCat.add(new StringField(l2, l3, Field.Store.YES));
+            dCat.add(new StringField(l3, l4, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            dCat = getDocument(l4n, dCat, indexWriter);
+            if (dCat != null) {
+                indexWriter.addDocument(dCat);
+            }
+        } else if (l6 == null) {
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
+            dCat.add(new StringField(l1, l2, Field.Store.YES));
+            dCat.add(new StringField(l2, l3, Field.Store.YES));
+            dCat.add(new StringField(l3, l4, Field.Store.YES));
+            dCat.add(new StringField(l4, l5, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
+            dCat = getDocument(l5n, dCat, indexWriter);
+            if (dCat != null) {
+                indexWriter.addDocument(dCat);
+            }
         } else {
-            if (l4 == null) {
-                dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
-                dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
-                dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
-                dCat.add(new StringField(l1, l2, Field.Store.YES));
-                dCat.add(new StringField(l2, l3, Field.Store.YES));
-                dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
-                dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
-                dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
-                dCat = getDocument(l3n, dCat, indexWriter);
-                if (dCat != null) {
-                    indexWriter.addDocument(dCat);
-                }
-            } else if (l5 == null) {
-                dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
-                dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
-                dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
-                dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
-                dCat.add(new StringField(l1, l2, Field.Store.YES));
-                dCat.add(new StringField(l2, l3, Field.Store.YES));
-                dCat.add(new StringField(l3, l4, Field.Store.YES));
-                dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
-                dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
-                dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
-                dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
-                dCat = getDocument(l4n, dCat, indexWriter);
-                if (dCat != null) {
-                    indexWriter.addDocument(dCat);
-                }
-            } else {
-                if (l6 == null) {
-                    dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
-                    dCat.add(new StringField(l1, l2, Field.Store.YES));
-                    dCat.add(new StringField(l2, l3, Field.Store.YES));
-                    dCat.add(new StringField(l3, l4, Field.Store.YES));
-                    dCat.add(new StringField(l4, l5, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
-                    dCat = getDocument(l5n, dCat, indexWriter);
-                    if (dCat != null) {
-                        indexWriter.addDocument(dCat);
-                    }
-                } else {
-                    dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL_6, l6, Field.Store.YES));
-                    dCat.add(new StringField(l1, l2, Field.Store.YES));
-                    dCat.add(new StringField(l2, l3, Field.Store.YES));
-                    dCat.add(new StringField(l3, l4, Field.Store.YES));
-                    dCat.add(new StringField(l4, l5, Field.Store.YES));
-                    dCat.add(new StringField(l5, l6, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
-                    dCat.add(new StringField(LEVEL6_NAME, l6n, Field.Store.YES));
-                    dCat = getDocument(l6n, dCat, indexWriter);
-                    if (dCat != null) {
-                        indexWriter.addDocument(dCat);
-                    }
-                }
+            dCat.add(new StringField(LEVEL_1, l1, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_2, l2, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_3, l3, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_4, l4, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_5, l5, Field.Store.YES));
+            dCat.add(new StringField(LEVEL_6, l6, Field.Store.YES));
+            dCat.add(new StringField(l1, l2, Field.Store.YES));
+            dCat.add(new StringField(l2, l3, Field.Store.YES));
+            dCat.add(new StringField(l3, l4, Field.Store.YES));
+            dCat.add(new StringField(l4, l5, Field.Store.YES));
+            dCat.add(new StringField(l5, l6, Field.Store.YES));
+            dCat.add(new StringField(LEVEL1_NAME, l1n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL2_NAME, l2n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL3_NAME, l3n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL4_NAME, l4n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL5_NAME, l5n, Field.Store.YES));
+            dCat.add(new StringField(LEVEL6_NAME, l6n, Field.Store.YES));
+            dCat = getDocument(l6n, dCat, indexWriter);
+            if (dCat != null) {
+                indexWriter.addDocument(dCat);
             }
         }
     }

@@ -847,10 +847,10 @@ public class SemGui extends javax.swing.JFrame {
         jToolBar10 = new javax.swing.JToolBar();
         jButton9 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton17 = new javax.swing.JButton();
         jSeparator27 = new javax.swing.JToolBar.Separator();
         jLabel5 = new javax.swing.JLabel();
         searchManageClassification = new javax.swing.JTextField();
+        onTrained2 = new javax.swing.JCheckBox();
         jSplitPane11 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         documentsTableScrollPanel = new javax.swing.JScrollPane();
@@ -861,6 +861,7 @@ public class SemGui extends javax.swing.JFrame {
         jSeparator59 = new javax.swing.JToolBar.Separator();
         wFreq3 = new javax.swing.JButton();
         jSeparator58 = new javax.swing.JToolBar.Separator();
+        jButton17 = new javax.swing.JButton();
         classificaTesto1 = new javax.swing.JButton();
         jButton16 = new javax.swing.JButton();
         jButton18 = new javax.swing.JButton();
@@ -5822,18 +5823,6 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar10.add(jButton4);
-
-        jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/doc_page.png"))); // NOI18N
-        jButton17.setText("Documenti");
-        jButton17.setFocusable(false);
-        jButton17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jButton17.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jButton17.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton17ActionPerformed(evt);
-            }
-        });
-        jToolBar10.add(jButton17);
         jToolBar10.add(jSeparator27);
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
@@ -5846,6 +5835,12 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar10.add(searchManageClassification);
+
+        onTrained2.setText("Istruite");
+        onTrained2.setFocusable(false);
+        onTrained2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        onTrained2.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jToolBar10.add(onTrained2);
 
         manageClassificationTreePanel.add(jToolBar10, java.awt.BorderLayout.PAGE_START);
 
@@ -5927,7 +5922,7 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.setRollover(true);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/table.png"))); // NOI18N
-        jButton1.setText("Ricarica Indice");
+        jButton1.setText("Ricarica");
         jButton1.setFocusable(false);
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -5939,7 +5934,7 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(jButton1);
 
         exportIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/arrow_out.png"))); // NOI18N
-        exportIndex.setText("Esporta Indice");
+        exportIndex.setText("Esporta");
         exportIndex.setFocusable(false);
         exportIndex.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         exportIndex.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -5965,6 +5960,18 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(wFreq3);
         tableToolbar2.add(jSeparator58);
 
+        jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/doc_page.png"))); // NOI18N
+        jButton17.setText("Categoria");
+        jButton17.setFocusable(false);
+        jButton17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jButton17.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
+        tableToolbar2.add(jButton17);
+
         classificaTesto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/bug.png"))); // NOI18N
         classificaTesto1.setText("Classifica");
         classificaTesto1.setToolTipText("Classifica");
@@ -5979,7 +5986,7 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(classificaTesto1);
 
         jButton16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/spellcheck.png"))); // NOI18N
-        jButton16.setText("Conferma cambiati selezionati");
+        jButton16.setText("Conferma cambiamenti");
         jButton16.setFocusable(false);
         jButton16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jButton16.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -5991,7 +5998,7 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(jButton16);
 
         jButton18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/link_break.png"))); // NOI18N
-        jButton18.setText("Non confermare cambiati");
+        jButton18.setText("Non confermare");
         jButton18.setFocusable(false);
         jButton18.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jButton18.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -6029,7 +6036,7 @@ public class SemGui extends javax.swing.JFrame {
         tableToolbar2.add(removeDocumentFilter);
 
         jLabel38.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/magnifier.png"))); // NOI18N
-        jLabel38.setText("Cerca  nel testo o nei level ");
+        jLabel38.setText("Cerca");
         tableToolbar2.add(jLabel38);
 
         serachDocumentBody.setColumns(10);
@@ -7153,9 +7160,17 @@ public class SemGui extends javax.swing.JFrame {
     private void searchManageClassificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchManageClassificationActionPerformed
         String searched = searchManageClassification.getText();
         if (searched.length() > 0) {
-            List<TreePath> paths = GuiUtils.find((DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot(), searched, false);
+
+            List<TreePath> paths = null;
+            if (!onTrained2.isSelected()) {
+                paths = GuiUtils.find((DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot(), searched, false);
+            } else {
+                paths = GuiUtils.findOnTrained((DefaultMutableTreeNode) manageClassificationTree.getModel().getRoot(), searched, false);
+            }
             GuiUtils.scrollToPath(manageClassificationTree, paths);
+
         }
+
     }//GEN-LAST:event_searchManageClassificationActionPerformed
 
     private void exportTreeFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportTreeFileChooserActionPerformed
@@ -7983,11 +7998,15 @@ public class SemGui extends javax.swing.JFrame {
                                         List<ClassificationPath> bayes = ME.bayesClassify(text, language);
                                         long endBayes = System.currentTimeMillis();
                                         if (bayes.size() > 0) {
-                                            boolean ok = false;
-
-                                            evaluateClassification(i, ok, bayes, 0, 9, correct);
-                                            if (bayes.size() > 1) {
-                                                evaluateClassification(i, ok, bayes, 1, 10, correct);
+                                            boolean ok = evaluateClassification(i, false, bayes, 0, 9, correct);
+                                            if (bayes.size() > 1 && !ok) {
+                                                for (int gg = 1; gg < bayes.size(); gg++) {
+                                                    
+                                                    if (evaluateClassification(i, ok, bayes, gg, 10, correct)) {
+                                                        gg = bayes.size();
+                                                        break;
+                                                    }
+                                                }
 
                                             }
                                         } else {
@@ -8011,7 +8030,7 @@ public class SemGui extends javax.swing.JFrame {
                     isClassify = false;
                 }
 
-                private void evaluateClassification(int i, boolean ok, List<ClassificationPath> bayes, int xx, int idx, final AtomicInteger correct) {
+                private boolean evaluateClassification(int i, boolean ok, List<ClassificationPath> bayes, int xx, int idx, final AtomicInteger correct) {
                     String leaf = bayes.get(xx).getLeaf();
                     String oldCat = null;
                     for (int j = 8; j > 2; j--) {
@@ -8031,6 +8050,7 @@ public class SemGui extends javax.swing.JFrame {
 
                         model.setValueAt("[" + leaf + "] " + bayes.get(xx).toSmallClassString(), i, idx);
                     }
+                    return ok;
                 }
             });
             t.setDaemon(true);
@@ -8301,16 +8321,17 @@ public class SemGui extends javax.swing.JFrame {
         if (selPath != null) {
             categorieSegmentsPanel.setSelectionPath(selPath);
             Object[] path = selPath.getPath();
-            String first = path[1].toString().replace("(","\\(").replace(")","\\)").replace(".","\\.");
-            String last = path[path.length - 1].toString().replace("(","\\(").replace(")","\\)").replace(".","\\.");
-             int idx[] = {1,4};
+            String first = path[1].toString().replace("(", "\\(").replace(")", "\\)").replace(".", "\\.");
+            String last = path[path.length - 1].toString().replace("(", "\\(").replace(")", "\\)").replace(".", "\\.");
+            int idx[] = {1, 4};
             String[] queries = new String[2];
-            if (path.length > 2)
-                queries[0] = first+"(.*)"+last+"(.*)";
-            else 
-                queries[0] = first+"(.*)";
+            if (path.length > 2) {
+                queries[0] = first + "(.*)" + last + "(.*)";
+            } else {
+                queries[0] = first + "(.*)";
+            }
             queries[1] = filterSegments.getText();
-            
+
             GuiUtils.filterTable(segmentsTable, queries, idx);
         }
         statusSegments.setText("Totale filtrati elementi: " + segmentsTable.getRowCount());
@@ -8521,7 +8542,7 @@ public class SemGui extends javax.swing.JFrame {
     private Map<Integer, SemDocument> tableData = null;
     private ReadFolderToTable rtt;
     private CapturesCoverage capcov = null;
-    private static final MulticlassEngine ME = new MulticlassEngine();
+    private static MulticlassEngine ME = new MulticlassEngine();
     private static final SegmentEngine SE = new SegmentEngine();
     private static final DocumentParser DP = new DocumentParser();
     private final RankEvaluations evaluations;
@@ -9036,6 +9057,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JFileChooser ocrFileChooser;
     private javax.swing.JButton okRank;
     private javax.swing.JCheckBox onTrained;
+    private javax.swing.JCheckBox onTrained2;
     private javax.swing.JCheckBox onlySegment;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JButton openSegmentRelationshipPanel;
@@ -11137,6 +11159,7 @@ public class SemGui extends javax.swing.JFrame {
             if (!onlySegment.isSelected()) {
                 LogGui.info("INIT MULTICLASSIFIER...");
                 initLabel.setText("Init multiclassifier...");
+                ME = new MulticlassEngine();
                 if (ME.init(percorsoIndice.getText(), Integer.parseInt(fattoreK.getText()), rebuildIndex.isSelected())) {
                     StopWordsUtils.populateStopWords(this);
                     LuceneIndexUtils.populateIndex(this);
