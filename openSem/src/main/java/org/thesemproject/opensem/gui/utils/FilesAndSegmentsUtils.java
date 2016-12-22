@@ -99,18 +99,27 @@ public class FilesAndSegmentsUtils {
      * Gestisce l'evidenziazione del segmento
      *
      * @param semGui frame
+     * @param modifier tipo marcatura
      */
-    public static void segmentsTableHilightSegment(SemGui semGui) {
+    public static void segmentsTableHilightSegment(SemGui semGui, String modifier) {
         DefaultTableModel segModel = (DefaultTableModel) semGui.getSegmentsTable().getModel();
         int[] rows = semGui.getSegmentsTable().getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
             //int pos = semGui.getSegmentsTable().convertRowIndexToModel(rows[i]);
-            semGui.getSegmentsTable().setValueAt("X", rows[i], 6);
+            semGui.getSegmentsTable().setValueAt(modifier, rows[i], 6);
             String seg = (String) semGui.getSegmentsTable().getValueAt(rows[i], 0);
             int id = Integer.parseInt(seg.substring(0, seg.indexOf(".")));
             SemDocument dto = semGui.getTableData().get(id);
             if (dto != null) {
-                dto.udpateSegmentsRows(seg);
+                //dto.udpateSegmentsRows(seg);
+                List<Object[]> rowsS = dto.getSegmentRows();
+                for (Object[] rowS : rowsS) {
+                    String idS = (String) rowS[0];
+                    if (idS.equals(seg)) {
+                        rowS[6] = modifier;
+                    }
+                }
+                dto.setSegmentRows(rowsS);
             }
         }
     }
@@ -202,7 +211,7 @@ public class FilesAndSegmentsUtils {
      * @throws NumberFormatException eccezione sui valori numerici
      */
     public static void segmentsTableMouseEventManagement(MouseEvent evt, SemGui semGui) throws NumberFormatException {
-        int currentFilesPosition = semGui.getSegmentsTable().getSelectedRow();
+        final int currentFilesPosition = semGui.getSegmentsTable().getSelectedRow();
         String sid = (String) semGui.getSegmentsTable().getValueAt(currentFilesPosition, 0);
         int id = Integer.parseInt(sid.substring(0, sid.indexOf(".")));
         String text = semGui.getSegmentsTable().getValueAt(currentFilesPosition, 4).toString();
@@ -220,7 +229,7 @@ public class FilesAndSegmentsUtils {
             semGui.getImagesPanel().removeAll();
         }
         DefaultMutableTreeNode clResults = new DefaultMutableTreeNode("Classificazione");
-        SemDocument dto = semGui.getTableData().get(id);
+        final SemDocument dto = semGui.getTableData().get(id);
         if (dto.getIdentifiedSegments() != null) {
             List<ClassificationPath> bayes = dto.getClassPath(sid);
             if (evt != null) {
@@ -232,6 +241,18 @@ public class FilesAndSegmentsUtils {
                     }
                     bayes = semGui.getME().bayesClassify(text, semGui.getSegmentsTable().getValueAt(currentFilesPosition, 3).toString());
                     dto.setClassPath(sid, bayes);
+                    String newClass1 = "";
+                    String newClass2 = "";
+                    if (bayes.size() == 1) {
+                        newClass1 = bayes.get(0).toSmallClassString();
+                    } else if (bayes.size() >= 2) {
+                        newClass1 = bayes.get(0).toSmallClassString();
+                        newClass2 = bayes.get(1).toSmallClassString();
+                    }
+                    semGui.getSegmentsTable().setValueAt(newClass1, currentFilesPosition, 1);
+                    semGui.getSegmentsTable().setValueAt(newClass2, currentFilesPosition, 2);
+                    
+
                 }
             }
             bayes.stream().forEach((ClassificationPath cp) -> {
@@ -905,7 +926,7 @@ public class FilesAndSegmentsUtils {
                                     SemDocument dto = semGui.getTableData().get(id);
                                     List<Object[]> rows = dto.getSegmentRows();
                                     int posSegRow = -1;
-                                    
+
                                     for (int k = 0; k < rows.size(); k++) {
                                         Object[] rx = rows.get(k);
                                         if (String.valueOf(rx[0]).equals(idSeg)) {
@@ -923,9 +944,9 @@ public class FilesAndSegmentsUtils {
                                     if (row % 3 == 0) {
                                         semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ") - " + row + "/" + size);
                                     }
-                                    
+
                                     String language = dto.getLanguage();
-                                   
+
                                     List<ClassificationPath> bayes = semGui.getME().bayesClassify(text, language);
                                     String oldClass1 = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 1));
                                     String oldClass2 = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 2));
@@ -938,17 +959,22 @@ public class FilesAndSegmentsUtils {
                                         newClass2 = bayes.get(1).toSmallClassString();
                                     }
                                     String check = String.valueOf(semGui.getSegmentsTable().getValueAt(pos, 6));
-                                    if ("X".equalsIgnoreCase(check)) {
-                                        if (!newClass1.equalsIgnoreCase(oldClass1) || !newClass2.equalsIgnoreCase(oldClass2)) {
-                                            semGui.getSegmentsTable().setValueAt("A", pos, 6);
-                                            rows.get(posSegRow)[6] = "A";
+                                    if (!"I".equalsIgnoreCase(check)) {
+                                        if ("X".equalsIgnoreCase(check)) {
+                                            if (!newClass1.equalsIgnoreCase(oldClass1)
+                                                    && !newClass1.equalsIgnoreCase(oldClass2)
+                                                    && !newClass2.equalsIgnoreCase(oldClass1)
+                                                    && !newClass2.equalsIgnoreCase(oldClass2)) {
+                                                semGui.getSegmentsTable().setValueAt("A", pos, 6);
+                                                rows.get(posSegRow)[6] = "A";
+                                            }
+                                        } else if (!newClass1.equalsIgnoreCase(oldClass1) || !newClass2.equalsIgnoreCase(oldClass2))    {
+                                            semGui.getSegmentsTable().setValueAt("C", pos, 6);
+                                            rows.get(posSegRow)[6] = "C";
+                                        } else {
+                                            semGui.getSegmentsTable().setValueAt("", pos, 6);
+                                            rows.get(posSegRow)[6] = "";
                                         }
-                                    } else if (!newClass1.equalsIgnoreCase(oldClass1) || !newClass2.equalsIgnoreCase(oldClass2)) {
-                                        semGui.getSegmentsTable().setValueAt("C", pos, 6);
-                                        rows.get(posSegRow)[6] = "C";
-                                    } else {
-                                        semGui.getSegmentsTable().setValueAt("", pos, 6);
-                                        rows.get(posSegRow)[6] = "";
                                     }
                                     semGui.getSegmentsTable().setValueAt(newClass1, pos, 1);
                                     semGui.getSegmentsTable().setValueAt(newClass2, pos, 2);

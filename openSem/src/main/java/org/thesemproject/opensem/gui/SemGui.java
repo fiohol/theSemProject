@@ -462,6 +462,7 @@ public class SemGui extends javax.swing.JFrame {
         jButton19 = new javax.swing.JButton();
         firstLevelOnly = new javax.swing.JButton();
         notMarked = new javax.swing.JButton();
+        notMarked1 = new javax.swing.JButton();
         changed = new javax.swing.JButton();
         alert = new javax.swing.JButton();
         jSeparator7 = new javax.swing.JToolBar.Separator();
@@ -2751,11 +2752,26 @@ public class SemGui extends javax.swing.JFrame {
         InputMap segInputMap = segmentsTable.getInputMap(segCondition);
         ActionMap segActionMap = segmentsTable.getActionMap();
 
-        segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DELETE);
-        segActionMap.put(DELETE, new AbstractAction() {
+        segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "CORRECT");
+        segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "IGNORE");
+        segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), "CLEAR");
+        segActionMap.put("CORRECT", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                hilightSegment();
+                hilightSegment("X");
             }
+        });
+
+        segActionMap.put("CLEAR", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hilightSegment("");
+            }
+        });
+
+        segActionMap.put("IGNORE", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                hilightSegment("I");
+            }
+
         });
 
         jPanel4.add(jScrollPane12, java.awt.BorderLayout.CENTER);
@@ -2828,6 +2844,19 @@ public class SemGui extends javax.swing.JFrame {
             }
         });
         jToolBar3.add(notMarked);
+
+        notMarked1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_delete.png"))); // NOI18N
+        notMarked1.setText("Ignorati");
+        notMarked1.setToolTipText("Non marcati");
+        notMarked1.setFocusable(false);
+        notMarked1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        notMarked1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        notMarked1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notMarked1ActionPerformed(evt);
+            }
+        });
+        jToolBar3.add(notMarked1);
 
         changed.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/thesemproject/opensem/gui/icons16/application_edit.png"))); // NOI18N
         changed.setText("Cambiati");
@@ -6493,7 +6522,10 @@ public class SemGui extends javax.swing.JFrame {
                     }
                     try {
                         ObjectOutputStream oos = new ObjectOutputStream(fout);
+                        
                         oos.writeObject(tableData);
+                        
+                        
                     } catch (Exception e) {
                         LogGui.printException(e);
                         return;
@@ -6522,6 +6554,7 @@ public class SemGui extends javax.swing.JFrame {
         }
         int idx = 4;
         String text = filterSegments.getText();
+        if (text.length() < 3 && text.length() != 0)  return;
         if (text.startsWith("Class1:")) {
             text = text.substring(7);
             idx = 1;
@@ -6923,7 +6956,9 @@ public class SemGui extends javax.swing.JFrame {
         if (isClassify) {
             return;
         }
-        GuiUtils.filterTable(filesTable, filterFile.getText(), 8);
+        if (filterFile.getText().length() == 0 || filterFile.getText().length() > 3) {
+            GuiUtils.filterTable(filesTable, filterFile.getText(), 8);
+        }
     }//GEN-LAST:event_filterFileKeyReleased
 
     private void searchTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTableKeyReleased
@@ -8001,7 +8036,7 @@ public class SemGui extends javax.swing.JFrame {
                                             boolean ok = evaluateClassification(i, false, bayes, 0, 9, correct);
                                             if (bayes.size() > 1 && !ok) {
                                                 for (int gg = 1; gg < bayes.size(); gg++) {
-                                                    
+
                                                     if (evaluateClassification(i, ok, bayes, gg, 10, correct)) {
                                                         gg = bayes.size();
                                                         break;
@@ -8336,6 +8371,10 @@ public class SemGui extends javax.swing.JFrame {
         }
         statusSegments.setText("Totale filtrati elementi: " + segmentsTable.getRowCount());
     }//GEN-LAST:event_jButton19ActionPerformed
+
+    private void notMarked1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notMarked1ActionPerformed
+                GuiUtils.filterOnStatus("I", null, this);
+    }//GEN-LAST:event_notMarked1ActionPerformed
 
     private void filterDocumentTableByLevel(JTable docTable, JTree catTree, JTextField filterTextBox) {
         GuiUtils.filterTable(docTable, null, 1);
@@ -9052,6 +9091,7 @@ public class SemGui extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> multipleYN;
     private javax.swing.JButton newDefinition;
     private javax.swing.JButton notMarked;
+    private javax.swing.JButton notMarked1;
     private javax.swing.JCheckBox notSubscribe;
     private javax.swing.JButton nuvoletta;
     private javax.swing.JFileChooser ocrFileChooser;
@@ -11672,8 +11712,8 @@ public class SemGui extends javax.swing.JFrame {
         filesTableMouseClicked(null);
     }
 
-    private void hilightSegment() {
-        FilesAndSegmentsUtils.segmentsTableHilightSegment(this);
+    private void hilightSegment(String key) {
+        FilesAndSegmentsUtils.segmentsTableHilightSegment(this, key);
     }
 
     private void filesTableSelectedRow() {

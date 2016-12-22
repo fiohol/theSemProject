@@ -3197,7 +3197,7 @@
                             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="segmentsTableKeyTyped"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="segmentsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {&#xa;    @Override&#xa;        public void valueChanged(ListSelectionEvent event) {&#xa;        if (segmentsTable.getSelectedRow() &gt; -1) {&#xa;            // print first column value from selected row&#xa;            segmentsTableSelectedRow();&#xa;        }&#xa;    }&#xa;});&#xa;&#xa;&#xa;int segCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;&#xa;  InputMap segInputMap = segmentsTable.getInputMap(segCondition);&#xa;  ActionMap segActionMap = segmentsTable.getActionMap();&#xa;&#xa;  segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DELETE);&#xa;  segActionMap.put(DELETE, new AbstractAction() {&#xa;     public void actionPerformed(ActionEvent e) {&#xa;        hilightSegment();&#xa;     }&#xa;});"/>
+                            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="segmentsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {&#xa;    @Override&#xa;        public void valueChanged(ListSelectionEvent event) {&#xa;        if (segmentsTable.getSelectedRow() &gt; -1) {&#xa;            // print first column value from selected row&#xa;            segmentsTableSelectedRow();&#xa;        }&#xa;    }&#xa;});&#xa;&#xa;&#xa;int segCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;&#xa;  InputMap segInputMap = segmentsTable.getInputMap(segCondition);&#xa;  ActionMap segActionMap = segmentsTable.getActionMap();&#xa;&#xa;  segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), &quot;CORRECT&quot;);&#xa;segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), &quot;IGNORE&quot;);&#xa;segInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), &quot;CLEAR&quot;);&#xa;  segActionMap.put(&quot;CORRECT&quot;, new AbstractAction() {&#xa;     public void actionPerformed(ActionEvent e) {&#xa;        hilightSegment(&quot;X&quot;);&#xa;     }&#xa;});&#xa;&#xa;segActionMap.put(&quot;CLEAR&quot;, new AbstractAction() {&#xa;     public void actionPerformed(ActionEvent e) {&#xa;        hilightSegment(&quot;&quot;);&#xa;     }&#xa;});&#xa;&#xa;segActionMap.put(&quot;IGNORE&quot;, new AbstractAction() {&#xa;     public void actionPerformed(ActionEvent e) {&#xa;        hilightSegment(&quot;I&quot;);&#xa;     }&#xa;&#xa;});"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>
@@ -3291,6 +3291,21 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="notMarkedActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="notMarked1">
+                          <Properties>
+                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/org/thesemproject/opensem/gui/icons16/application_delete.png"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Ignorati"/>
+                            <Property name="toolTipText" type="java.lang.String" value="Non marcati"/>
+                            <Property name="focusable" type="boolean" value="false"/>
+                            <Property name="horizontalAlignment" type="int" value="4"/>
+                            <Property name="horizontalTextPosition" type="int" value="4"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="notMarked1ActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="changed">
