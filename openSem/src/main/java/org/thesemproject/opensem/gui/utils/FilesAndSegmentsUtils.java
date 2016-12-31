@@ -236,6 +236,7 @@ public class FilesAndSegmentsUtils {
                 if (evt.getClickCount() == 2 && !evt.isConsumed()) {
                     evt.consume();
                     if (semGui.isNeedUpdate()) {
+                        semGui.getRebuildIndex().setSelected(true);
                         semGui.initializeModel();
                         semGui.setNeedUpdate(false);
                     }
@@ -680,6 +681,7 @@ public class FilesAndSegmentsUtils {
                         semGui.getFilesTab().setTitleAt(1, "Segmenti (" + semGui.getSegmentsTable().getRowCount() + ")");
                         semGui.getFilesTab().setTitleAt(2, "Cambiamenti (" + semGui.getChangedTable().getRowCount() + ")");
                         if (semGui.isNeedUpdate()) {
+                            semGui.getRebuildIndex().setSelected(true);
                             semGui.initializeModel();
                             semGui.setNeedUpdate(false);
                         }
@@ -899,6 +901,7 @@ public class FilesAndSegmentsUtils {
                         semGui.getFilesTab().setTitleAt(2, "Cambiamenti (" + semGui.getChangedTable().getRowCount() + ")");
                         if (semGui.isNeedUpdate()) {
                             semGui.getRebuildIndex().setSelected(true);
+                            //semGui.getRebuildIndex().setSelected(false);
                             semGui.initializeModel(false);
                             semGui.setNeedUpdate(false);
                         }

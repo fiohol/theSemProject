@@ -1146,6 +1146,7 @@ public class GuiUtils {
             List<String> lines = GuiUtils.readFileLines(file.getAbsolutePath());
             NodeData root = NodeData.getNodeData(lines, Integer.parseInt(semGui.getFattoreK().getText()), new InternPool());
             semGui.getME().storeXml(NodeData.getDocument(root));
+            semGui.getRebuildIndex().setSelected(true);
             semGui.initializeModel();
             semGui.setNeedUpdate(false);
         }

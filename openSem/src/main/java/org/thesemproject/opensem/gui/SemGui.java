@@ -11194,11 +11194,15 @@ public class SemGui extends javax.swing.JFrame {
         GuiUtils.clearTable(documentsTable);
         //Abilita i testi...
         boolean ok = false;
+       
         try {
             LogGui.printMemorySummary();
             if (!onlySegment.isSelected()) {
                 LogGui.info("INIT MULTICLASSIFIER...");
                 initLabel.setText("Init multiclassifier...");
+                if (ME != null) {
+                    ME.closeAllReaders();
+                }
                 ME = new MulticlassEngine();
                 if (ME.init(percorsoIndice.getText(), Integer.parseInt(fattoreK.getText()), rebuildIndex.isSelected())) {
                     StopWordsUtils.populateStopWords(this);
@@ -11509,6 +11513,7 @@ public class SemGui extends javax.swing.JFrame {
         Thread t = new Thread(
                 () -> {
                     if (needUpdate) {
+                        getRebuildIndex().setSelected(true);
                         initializeModel();
                         needUpdate = false;
                     }

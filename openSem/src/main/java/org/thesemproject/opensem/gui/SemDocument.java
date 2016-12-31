@@ -235,7 +235,7 @@ public class SemDocument implements Serializable {
     public void setClassPath(String segmentId, List<ClassificationPath> cp) {
         classRows.put(segmentId, cp);
     }
-    
+
     /**
      * Imposta il segment come marcato. Un segment marcato ha una X nell'ultima
      * colonna. Inoltre a fronte di una riclassificazione se un segmento marcato
@@ -378,7 +378,7 @@ public class SemDocument implements Serializable {
                         if (!newValue1.equals(oldValue1)) {
                             compare.add(getCompareRow(key1, oldValue1, newValue1, "Classificazione", (String) newValue[4]));
                             changed = true;
-                        }
+                        } 
                     }
                     if (size > 1) {
                         String key2 = newValue[0] + ".Bayes2";
@@ -401,8 +401,9 @@ public class SemDocument implements Serializable {
                     newValue[6] = "X";
                     if (changed) {
                         newValue[6] = "A";
-
                     }
+                } else if ("I".equalsIgnoreCase(oldChecked.get(newValue[0]))) {
+                    newValue[6] = "I";
                 } else if (changed) {
                     newValue[6] = "C";
                 }
