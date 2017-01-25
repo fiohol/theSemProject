@@ -35,7 +35,7 @@ import org.apache.lucene.classification.KNearestNeighborClassifier;
 import org.apache.lucene.util.BytesRef;
 import org.jdom2.Document;
 import org.jdom2.*;
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 
 /**
  * Questo oggetto rappresenta un nodo gerarchico di classificazione con i

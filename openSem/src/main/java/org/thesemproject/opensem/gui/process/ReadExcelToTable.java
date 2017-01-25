@@ -15,7 +15,7 @@
  */
 package org.thesemproject.opensem.gui.process;
 
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.thesemproject.opensem.gui.SemDocument;
 import org.thesemproject.opensem.gui.LogGui;

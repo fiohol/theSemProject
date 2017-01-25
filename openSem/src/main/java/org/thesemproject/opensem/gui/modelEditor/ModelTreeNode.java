@@ -15,7 +15,7 @@
  */
 package org.thesemproject.opensem.gui.modelEditor;
 
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**

@@ -543,6 +543,7 @@ public class SegmentationUtils {
             String segmentName = (parentName.length() > 0 ? parentName + "." : "") + s.getName();
             Map<String, Integer> cellIndex = null;
             List<SegmentationResults> srs = identifiedSegments.get(s);
+            int srCount = 0;
             for (SegmentationResults sr : srs) {
                 Document segmentDocument = new Document();
                 if (s.getName().equalsIgnoreCase("Not Identified")) {
@@ -577,7 +578,7 @@ public class SegmentationUtils {
                     sent.stream().forEach((String sen) -> {
                         text.append(sen).append("\n");
                     });
-                    segmentDocument.put(BSonUtils.TEXT, text);
+                    segmentDocument.put(org.thesemproject.commons.utils.BSonUtils.TEXT, text);
                     if (s.isClassify()) {
                         List<ClassificationPath> cps = sr.getClassificationPaths();
                         for (int i = 0; i < cps.size(); i++) {
@@ -586,7 +587,8 @@ public class SegmentationUtils {
                         }
                     }
                 }
-                document.append("Segment", segmentDocument);
+                document.append("Segment." + segmentName + "." + srCount, segmentDocument);
+                srCount++;
             }
         }
         return document;

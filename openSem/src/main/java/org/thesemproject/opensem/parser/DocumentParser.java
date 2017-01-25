@@ -41,7 +41,7 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.BodyContentHandler;
 import org.thesemproject.opensem.gui.LogGui;
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 

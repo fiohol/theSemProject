@@ -15,6 +15,7 @@
  */
 package org.thesemproject.opensem.gui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.thesemproject.opensem.gui.utils.StopWordsUtils;
 import org.thesemproject.opensem.gui.utils.SegmentsUtils;
 import org.thesemproject.opensem.gui.utils.DataProvidersUtils;
@@ -6508,6 +6509,7 @@ public class SemGui extends javax.swing.JFrame {
                     isSaving = true;
                     filesInfoLabel.setText("Salvataggio in corso...");
                     FileOutputStream fout;
+                    FileOutputStream fout2;
                     try {
                         String path = saveAsFileChooser.getSelectedFile().getAbsolutePath();
                         GuiUtils.makeBackup(path);
@@ -6516,15 +6518,31 @@ public class SemGui extends javax.swing.JFrame {
                             path = path + ".ser";
                         }
                         fout = new FileOutputStream(new File(path));
+                        fout2 = new FileOutputStream(new File(path+"2.ser"));
                     } catch (Exception e) {
                         LogGui.printException(e);
                         return;
                     }
                     try {
+                        
                         ObjectOutputStream oos = new ObjectOutputStream(fout);
-                        
+                        ObjectOutputStream oos2 = new ObjectOutputStream(fout2);
                         oos.writeObject(tableData);
+                        Map<Integer, org.thesemproject.configurator.gui.SemDocument> tableData2 = new HashMap<>();
+                        for (Integer i:tableData.keySet()) {
+                            SemDocument d = tableData.get(i);
+                            org.thesemproject.configurator.gui.SemDocument d2 = new org.thesemproject.configurator.gui.SemDocument();
+                            //Map<org.thesemproject.engine.segmentation.SegmentConfiguration, List<org.thesemproject.engine.segmentation.SegmentationResults>> res2 = new HashMap<>();
+                            //d2.setIdentifiedSegments(res2);
+                            d2.setSegmentRows(d.getSegmentRows());
+                            d2.setFileName(d.getFileName());
+                            d2.setId(d.getId());
+                            d2.setRow(d.getRow());
+                            tableData2.put(i,d2);
+                                
+                        }
                         
+                        oos2.writeObject(tableData2);
                         
                     } catch (Exception e) {
                         LogGui.printException(e);
@@ -6532,6 +6550,7 @@ public class SemGui extends javax.swing.JFrame {
                     }
                     try {
                         fout.close();
+                        fout2.close();
                     } catch (Exception e) {
                         LogGui.printException(e);
                     }

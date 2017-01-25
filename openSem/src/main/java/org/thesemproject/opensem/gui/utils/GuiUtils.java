@@ -16,7 +16,7 @@
 package org.thesemproject.opensem.gui.utils;
 
 import java.awt.BorderLayout;
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.classification.IndexManager;
 import org.thesemproject.opensem.classification.MyAnalyzer;

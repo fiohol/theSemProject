@@ -60,7 +60,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import static org.thesemproject.opensem.classification.IndexManager.getNotTokenizedFieldType;
 import static org.thesemproject.opensem.classification.IndexManager.reindexDoc;
-import org.thesemproject.opensem.utils.interning.InternPool;
+import org.thesemproject.commons.utils.interning.InternPool;
 import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
 
 /**

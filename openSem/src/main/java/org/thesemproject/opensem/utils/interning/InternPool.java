@@ -15,6 +15,8 @@
  */
 package org.thesemproject.opensem.utils.interning;
 
+
+
 /**
  * Classe per gestire la versione internizzata di un oggetto
  * 
