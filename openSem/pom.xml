@@ -437,6 +437,6 @@
         </plugins>
         
     </build> 
-    <name>openSem</name>
+    <name>openSem-1.8</name>
     
 </project>
