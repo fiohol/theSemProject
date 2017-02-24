@@ -60,8 +60,8 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import static org.thesemproject.opensem.classification.IndexManager.getNotTokenizedFieldType;
 import static org.thesemproject.opensem.classification.IndexManager.reindexDoc;
-import org.thesemproject.commons.utils.interning.InternPool;
 import static org.thesemproject.opensem.classification.IndexManager.getIndexWriter;
+import org.thesemproject.opensem.utils.interning.InternPool;
 
 /**
  * Motore di classificazione statistico basato su Lucene IL motore è stato

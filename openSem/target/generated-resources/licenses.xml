@@ -1945,10 +1945,10 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.24</version>
+      <version>1.5.6</version>
       <licenses>
         <license>
-          <name>Apache License, Version 2.0</name>
+          <name>The Apache Software License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
         </license>
@@ -2367,30 +2367,6 @@
           <distribution>repo</distribution>
           <comments>Free for open or commercial use, with credit line</comments>
         </license>
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>org.theSemProject</groupId>
-      <artifactId>openSem-commons</artifactId>
-      <version>1.0</version>
-      <licenses>
-        <!--No license information available. -->
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>org.theSemProject</groupId>
-      <artifactId>openSem-configurator</artifactId>
-      <version>1.0</version>
-      <licenses>
-        <!--No license information available. -->
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>org.theSemProject</groupId>
-      <artifactId>openSem-engine</artifactId>
-      <version>1.0</version>
-      <licenses>
-        <!--No license information available. -->
       </licenses>
     </dependency>
     <dependency>

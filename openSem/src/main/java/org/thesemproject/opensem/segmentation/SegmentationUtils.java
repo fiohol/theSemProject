@@ -578,7 +578,7 @@ public class SegmentationUtils {
                     sent.stream().forEach((String sen) -> {
                         text.append(sen).append("\n");
                     });
-                    segmentDocument.put(org.thesemproject.commons.utils.BSonUtils.TEXT, text);
+                    segmentDocument.put(BSonUtils.TEXT, text);
                     if (s.isClassify()) {
                         List<ClassificationPath> cps = sr.getClassificationPaths();
                         for (int i = 0; i < cps.size(); i++) {

@@ -16,7 +16,6 @@
 package org.thesemproject.opensem.gui.utils;
 
 import java.awt.BorderLayout;
-import org.thesemproject.commons.utils.interning.InternPool;
 import org.thesemproject.opensem.classification.ClassificationPath;
 import org.thesemproject.opensem.classification.IndexManager;
 import org.thesemproject.opensem.classification.MyAnalyzer;
@@ -86,6 +85,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.thesemproject.opensem.gui.modelEditor.ClassicationTreeNode;
+import org.thesemproject.opensem.utils.interning.InternPool;
 
 /**
  *

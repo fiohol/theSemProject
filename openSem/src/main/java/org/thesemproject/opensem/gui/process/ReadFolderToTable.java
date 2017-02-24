@@ -15,7 +15,6 @@
  */
 package org.thesemproject.opensem.gui.process;
 
-import org.thesemproject.commons.utils.interning.InternPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.thesemproject.opensem.gui.SemDocument;
 import org.thesemproject.opensem.gui.LogGui;
@@ -33,6 +32,7 @@ import static org.apache.uima.util.FileUtils.getFiles;
 import org.thesemproject.opensem.utils.FinalBoolean;
 import org.thesemproject.opensem.utils.ParallelProcessor;
 import static org.apache.uima.util.FileUtils.getFiles;
+import org.thesemproject.opensem.utils.interning.InternPool;
 
 /**
  *

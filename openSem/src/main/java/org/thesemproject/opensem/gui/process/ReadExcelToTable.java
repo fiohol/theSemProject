@@ -15,7 +15,6 @@
  */
 package org.thesemproject.opensem.gui.process;
 
-import org.thesemproject.commons.utils.interning.InternPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.thesemproject.opensem.gui.SemDocument;
 import org.thesemproject.opensem.gui.LogGui;
@@ -29,6 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.thesemproject.opensem.utils.interning.InternPool;
 
 /**
  *
