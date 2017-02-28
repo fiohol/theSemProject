@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.theSemProject</groupId>
     <artifactId>openSem</artifactId>
-    <version>1.9</version>
+    <version>1.9.1</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -432,6 +432,6 @@
         </plugins>
         
     </build> 
-    <name>openSem-1.9</name>
+    <name>openSem-1.9.1</name>
     
 </project>
