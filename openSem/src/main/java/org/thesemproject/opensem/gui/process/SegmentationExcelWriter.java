@@ -87,7 +87,7 @@ public class SegmentationExcelWriter {
         row.createCell(0).setCellValue(fileName);
         row.createCell(1).setCellValue(language);
         if (text != null) {
-            if (text.length() > 32767) {
+            if (text.length() >= 32766) {
                 text = text.substring(0, 32766);
             }
             row.createCell(2).setCellValue(text);

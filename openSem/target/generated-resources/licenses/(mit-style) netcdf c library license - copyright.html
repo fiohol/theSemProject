@@ -83,7 +83,7 @@
        <li class="top"><a href="/software/" id="software" class="top_link"><span class="down">Software</span></a>
         <ul class="sub">
          <li><b>Display &amp; Analysis</b></li>
-         <li><a href="/software/awips2/">AWIPS II</a></li>
+         <li><a href="/software/awips2/">AWIPS</a></li>
          <li><a href="/software/gempak/">GEMPAK</a></li>
          <li><a href="/software/idv/">IDV</a></li>
          <li><a href="/software/mcidas">McIDAS</a></li>
@@ -105,7 +105,7 @@
        <li class="top"><a href="/downloads/" id="downloads" class="top_link"><span class="down">Downloads</span></a>
         <ul class="sub">
          <li><b>Display &amp; Analysis</b></li>
-         <li><a href="/software/awips2/doc/install.html">AWIPS II</a></li>
+         <li><a href="/software/awips2/doc/install.html">AWIPS</a></li>
          <li><a href="/downloads/gempak/">GEMPAK</a></li>
          <li><a href="/downloads/idv/">IDV</a></li>
          <li><a href="/downloads/mcidas/">McIDAS</a></li>
@@ -212,8 +212,9 @@
 
        <li class="top"><a href="/events/" id="eventsmenu" class="top_link"><span class="down">Events</span></a>
         <ul class="sub">
-         <li><b>Summer/Fall 2016</b></li>
-		     <li><a href="/events/2016TrainingWorkshop/">Software Training Workshop</a></li>
+         <li><b>Spring/Summer 2017</b></li>
+	 <li><a href="/events/2017CloudModelingWorkshop/">Modeling Research in the Cloud</a></li>
+	 <li><a href="/blogs/news/entry/python-focused-software-training-workshop1">Workshop at U. of Wisconsin</a></li>
          <li><b>Unidata Events</b></li>
          <li><a href="/events/">Calendar of Events</a></li>
          <li><a href="/community/seminars/">Seminar Series</a></li>
@@ -261,15 +262,20 @@
       </div> <!-- /#logo-floater -->
 
       <div id="search-floater">
-       <form name="google" action="/search.jsp" id="cse-search-box">
-         <input type="hidden" name="hq" value="site:www.unidata.ucar.edu"></input> 
-         <input type="hidden" name="cx" value="008424664622949020059:afj38jxaljc"> </input>
-         <input type="hidden" name="cof" value="FORID:9"> </input>
-         <input type="hidden" name="ie" value="UTF-8"> </input>
-         <input type="text" name="q" autocomplete="on" style="background: url(&quot;/images/google_custom_search_watermark.gif&quot;) no-repeat scroll left center rgb(255, 255, 255); border-width:0 !important;" id="edit-query" size="40" maxlength="255" class="form-text"></input>
-         <input type="submit" name="sa" value="search" id="edit-sa" class="form-submit"></input>
-       </form>
-       <script type="text/javascript" src="https://www.google.com/coop/cse/brand?form=cse-search-box"></script>
+       <script>
+
+        (function() {
+         var cx = '011718067322694956191:11twidty55y';
+         var gcse = document.createElement('script');
+         gcse.type = 'text/javascript';
+         gcse.async = true;
+         gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+         var s = document.getElementsByTagName('script')[0];
+         s.parentNode.insertBefore(gcse, s);
+        })();
+
+       </script>
+       <div class="gcse-searchbox-only"></div>
       </div> <!-- /#search-floater -->
 
 
@@ -280,7 +286,6 @@
      </div> <!-- /#banner -->
     </div> <!-- /#header -->
    </header> <!-- /#header-wrap -->
-
  
    <div id="wrap">
     <div id="container">
