@@ -91,6 +91,11 @@ public class SegmentationExcelWriter {
                 text = text.substring(0, 32766);
             }
             row.createCell(2).setCellValue(text);
+            if (kpi != null) {
+                if (kpi.length() >= 32766) {
+                    kpi = kpi.substring(0, 32766);
+                }
+            }
             row.createCell(3).setCellValue(kpi);
         }
         writeSegments(fileName, row, wb, sheetCellIndex, identifiedSegments, "");
